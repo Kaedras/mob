@@ -60,7 +60,6 @@ namespace mob {
         add_os_specific_tasks();
 
         add_task<parallel_tasks>()
-            .add_task<sevenz>()
             .add_task<libbsarch>()
             .add_task<libloot>()
             .add_task<directxtex>()

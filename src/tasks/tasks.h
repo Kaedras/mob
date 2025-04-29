@@ -183,23 +183,6 @@ namespace mob::tasks {
         fs::path project_file_path() const;
     };
 
-    class sevenz : public basic_task<sevenz> {
-    public:
-        sevenz();
-
-        static std::string version();
-        static bool prebuilt();
-        static fs::path source_path();
-
-    protected:
-        void do_clean(clean c) override;
-        void do_fetch() override;
-        void do_build_and_install() override;
-
-    private:
-        void build();
-    };
-
     class spdlog : public basic_task<spdlog> {
     public:
         spdlog();
