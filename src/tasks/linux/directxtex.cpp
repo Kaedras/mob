@@ -79,7 +79,7 @@ namespace mob::tasks {
         const auto binary_path_debug =
             source_path() / "out" / "build" / DEBUG_PRESET;
 
-        for (const auto& header : {"DDS.h", "DirectXTex.h", "DirectXTex.inl "}) {
+        for (const auto& header : {"DDS.h", "DirectXTex.h", "DirectXTex.inl"}) {
             op::copy_file_to_dir_if_better(cx(), source_path() / "DirectXTex" / header,
                                            source_path() / "Include");
         }
