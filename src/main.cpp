@@ -19,6 +19,7 @@ namespace mob {
         using namespace tasks;
 
         add_task<parallel_tasks>()
+            .add_task<sevenz>()
             .add_task<gtest>()
             .add_task<zlib>()
             .add_task<openssl>()

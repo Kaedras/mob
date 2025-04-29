@@ -9,6 +9,11 @@
 
 namespace mob {
 
+    env env::vs(arch a)
+    {
+        return {};
+    }
+
     env& env::set(std::string_view k, std::string_view v, flags f)
     {
         copy_for_write();
