@@ -2,6 +2,7 @@
 
 #include "../utility.h"
 #include "./formatters.h"
+#include <iostream>
 
 namespace mob {
 
@@ -9,7 +10,11 @@ namespace mob {
 
     // system error message
     //
+#ifdef __unix__
+    std::string error_message(int e);
+#else
     std::string error_message(DWORD e);
+#endif
 
     // a logger with some context, this is passed around everywhere and knows which
     // task and tool is currently running to get better context when logging

@@ -221,10 +221,11 @@ namespace mob {
     {
         std::vector<fs::path> v;
 
+#ifdef _WIN32
         // usvfs
         if (fs::exists(tasks::usvfs::source_path()))
             v.push_back(tasks::usvfs::source_path());
-
+#endif
         const auto super = tasks::modorganizer::super_path();
 
         // all directories in super except for those starting with a dot

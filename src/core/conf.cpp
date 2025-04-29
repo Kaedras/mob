@@ -9,6 +9,14 @@
 #include "ini.h"
 #include "paths.h"
 
+#ifdef __unix__
+inline const wchar_t* GetCommandLineW()
+{
+    // stub
+    return L"";
+}
+#endif
+
 namespace mob::details {
 
     using key_value_map = std::map<std::string, std::string, std::less<>>;
@@ -506,15 +514,17 @@ namespace mob {
         set_path_if_empty("third_party", find_third_party_directory);
         this_env::prepend_to_path(conf().path().third_party() / "bin");
 
+#ifdef _WIN32
         set_path_if_empty("pf_x86", find_program_files_x86);
         set_path_if_empty("pf_x64", find_program_files_x64);
         set_path_if_empty("vs", find_vs);
         set_path_if_empty("qt_install", find_qt);
+        set_path_if_empty("qt_bin", qt::installation_path() / "bin");
+        set_path_if_empty("qt_translations", qt::installation_path() / "translations");
+#endif
         set_path_if_empty("temp_dir", find_temp_dir);
         set_path_if_empty("patches", find_in_root("patches"));
         set_path_if_empty("licenses", find_in_root("licenses"));
-        set_path_if_empty("qt_bin", qt::installation_path() / "bin");
-        set_path_if_empty("qt_translations", qt::installation_path() / "translations");
 
         // second, if any of these paths are relative, they use the second argument
         // as the root; if they're empty, they combine the second and third
@@ -540,12 +550,14 @@ namespace mob {
         resolve_path("install_stylesheets", p.install_bin(), "stylesheets");
         resolve_path("install_translations", p.install_bin(), "translations");
 
+#ifdef _WIN32
         // finally, resolve the tools that are unlikely to be in PATH; all the
         // other tools (7z, jom, patch, etc.) are assumed to be in PATH (which
         // now contains third-party) or have valid absolute paths in the ini
 
         details::set_string("tools", "vcvars", path_to_utf8(find_vcvars()));
         details::set_string("tools", "iscc", path_to_utf8(find_iscc()));
+#endif
     }
 
     void conf::set_log_file()

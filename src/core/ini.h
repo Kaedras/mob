@@ -1,5 +1,8 @@
 #pragma once
 
+#include <map>
+#include <string>
+
 namespace mob {
 
     std::string default_ini_filename();

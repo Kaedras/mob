@@ -158,8 +158,9 @@ namespace mob {
         else
             p.arg(cmd_);
 
+#ifdef _WIN32
         p.env(env::vs(arch_).set("CXXFLAGS", "/wd4566")).cwd(build_path());
-
+#endif
         execute_and_join(p);
     }
 

@@ -7,6 +7,15 @@
 #include "op.h"
 #include "process.h"
 
+#ifdef __unix__
+#define PATH "PATH"
+static constexpr auto pathSeparator = ":";
+#else
+#define PATH L"PATH"
+static constexpr auto pathSeparator = L";";
+#endif
+
+
 namespace mob {
 
     // retrieves the Visual Studio environment variables for the given architecture;
@@ -174,7 +183,7 @@ namespace mob {
     {
         copy_for_write();
 
-        std::wstring path;
+        nativeString path;
 
         switch (f) {
         case replace: {
@@ -183,20 +192,20 @@ namespace mob {
                 return p.native();
             });
 
-            path = join(strings, L";");
+            path = join(strings, pathSeparator);
 
             break;
         }
 
         case append: {
-            auto current = find(L"PATH");
+            auto current = find(PATH);
             if (current)
                 path = *current;
 
             // append all paths as utf16 strings to the current value, if any
             for (auto&& p : v) {
                 if (!path.empty())
-                    path += L";";
+                    path += pathSeparator;
 
                 path += p.native();
             }
@@ -205,14 +214,14 @@ namespace mob {
         }
 
         case prepend: {
-            auto current = find(L"PATH");
+            auto current = find(PATH);
             if (current)
                 path = *current;
 
             // prepend all paths as utf16 strings to the current value, if any
             for (auto&& p : v) {
                 if (!path.empty())
-                    path = L";" + path;
+                    path = pathSeparator + path;
 
                 path = p.native() + path;
             }
@@ -221,26 +230,12 @@ namespace mob {
         }
         }
 
-        set(L"PATH", path, replace);
+        set(PATH, path, replace);
 
         return *this;
     }
 
-    env& env::set(std::string_view k, std::string_view v, flags f)
-    {
-        copy_for_write();
-        set_impl(utf8_to_utf16(k), utf8_to_utf16(v), f);
-        return *this;
-    }
-
-    env& env::set(std::wstring k, std::wstring v, flags f)
-    {
-        copy_for_write();
-        set_impl(std::move(k), std::move(v), f);
-        return *this;
-    }
-
-    void env::set_impl(std::wstring k, std::wstring v, flags f)
+    void env::set_impl(nativeString k, nativeString v, flags f)
     {
         auto current = find(k);
 
@@ -264,17 +259,6 @@ namespace mob {
         }
     }
 
-    std::string env::get(std::string_view k) const
-    {
-        if (!data_)
-            return {};
-
-        auto current = find(utf8_to_utf16(k));
-        if (!current)
-            return {};
-
-        return utf16_to_utf8(*current);
-    }
 
     env::map env::get_map() const
     {
@@ -283,40 +267,6 @@ namespace mob {
 
         std::scoped_lock lock(data_->m);
         return data_->vars;
-    }
-
-    void env::create_sys() const
-    {
-        // CreateProcess() wants a string where every key=value is separated by a
-        // null and also terminated by a null, so there are two null characters at
-        // the end
-
-        data_->sys.clear();
-
-        for (auto&& v : data_->vars) {
-            data_->sys += v.first + L"=" + v.second;
-            data_->sys.append(1, L'\0');
-        }
-
-        data_->sys.append(1, L'\0');
-    }
-
-    std::wstring* env::find(std::wstring_view name)
-    {
-        return const_cast<std::wstring*>(std::as_const(*this).find(name));
-    }
-
-    const std::wstring* env::find(std::wstring_view name) const
-    {
-        if (!data_)
-            return {};
-
-        for (auto itor = data_->vars.begin(); itor != data_->vars.end(); ++itor) {
-            if (_wcsicmp(itor->first.c_str(), name.data()) == 0)
-                return &itor->second;
-        }
-
-        return {};
     }
 
     void* env::get_unicode_pointers() const
@@ -366,146 +316,4 @@ namespace mob {
         own_ = true;
     }
 
-    // mob's environment variables are only retrieved once and are kept in sync
-    // after that; this must also be thread-safe
-    static std::mutex g_sys_env_mutex;
-    static env g_sys_env;
-    static bool g_sys_env_inited;
-
-    env this_env::get()
-    {
-        std::scoped_lock lock(g_sys_env_mutex);
-
-        if (g_sys_env_inited) {
-            // already done
-            return g_sys_env;
-        }
-
-        // first time, get the variables from the system
-
-        auto free = [](wchar_t* p) {
-            FreeEnvironmentStringsW(p);
-        };
-
-        auto env_block =
-            std::unique_ptr<wchar_t, decltype(free)>{GetEnvironmentStringsW(), free};
-
-        // GetEnvironmentStringsW() returns a string where each variable=value
-        // is separated by a null character
-
-        for (const wchar_t* name = env_block.get(); *name != L'\0';) {
-            // equal sign
-            const wchar_t* equal = std::wcschr(name, '=');
-
-            // key
-            std::wstring key(name, static_cast<std::size_t>(equal - name));
-
-            // value
-            const wchar_t* value_start = equal + 1;
-            std::wstring value(value_start);
-
-            // the strings contain all sorts of weird stuff, like variables to
-            // keep track of the current directory, those start with an equal sign,
-            // so just ignore them
-            if (!key.empty())
-                g_sys_env.set(key, value);
-
-            // next string is one past end of value to account for null byte
-            name = value_start + value.length() + 1;
-        }
-
-        g_sys_env_inited = true;
-
-        return g_sys_env;
-    }
-
-    void this_env::set(const std::string& k, const std::string& v, env::flags f)
-    {
-        const std::wstring wk = utf8_to_utf16(k);
-        std::wstring wv       = utf8_to_utf16(v);
-
-        switch (f) {
-        case env::replace: {
-            ::SetEnvironmentVariableW(wk.c_str(), wv.c_str());
-            break;
-        }
-
-        case env::append: {
-            const std::wstring current = get_impl(k).value_or(L"");
-            wv                         = current + wv;
-            ::SetEnvironmentVariableW(wk.c_str(), wv.c_str());
-            break;
-        }
-
-        case env::prepend: {
-            const std::wstring current = get_impl(k).value_or(L"");
-            wv                         = wv + current;
-            ::SetEnvironmentVariableW(wk.c_str(), wv.c_str());
-            break;
-        }
-        }
-
-        // keep in sync
-        {
-            std::scoped_lock lock(g_sys_env_mutex);
-            if (g_sys_env_inited)
-                g_sys_env.set(utf8_to_utf16(k), wv);
-        }
-    }
-
-    void this_env::prepend_to_path(const fs::path& p)
-    {
-        gcx().trace(context::generic, "prepending to PATH: {}", p);
-        set("PATH", path_to_utf8(p) + ";", env::prepend);
-    }
-
-    void this_env::append_to_path(const fs::path& p)
-    {
-        gcx().trace(context::generic, "appending to PATH: {}", p);
-        set("PATH", ";" + path_to_utf8(p), env::append);
-    }
-
-    std::string this_env::get(const std::string& name)
-    {
-        auto v = get_impl(name);
-        if (!v) {
-            gcx().bail_out(context::generic, "environment variable {} doesn't exist",
-                           name);
-        }
-
-        return utf16_to_utf8(*v);
-    }
-
-    std::optional<std::string> this_env::get_opt(const std::string& name)
-    {
-        auto v = get_impl(name);
-        if (v)
-            return utf16_to_utf8(*v);
-        else
-            return {};
-    }
-
-    std::optional<std::wstring> this_env::get_impl(const std::string& k)
-    {
-        const std::wstring wk = utf8_to_utf16(k);
-
-        const std::size_t buffer_size = GetEnvironmentVariableW(wk.c_str(), nullptr, 0);
-
-        if (buffer_size == 0)
-            return {};
-
-        auto buffer = std::make_unique<wchar_t[]>(buffer_size + 1);
-        std::fill(buffer.get(), buffer.get() + buffer_size + 1, 0);
-
-        const std::size_t written = GetEnvironmentVariableW(
-            wk.c_str(), buffer.get(), static_cast<DWORD>(buffer_size));
-
-        if (written == 0)
-            return {};
-
-        MOB_ASSERT((written + 1) == buffer_size);
-
-        return std::wstring(buffer.get(), buffer.get() + written);
-    }
-
-}  // namespace mob
+}

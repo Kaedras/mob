@@ -62,11 +62,14 @@
 #include <thread>
 #include <vector>
 
+#ifdef _WIN32
 #include <Shlobj.h>
-#include <fcntl.h>
-#include <imagehlp.h>
-#include <io.h>
 #include <shlwapi.h>
+#include <io.h>
+#include <imagehlp.h>
+#endif
+
+#include <fcntl.h>
 
 #include <clipp.h>
 #include <curl/curl.h>

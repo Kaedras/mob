@@ -1,5 +1,7 @@
 #pragma once
 
+#include <type_traits>
+
 namespace mob {
 
 #define MOB_ENUM_OPERATORS(E)                                                          \

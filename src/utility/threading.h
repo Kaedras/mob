@@ -1,5 +1,9 @@
 #pragma once
 
+#include <functional>
+#include <thread>
+#include <optional>
+
 namespace mob {
 
     // sets unhandled exception and std::terminate handlers for the current thread

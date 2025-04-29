@@ -11,6 +11,36 @@
 
 namespace mob {
 
+#ifdef __unix__
+    void add_os_specific_tasks(){}
+#else
+    void add_os_specific_tasks()
+    {
+        using namespace tasks;
+
+        add_task<parallel_tasks>()
+            .add_task<gtest>()
+            .add_task<zlib>()
+            .add_task<openssl>()
+            .add_task<bzip2>();
+
+        add_task<parallel_tasks>()
+            .add_task<tasks::python>()
+            .add_task<lz4>()
+
+        add_task<parallel_tasks>()
+            .add_task<boost>()
+            .add_task<boost_di>()
+            .add_task<sip>();
+
+        add_task<parallel_tasks>()
+            .add_task<pyqt>()
+            .add_task<pybind11>()
+            .add_task<usvfs>()
+            .add_task<explorerpp>();
+    }
+#endif
+
     void add_tasks()
     {
         using namespace tasks;
@@ -26,33 +56,18 @@ namespace mob {
 
         // third-party tasks
 
-        add_task<parallel_tasks>()
-            .add_task<sevenz>()
-            .add_task<zlib>()
-            .add_task<gtest>()
-            .add_task<libbsarch>()
-            .add_task<libloot>()
-            .add_task<openssl>()
-            .add_task<bzip2>()
-            .add_task<directxtex>();
+        add_os_specific_tasks();
 
         add_task<parallel_tasks>()
-            .add_task<tasks::python>()
-            .add_task<lz4>()
+            .add_task<sevenz>()
+            .add_task<libbsarch>()
+            .add_task<libloot>()
+            .add_task<directxtex>()
             .add_task<spdlog>();
 
         add_task<parallel_tasks>()
-            .add_task<boost>()
-            .add_task<boost_di>()
-            .add_task<sip>();
-
-        add_task<parallel_tasks>()
-            .add_task<pyqt>()
-            .add_task<pybind11>()
-            .add_task<usvfs>()
             .add_task<stylesheets>()
-            .add_task<licenses>()
-            .add_task<explorerpp>();
+            .add_task<licenses>();
 
         // super tasks
 
@@ -215,6 +230,22 @@ namespace mob {
 
 }  // namespace mob
 
+#ifdef __unix__
+int main(int argc, char** argv)
+{
+    // outputs stacktrace on crash
+    mob::set_thread_exception_handlers();
+
+    std::vector<std::string> args;
+    for (int i = 1; i < argc; ++i)
+        args.emplace_back(argv[i]);
+
+    int r = mob::run(args);
+    mob::dump_logs();
+
+    return r;
+}
+#else
 int wmain(int argc, wchar_t** argv)
 {
     // makes streams unicode
@@ -232,3 +263,4 @@ int wmain(int argc, wchar_t** argv)
 
     return r;
 }
+#endif

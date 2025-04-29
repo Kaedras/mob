@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../tools/tools.h"
+
 namespace mob {
 
     // a tool that runs `cmake ..` by default in a given directory

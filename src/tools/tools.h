@@ -943,4 +943,6 @@ namespace mob {
 // more tools
 #include "cmake.h"
 #include "git.h"
-#include "msbuild.h"
+#ifdef _WIN32
+#include "win32/msbuild.h"
+#endif

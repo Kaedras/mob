@@ -76,18 +76,6 @@ namespace mob {
         template <class T>
         T get(std::string_view key) const;
 
-        template <>
-        bool get<bool>(std::string_view key) const
-        {
-            return details::get_bool(name_, key);
-        }
-
-        template <>
-        int get<int>(std::string_view key) const
-        {
-            return details::get_int(name_, key);
-        }
-
         void set(std::string_view key, std::string_view value)
         {
             details::set_string(name_, key, value);
@@ -101,6 +89,19 @@ namespace mob {
     private:
         std::string name_;
     };
+
+    template <>
+    template <>
+    inline bool conf_section<std::string>::get<bool>(std::string_view key) const
+    {
+        return details::get_bool(name_, key);
+    }
+    template <>
+    template <>
+    inline int conf_section<std::string>::get<int>(std::string_view key) const
+    {
+        return details::get_int(name_, key);
+    }
 
     // options in [global]
     //
@@ -157,32 +158,26 @@ namespace mob {
         template <class T>
         T get(std::string_view key) const;
 
-        template <>
-        bool get<bool>(std::string_view key) const
-        {
-            return get_bool(key);
-        }
-
         std::string mo_org() const { return get("mo_org"); }
         std::string mo_branch() const { return get("mo_branch"); }
         std::string mo_fallback_branch() const { return get("mo_fallback"); }
-        bool no_pull() const { return get<bool>("no_pull"); }
-        bool revert_ts() const { return get<bool>("revert_ts"); }
-        bool ignore_ts() const { return get<bool>("ignore_ts"); }
+        bool no_pull() const { return get_bool("no_pull"); }
+        bool revert_ts() const { return get_bool("revert_ts"); }
+        bool ignore_ts() const { return get_bool("ignore_ts"); }
         std::string git_url_prefix() const { return get("git_url_prefix"); }
-        bool git_shallow() const { return get<bool>("git_shallow"); }
+        bool git_shallow() const { return get_bool("git_shallow"); }
         std::string git_user() const { return get("git_username"); }
         std::string git_email() const { return get("git_email"); }
-        bool set_origin_remote() const { return get<bool>("set_origin_remote"); }
+        bool set_origin_remote() const { return get_bool("set_origin_remote"); }
         std::string remote_org() const { return get("remote_org"); }
         std::string remote_key() const { return get("remote_key"); }
         bool remote_no_push_upstream() const
         {
-            return get<bool>("remote_no_push_upstream");
+            return get_bool("remote_no_push_upstream");
         }
         bool remote_push_default_origin() const
         {
-            return get<bool>("remote_push_default_origin");
+            return get_bool("remote_push_default_origin");
         }
 
         // specify the configuration to build
@@ -194,6 +189,12 @@ namespace mob {
 
         bool get_bool(std::string_view name) const;
     };
+
+    template <>
+    inline bool conf_task::get<bool>(std::string_view key) const
+    {
+        return get_bool(key);
+    }
 
     // options in [tools]
     //

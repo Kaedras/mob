@@ -1,6 +1,8 @@
 #pragma once
 
 #include "utility.h"
+#include <curl/system.h>
+#include <curl/curl.h>
 
 namespace mob {
 
@@ -84,7 +86,7 @@ namespace mob {
         const context& cx_;
         mob::url url_;
         fs::path path_;
-        handle_ptr file_;
+        file_ptr file_;
         std::thread thread_;
         std::size_t bytes_;
         std::atomic<bool> interrupt_;

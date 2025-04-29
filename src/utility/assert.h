@@ -1,5 +1,9 @@
 #pragma once
 
+#ifdef __unix__
+#define __FUNCSIG__ __PRETTY_FUNCTION__
+#endif
+
 namespace mob {
 
 #define MOB_WIDEN2(x) L##x
@@ -7,7 +11,7 @@ namespace mob {
 #define MOB_FILE_UTF16 MOB_WIDEN(__FILE__)
 
 #define MOB_ASSERT(x, ...)                                                             \
-    mob_assert(x, __VA_ARGS__, #x, MOB_FILE_UTF16, __LINE__, __FUNCSIG__);
+    mob_assert(x, ##__VA_ARGS__, #x, MOB_FILE_UTF16, __LINE__, __FUNCSIG__);
 
     void mob_assertion_failed(const char* message, const char* exp, const wchar_t* file,
                               int line, const char* func);

@@ -188,7 +188,7 @@ namespace mob {
         cx_.trace(context::net, "curl: transfer finished {}", url_);
 
         if (file_) {
-            ::FlushFileBuffers(file_.get());
+            fflush(file_.get());
             file_.reset();
         }
 
@@ -272,10 +272,9 @@ namespace mob {
 
         cx_.trace(context::net, "opening {}", path_);
 
-        HANDLE h = ::CreateFileW(path_.native().c_str(), GENERIC_WRITE, FILE_SHARE_READ,
-                                 nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+        FILE* f = fopen(path_.native().c_str(), "wb");
 
-        if (h == INVALID_HANDLE_VALUE) {
+        if (f == nullptr) {
             const auto e = GetLastError();
 
             cx_.error(context::net, "failed to open {}, {}", path_, error_message(e));
@@ -283,14 +282,14 @@ namespace mob {
             return false;
         }
 
-        file_.reset(h);
+        file_.reset(f);
         return true;
     }
 
     bool curl_downloader::write_file(char* ptr, size_t n)
     {
-        DWORD written = 0;
-        if (!::WriteFile(file_.get(), ptr, static_cast<DWORD>(n), &written, nullptr)) {
+        size_t written = fwrite(ptr, sizeof(char), n, file_.get());
+        if (written != n) {
             const auto e = GetLastError();
 
             cx_.error(context::net, "failed to write to {}, {}", path_,

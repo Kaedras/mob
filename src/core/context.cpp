@@ -5,6 +5,16 @@
 #include "../utility.h"
 #include "conf.h"
 
+#ifdef __unix__
+#include "../linux_compatibility.h"
+static constexpr const char* newLine = "\n";
+static constexpr int newLineLength = 1;
+#else
+static constexpr const char* newLine = "\r\n";
+static constexpr int newLineLength = 2;
+#endif
+
+
 namespace mob {
 
     // timestamps are relative to this
@@ -15,7 +25,7 @@ namespace mob {
     static std::vector<std::string> g_errors, g_warnings;
 
     // handle to log file
-    static handle_ptr g_log_file;
+    static file_ptr g_log_file;
 
     // global output mutex to avoid interleaving, but also mixing colors
     static std::mutex g_mutex;
@@ -74,39 +84,6 @@ namespace mob {
         default:
             return "?";
         }
-    }
-
-    // retrieves the error message from the system for the given id
-    //
-    std::string error_message(DWORD id)
-    {
-        wchar_t* message = nullptr;
-
-        const auto ret =
-            FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM |
-                               FORMAT_MESSAGE_IGNORE_INSERTS,
-                           NULL, id, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-                           reinterpret_cast<LPWSTR>(&message), 0, NULL);
-
-        std::wstring s;
-
-        std::wostringstream oss;
-
-        // hex error code
-        oss << L"0x" << std::hex << id;
-
-        if (ret == 0 || !message) {
-            // error message not found, just use the hex error code
-            s = oss.str();
-        }
-        else {
-            // FormatMessage() includes a newline, trim it and put the hex code too
-            s = trim_copy(message) + L" (" + oss.str() + L")";
-        }
-
-        LocalFree(message);
-
-        return utf16_to_utf8(s);
     }
 
     std::chrono::nanoseconds timestamp()
@@ -211,16 +188,15 @@ namespace mob {
             if (!exists(p.parent_path()))
                 op::create_directories(gcx(), mob::conf().path().prefix());
 
-            HANDLE h = CreateFileW(p.native().c_str(), GENERIC_WRITE, FILE_SHARE_READ,
-                                   nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+            FILE* f = fopen(p.native().c_str(), "wt");
 
-            if (h == INVALID_HANDLE_VALUE) {
+            if (f == nullptr) {
                 const auto e = GetLastError();
                 gcx().bail_out(context::generic, "failed to open log file {}, {}", p,
                                error_message(e));
             }
 
-            g_log_file.reset(h);
+            g_log_file.reset(f);
         }
     }
 
@@ -267,12 +243,8 @@ namespace mob {
 
         // log file
         if (g_log_file && log_enabled(lv, mob::conf().global().file_log_level())) {
-            DWORD written = 0;
-
-            ::WriteFile(g_log_file.get(), utf8.data(), static_cast<DWORD>(utf8.size()),
-                        &written, nullptr);
-
-            ::WriteFile(g_log_file.get(), "\r\n", 2, &written, nullptr);
+            fwrite(utf8.data(), 1, utf8.size(), g_log_file.get());
+            fwrite(newLine, 1, newLineLength, g_log_file.get());
         }
 
         // remember warnings and errors

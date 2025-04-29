@@ -1,5 +1,14 @@
 #pragma once
 
+#include <mutex>
+#include <sstream>
+#include <string_view>
+
+#ifdef __unix__
+using WORD = uint16_t;
+using CONSOLE_FONT_INFOEX = int;
+#endif
+
 namespace mob {
 
     // sets the current console color in the constructor, restores it in the

@@ -92,6 +92,17 @@ namespace mob::op {
             do_delete_file(cx, p);
     }
 
+    // this function should handle wildcards like '*' and '?' correctly
+    // todo test this
+    bool wildcard_match(const char* file, const char* spec) {
+        // Convert the pattern to regex
+        std::regex re(spec);
+
+        // Perform the match
+        return std::regex_match(file, re);
+    }
+
+
     void delete_file_glob(const context& cx, const fs::path& glob, flags f)
     {
         cx.trace(context::fs, "deleting glob {}", glob);
@@ -106,7 +117,7 @@ namespace mob::op {
             const auto p    = e.path();
             const auto name = p.filename().native();
 
-            if (!PathMatchSpecW(name.c_str(), wildcard.c_str())) {
+            if (!wildcard_match(name.c_str(), wildcard.c_str())) {
                 cx.trace(context::fs, "{} did not match {}; skipping", name, wildcard);
 
                 continue;
@@ -315,7 +326,7 @@ namespace mob::op {
         for (auto&& e : fs::directory_iterator(file_parent)) {
             const auto name = e.path().filename().native();
 
-            if (!PathMatchSpecW(name.c_str(), wildcard.c_str())) {
+            if (!wildcard_match(name.c_str(), wildcard.c_str())) {
                 cx.trace(context::fs, "{} did not match {}; skipping", name, wildcard);
 
                 continue;
@@ -357,21 +368,14 @@ namespace mob::op {
         if (conf().global().dry())
             return;
 
-        const wchar_t* backup_p = nullptr;
-        std::wstring backup_s;
+        try {
+            if (!backup.empty()) {
+                fs::rename(dest, backup);
+            }
 
-        if (!backup.empty()) {
-            backup_s = backup.native();
-            backup_p = backup_s.c_str();
-        }
-
-        const auto r = ::ReplaceFileW(
-            src.native().c_str(), dest.native().c_str(), backup_p,
-            REPLACEFILE_IGNORE_MERGE_ERRORS | REPLACEFILE_IGNORE_ACL_ERRORS, nullptr,
-            nullptr);
-
-        if (r)
+            fs::rename(src, dest);
             return;
+        } catch (...) {}
 
         const auto e = GetLastError();
 
@@ -502,7 +506,7 @@ namespace mob::op {
         fs::remove_all(p, ec);
 
         if (ec) {
-            if (ec.value() == ERROR_ACCESS_DENIED) {
+            if (ec == std::errc::permission_denied) {
                 cx.trace(context::fs,
                          "got access denied trying to delete dir {}, "
                          "trying to remove read-only flag recursively",
@@ -596,7 +600,7 @@ namespace mob::op {
 
             const std::string scut = s.substr(0, prefix.size());
 
-            if (_stricmp(scut.c_str(), prefix.c_str()) != 0)
+            if (strcasecmp(scut.c_str(), prefix.c_str()) != 0)
                 return false;
 
             return true;

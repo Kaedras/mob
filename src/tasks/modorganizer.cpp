@@ -139,9 +139,11 @@ namespace mob::tasks {
         if (is_set(c, clean::reconfigure))
             run_tool(create_cmake_tool(cmake::clean));
 
+#ifdef _WIN32
         // msbuild clean
         if (is_set(c, clean::rebuild))
             run_tool(create_msbuild_tool(msbuild::clean));
+#endif
     }
 
     void modorganizer::do_fetch()
@@ -187,6 +189,7 @@ namespace mob::tasks {
         // run cmake
         run_tool(create_cmake_tool());
 
+#ifdef _WIN32
         // run restore for nuget
         //
         // until https://gitlab.kitware.com/cmake/cmake/-/issues/20646 is resolved,
@@ -196,6 +199,7 @@ namespace mob::tasks {
 
         // run msbuild
         run_tool(create_msbuild_tool());
+#endif
     }
 
     cmake modorganizer::create_cmake_tool(cmake::ops o)
@@ -210,26 +214,29 @@ namespace mob::tasks {
                 .generator(cmake::vs)
                 .def("CMAKE_INSTALL_PREFIX:PATH", conf().path().install())
                 .def("DEPENDENCIES_DIR", conf().path().build())
-                .def("BOOST_ROOT", boost::source_path())
-                .def("BOOST_LIBRARYDIR", boost::lib_path(arch::x64))
                 .def("SPDLOG_ROOT", spdlog::source_path())
                 .def("LOOT_PATH", libloot::source_path())
-                .def("LZ4_ROOT", lz4::source_path())
-                .def("QT_ROOT", qt::installation_path())
-                .def("ZLIB_ROOT", zlib::source_path())
-                .def("PYTHON_ROOT", python::source_path())
                 .def("SEVENZ_ROOT", sevenz::source_path())
                 .def("LIBBSARCH_ROOT", libbsarch::source_path())
-                .def("BOOST_DI_ROOT", boost_di::source_path())
+#ifdef _WIN32
                 // gtest has no RelWithDebInfo, so simply use Debug/Release
                 .def("GTEST_ROOT",
                      gtest::build_path(arch::x64, c == config::debug ? config::debug
                                                                      : config::release))
+                .def("BOOST_ROOT", boost::source_path())
+                .def("BOOST_LIBRARYDIR", boost::lib_path(arch::x64))
+                .def("LZ4_ROOT", lz4::source_path())
+                .def("QT_ROOT", qt::installation_path())
+                .def("ZLIB_ROOT", zlib::source_path())
+                .def("PYTHON_ROOT", python::source_path())
+                .def("BOOST_DI_ROOT", boost_di::source_path())
                 .def("OPENSSL_ROOT_DIR", openssl::source_path())
+#endif
                 .def("DIRECTXTEX_ROOT", directxtex::source_path())
                 .root(root));
     }
 
+#ifdef _WIN32
     msbuild modorganizer::create_msbuild_tool(msbuild::ops o)
     {
         return std::move(msbuild(o)
@@ -237,5 +244,6 @@ namespace mob::tasks {
                              .configuration(task_conf().configuration())
                              .architecture(arch::x64));
     }
+#endif
 
 }  // namespace mob::tasks

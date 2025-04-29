@@ -3,6 +3,20 @@
 #include "../utility.h"
 #include "context.h"
 #include "env.h"
+#include <set>
+
+#ifdef __unix__
+#define DWORD int
+struct STARTUPINFOW {
+    int stdIn;
+    int stdOut;
+    int stdErr;
+};
+
+using nativeString = std::string;
+#else
+using nativeString = std::wstring;
+#endif
 
 namespace mob {
 
@@ -443,7 +457,7 @@ namespace mob {
         // the process itself; this includes flags to cmd like /U, but also stuff
         // like chcp
         //
-        std::wstring make_cmd_args(const std::string& what) const;
+        nativeString make_cmd_args(const std::string& what) const;
 
         // sets the raw command line to `make_cmd() | p.make_cmd()`
         //
@@ -470,7 +484,7 @@ namespace mob {
 
         // calls CreateProcess() with the given stuff
         //
-        void create(std::wstring cmd, std::wstring args, std::wstring cwd,
+        void create(nativeString cmd, nativeString args, nativeString cwd,
                     STARTUPINFOW si);
 
         // called regularly in join(), checks for termination or interruption,

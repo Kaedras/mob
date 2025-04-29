@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../utility/string.h"
+#include <format>
 
 template <>
 struct std::formatter<std::wstring, char> : std::formatter<std::string, char> {

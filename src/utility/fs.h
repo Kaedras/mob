@@ -1,5 +1,13 @@
 #pragma once
 
+#include <filesystem>
+
+#ifdef __unix__
+#include "../linux_compatibility.h"
+#endif
+
+namespace fs = std::filesystem;
+
 namespace mob {
 
     class context;
@@ -8,6 +16,9 @@ namespace mob {
     //
     fs::path make_temp_file();
 
+#ifdef __unix__
+    using handle_ptr = FdCloser;
+#else
     struct handle_closer {
         using pointer = HANDLE;
 
@@ -19,6 +30,7 @@ namespace mob {
     };
 
     using handle_ptr = std::unique_ptr<HANDLE, handle_closer>;
+#endif
 
     struct file_closer {
         void operator()(std::FILE* f)

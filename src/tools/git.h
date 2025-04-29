@@ -1,5 +1,7 @@
 #pragma once
 
+#include <condition_variable>
+
 namespace mob {
 
     namespace details {

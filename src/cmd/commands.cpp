@@ -10,18 +10,17 @@
 
 namespace mob {
 
-    BOOL WINAPI signal_handler(DWORD) noexcept
+    void signal_handler(int) noexcept
     {
         // don't use u8cout, this would lock the global mutex, but the handler
         // can be called while stuff is being output and the mutex is locked
         std::wcout << L"sigint, interrupting...\n";
         task_manager::instance().interrupt_all();
-        return TRUE;
     }
 
     void set_sigint_handler()
     {
-        ::SetConsoleCtrlHandler(mob::signal_handler, TRUE);
+        std::signal(SIGINT, signal_handler);
     }
 
     void help(const clipp::group& g, const std::string& more)

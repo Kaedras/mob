@@ -1,10 +1,16 @@
 #pragma once
 
 #include "../utility/enum.h"
+#include <clipp.h>
+#include <regex>
+#include <optional>
+#include <filesystem>
 
 namespace mob::tasks {
     class modorganizer;
 }
+
+namespace fs = std::filesystem;
 
 namespace mob {
 
