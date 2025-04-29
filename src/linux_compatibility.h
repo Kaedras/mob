@@ -111,11 +111,11 @@ inline bool GenerateConsoleCtrlEvent(int, int pidFd)
 inline bool GetExitCodeProcess(int pidFd, int* exitCode)
 {
     siginfo_t info{};
-    int result = waitid(P_PIDFD, pidFd, &info, WEXITED | WSTOPPED | WNOHANG);
+    int result = waitid(P_PIDFD, pidFd, &info, WEXITED | WSTOPPED);
     if (result == -1) {
         return false;
     }
 
-    *exitCode = info.si_code;
+    *exitCode = info.si_status;
     return true;
 }
