@@ -20,7 +20,7 @@ namespace mob::tasks {
                                     cmakebuild::ops o = cmakebuild::build)
         {
             return std::move(cmakebuild(o).architecture(a).configuration(config).sourcedir(
-                directxtex::source_path() / "DirectXTex"));
+                directxtex::source_path()));
         }
 
     }  // namespace
