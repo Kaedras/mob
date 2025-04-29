@@ -116,8 +116,6 @@ namespace mob {
             op::create_directories(*cx_, fs::absolute(cwd));
         }
 
-        // creating process
-
         pid_t pid = fork();
 
         // error
@@ -130,10 +128,34 @@ namespace mob {
         // child
         if (pid == 0) {
             // create argument list for execvp
-            std::vector<const char*> argV = {};
             auto tmp = split(args, " ");
-            argV.reserve(tmp.size());
-            for (const auto& arg : tmp) {
+
+            // clean up arguments
+            for (auto& arg : tmp) {
+                // remove leading and trailing quotation marks
+                if (arg.front() == '\"' || arg.front() == '\'') {
+                    arg.erase(0, 1);
+                }
+                if (arg.back() == '\"' || arg.back()== '\'') {
+                    arg.pop_back();
+                }
+            }
+            // remove '.exe' from command
+            if (tmp[0].ends_with(".exe")) {
+                tmp[0].erase(tmp[0].size() - 4);
+            }
+
+            // convert arguments from string to const char*
+            std::vector<const char*> argV = {};
+            argV.reserve(tmp.size() + 1);
+            for (auto& arg : tmp) {
+                // remove leading and trailing quotation marks
+                if (arg.front() == '\"' || arg.front() == '\'') {
+                    arg.erase(0, 1);
+                }
+                if (arg.back() == '\"' || arg.back()== '\'') {
+                    arg.pop_back();
+                }
                 argV.push_back(arg.c_str());
             }
             // array must be terminated by a null pointer
