@@ -13,7 +13,8 @@ namespace mob {
     class async_pipe_stdout {
     public:
         async_pipe_stdout(const context& cx);
-        handle_ptr create();
+        ~async_pipe_stdout();
+        int create();
         std::string_view read(bool finish);
         bool closed() const;
 
@@ -25,11 +26,7 @@ namespace mob {
         static constexpr std::size_t buffer_size = 50 * 1024;
 
         // end of the pipe that is read from
-        handle_ptr pipe_;
-
-        // an event that's given to pipe for overlapped reads, signalled when data
-        // is available
-        handle_ptr event_;
+        int pipe_;
 
         // internal buffer of `buffer_size` bytes, the data from the pipe is put
         // in there
@@ -56,7 +53,7 @@ namespace mob {
     public:
         async_pipe_stdin(const context& cx);
 
-        handle_ptr create();
+        int create();
 
         // tries to send all of `s` down the pipe, returns the number of bytes
         // actually written
@@ -72,7 +69,7 @@ namespace mob {
         const context& cx_;
 
         // end of the pipe that is written to
-        handle_ptr pipe_;
+        int pipe_;
     };
 }
 

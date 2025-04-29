@@ -6,9 +6,15 @@
 namespace mob {
 
     async_pipe_stdout::async_pipe_stdout(const context& cx)
-        : cx_(cx), buffer_(std::make_unique<char[]>(buffer_size)), closed_(true)
+        : cx_(cx), pipe_(-1), buffer_(std::make_unique<char[]>(buffer_size)),
+          closed_(true)
     {
         std::memset(buffer_.get(), 0, buffer_size);
+    }
+
+    async_pipe_stdout::~async_pipe_stdout()
+    {
+        close(pipe_);
     }
 
     bool async_pipe_stdout::closed() const
@@ -16,7 +22,7 @@ namespace mob {
         return closed_;
     }
 
-    handle_ptr async_pipe_stdout::create()
+    int async_pipe_stdout::create()
     {
         int pipeFd[2];
 
@@ -25,10 +31,10 @@ namespace mob {
             cx_.bail_out(context::cmd, "CreatePipe failed, {}", strerror(e));
         }
 
-        pipe_.reset(pipeFd[0]);
+        pipe_ = pipeFd[0];
         closed_ = false;
 
-        return handle_ptr(pipeFd[1]);
+        return pipeFd[1];
     }
 
     std::string_view async_pipe_stdout::read(bool finish)
@@ -53,32 +59,35 @@ namespace mob {
 
     std::string_view async_pipe_stdout::try_read()
     {
-        size_t bytes_read = 0;
+        ssize_t bytes_read = 0;
 
         // read bytes from the pipe
-        bytes_read = ::read(pipe_.get(), buffer_.get(), buffer_size);
+        bytes_read = ::read(pipe_, buffer_.get(), buffer_size);
 
-        if (bytes_read) {
-            return {buffer_.get(), bytes_read};
+        if (bytes_read == 0) {
+            // EOF
+            return {};
+        }
+
+        if (bytes_read > 0) {
+            return {buffer_.get(), static_cast<size_t>(bytes_read)};
         }
 
         const int e = errno;
         if (e == EPIPE) {
             // broken pipe means the process is finished
             closed_ = true;
-        } else {
+        }
+        else {
             // some other hard error
             cx_.bail_out(context::cmd, "async_pipe_stdout read failed, {}",
                          strerror(e));
         }
-
-        // nothing available
-        return {};
     }
 
     async_pipe_stdin::async_pipe_stdin(const context& cx) : cx_(cx) {}
 
-    handle_ptr async_pipe_stdin::create()
+    int async_pipe_stdin::create()
     {
         int pipeFd[2];
 
@@ -88,10 +97,10 @@ namespace mob {
         }
 
         // keep the end that's written to
-        pipe_.reset(pipeFd[1]);
+        pipe_ = pipeFd[1];
 
         // give to other end to the new process
-        return handle_ptr(pipeFd[0]);
+        return pipeFd[0];
     }
 
     std::size_t async_pipe_stdin::write(std::string_view s)
@@ -115,7 +124,7 @@ namespace mob {
 
     void async_pipe_stdin::close()
     {
-        pipe_ = {};
+        ::close(pipe_);
     }
 
 }  // namespace mob

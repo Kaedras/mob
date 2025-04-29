@@ -164,6 +164,17 @@ namespace mob {
             if (!cwd.empty()) {
                 chdir(cwd.c_str());
             }
+
+            if (dup2(si.stdIn, 0) == -1) {
+                cx_->error(context::cmd, "failed to redirect stdIn");
+            }
+            if (dup2(si.stdOut, 1) == -1) {
+                cx_->error(context::cmd, "failed to redirect stdOut");
+            }
+            if (dup2(si.stdErr, 2) == -1) {
+                cx_->error(context::cmd, "failed to redirect stdErr");
+            }
+
             execvp(argV[0], const_cast<char* const*>(argV.data()));
 
             // exec only returns on error
@@ -195,16 +206,16 @@ namespace mob {
 
         // close the handle quickly after termination
         guard g([&] {
-            impl_.handle = {};
+            impl_.handle = -1;
         });
 
         cx_->trace(context::cmd, "joining");
 
         for (;;) {
-            pollfd pfd{impl_.handle.get(), POLLIN, 0};
+            pollfd pfd{impl_.handle.get(), POLLHUP | POLLIN, 0};
             int result = poll(&pfd, 1, wait_timeout);
 
-            if (result == 1) {
+            if (result > 0) {
                 on_completed();
                 break;
             }
