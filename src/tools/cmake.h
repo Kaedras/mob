@@ -16,6 +16,16 @@ namespace mob {
 
         // type of build files generated
         //
+#ifdef __unix__
+        enum class generators {
+            // generates unix makefiles
+            make = 0x01,
+
+            // generates build files for ninja
+            ninja = 0x02,
+            ninjaMultiConfig = 0x03
+        };
+#else
         enum class generators {
             // generates build files for visual studio
             vs = 0x01,
@@ -23,6 +33,7 @@ namespace mob {
             // generates build files for jom/nmake
             jom = 0x02
         };
+#endif
         using enum generators;
 
         // what run() will do
