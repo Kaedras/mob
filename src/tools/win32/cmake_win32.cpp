@@ -5,7 +5,7 @@
 namespace mob {
 
     cmake::cmake(ops o)
-        : basic_process_runner("cmake"), op_(o), gen_(jom), arch_(arch::def)
+        : basic_process_runner("cmake"), op_(o), gen_(jom), arch_(arch::def), config_(config::release)
     {
     }
 

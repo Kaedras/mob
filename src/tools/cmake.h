@@ -14,10 +14,17 @@ namespace mob {
         //
         static fs::path binary();
 
+        // retrieve the name of the configuration for the given config
+        //
+        static std::string configuration_name(config c);
+
         // type of build files generated
         //
 #ifdef __unix__
         enum class generators {
+            // don't specify generator explicitly
+            default_generator = 0x00,
+
             // generates unix makefiles
             make = 0x01,
 
@@ -41,6 +48,12 @@ namespace mob {
         enum class ops {
             // generates the build files
             generate = 1,
+
+            // builds project
+            build,
+
+            // installs project
+            install,
 
             // cleans the build files so they're regenerated from scratch
             clean
@@ -82,6 +95,11 @@ namespace mob {
         //
         cmake& prefix(const fs::path& s);
 
+        // if not empty, the path is passed to cmake with
+        // `-DCMAKE_PREFIX_PATH=path`
+        //
+        cmake& prefix_path(const fs::path& s);
+
         // adds a variable definition, passed as `-Dname=value`
         //
         cmake& def(const std::string& name, const std::string& value);
@@ -97,6 +115,10 @@ namespace mob {
         // variables for the build environment
         //
         cmake& architecture(arch a);
+
+        // sets the build configuration, defaults to Release
+        //
+        cmake& configuration(config c);
 
         // by default, the tool invokes `cmake ..` in the output directory, setting
         // this will invoke `cmake cmd` instead
@@ -169,6 +191,9 @@ namespace mob {
         // passed as -DCMAKE_INSTALL_PREFIX
         fs::path prefix_;
 
+        // passed as -DCMAKE_PREFIX_PATH
+        fs::path prefix_path_;
+
         // passed verbatim
         std::vector<std::string> args_;
 
@@ -177,6 +202,9 @@ namespace mob {
 
         // architecture, used for build directory name and command line
         arch arch_;
+
+        // build configuration
+        config config_;
 
         // overrides `..` on the command line
         std::string cmd_;
@@ -188,6 +216,14 @@ namespace mob {
         // runs cmake
         //
         void do_generate();
+
+        // runs cmake --build
+        //
+        void do_build();
+
+        // runs cmake --install
+        //
+        void do_install();
 
         // returns a list of generators handled by this tool, same ones as in the
         // `generators` enum on top
