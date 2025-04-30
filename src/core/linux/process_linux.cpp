@@ -137,10 +137,13 @@ namespace mob {
                 continue;
             }
             // remove leading and trailing quotation marks
-            if (arg.front() == '\"' || arg.front() == '\'') {
+            // avoid issues when argument is something like value="sdf"
+            if (arg.front() == '\"' && arg.back() == '\"') {
                 arg.erase(0, 1);
+                arg.pop_back();
             }
-            if (arg.back() == '\"' || arg.back()== '\'') {
+            if (arg.front() == '\'' && arg.back() == '\'') {
+                arg.erase(0, 1);
                 arg.pop_back();
             }
             argument_strings.push_back(arg);
