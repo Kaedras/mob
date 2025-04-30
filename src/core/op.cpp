@@ -92,16 +92,73 @@ namespace mob::op {
             do_delete_file(cx, p);
     }
 
-    // this function should handle wildcards like '*' and '?' correctly
-    // todo test this
-    bool wildcard_match(const char* file, const char* spec) {
-        // Convert the pattern to regex
-        std::regex re(spec);
+    bool wildcard_match(const std::filesystem::path& file, const std::string& spec) {
+        std::string regexPattern;
+        for (const char ch : spec) {
+            switch (ch)
+            {
+            case '*':
+                regexPattern += ".*";
+                break;
+            case '?':
+                regexPattern += ".{1}";
+                break;
 
-        // Perform the match
-        return std::regex_match(file, re);
+            case '[':
+            case ']':
+            case '{':
+            case '}':
+            case '(':
+            case ')':
+            case '\\':
+            case '+':
+            case '|':
+            case '^':
+            case '$':
+                regexPattern += '\\';
+                [[fallthrough]];
+            default:
+                regexPattern += ch;
+            }
+        }
+
+        std::regex re(regexPattern);
+        return std::regex_match(file.c_str(), re);
     }
 
+    bool wildcard_match(const std::filesystem::path& file, const std::wstring& spec) {
+        std::wstring regexPattern;
+        for (const char ch : spec) {
+            switch (ch)
+            {
+            case '*':
+                regexPattern += L".*";
+                break;
+            case '?':
+                regexPattern += L".{1}";
+                break;
+
+            case '[':
+            case ']':
+            case '{':
+            case '}':
+            case '(':
+            case ')':
+            case '\\':
+            case '+':
+            case '|':
+            case '^':
+            case '$':
+                regexPattern += '\\';
+                [[fallthrough]];
+            default:
+                regexPattern += ch;
+            }
+        }
+
+        std::wregex re(regexPattern);
+        return std::regex_match(file.generic_wstring(), re);
+    }
 
     void delete_file_glob(const context& cx, const fs::path& glob, flags f)
     {
