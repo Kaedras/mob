@@ -83,6 +83,9 @@ namespace mob::tasks {
             op::copy_file_to_dir_if_better(cx(), source_path() / "DirectXTex" / header,
                                            source_path() / "Include");
         }
+
+        // copy "dxgiformat.h" from install dir
+        op::copy_file_to_dir_if_better(cx(), conf().path().install() / "include/dxgiformat.h", source_path() / "Include");
     }
 
 }  // namespace mob::tasks

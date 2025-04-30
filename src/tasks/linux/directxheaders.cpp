@@ -61,13 +61,8 @@ namespace mob::tasks {
     {
         run_tool(create_cmake_tool(arch::x64, config::release));
 
-        // move files
-        //
-        // const auto binary_path =
-        //     source_path() / "out/install/x64-Release-Linux";
-        //
-        // op::copy_glob_to_dir_if_better(cx(), binary_path / "share",
-        //                                source_path() / "Lib" / "Debug", op::copy_dirs | op::copy_files);
+        // copy "dxgiformat.h" to install dir
+        op::copy_file_to_dir_if_better(cx(), source_path() / "include/directx/dxgiformat.h", conf().path().install() / "include");
     }
 
 }  // namespace mob::tasks
