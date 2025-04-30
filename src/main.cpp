@@ -12,7 +12,13 @@
 namespace mob {
 
 #ifdef __unix__
-    void add_os_specific_tasks(){}
+    void add_os_specific_tasks()
+    {
+        using namespace tasks;
+        add_task<parallel_tasks>()
+            .add_task<directxmath>()
+            .add_task<directxheaders>();
+    }
 #else
     void add_os_specific_tasks()
     {
