@@ -162,8 +162,8 @@ namespace mob {
                      .stderr_encoding(encodings::utf8)
                      .binary(binary())
                      .cwd(root_)
-                     .arg("-DCMAKE_BUILD_TYPE=" + configuration_name(config_))
-                     .arg("-DCMAKE_INSTALL_MESSAGE=" +
+                     .arg("-DCMAKE_BUILD_TYPE=", configuration_name(config_))
+                     .arg("-DCMAKE_INSTALL_MESSAGE=",
                           conf_cmake::to_string(conf().cmake().install_message()))
                      .arg("--log-level=ERROR")
                      .arg("--no-warn-unused-cli");
@@ -192,7 +192,7 @@ namespace mob {
             p.arg("-DCMAKE_PREFIX_PATH=", prefix_path_);
 
 
-        p.args(args_).arg("-B " + build_path().string());
+        p.args(args_).arg("-B", build_path());
 
 #ifdef _WIN32
         p.env(env::vs(arch_).set("CXXFLAGS", "/wd4566")).cwd(build_path());
@@ -210,12 +210,12 @@ namespace mob {
                      .stderr_encoding(encodings::utf8)
                      .binary(binary()).cwd(root_);
 
-        p.arg("--build " + build_path().string());
+        p.arg("--build", build_path());
 
         unsigned int threads = std::thread::hardware_concurrency();
         if (threads > 1) {
             cx().debug(context::generic, "setting -j to {}", threads);
-            p.arg("-j " + std::to_string(threads));
+            p.arg("-j", threads);
         }
 
         execute_and_join(p);
@@ -229,7 +229,7 @@ namespace mob {
         auto p = process()
              .stdout_encoding(encodings::utf8)
              .stderr_encoding(encodings::utf8)
-             .binary(binary()).cwd(root_).args(args_);
+             .binary(binary()).cwd(root_);
 
         p.arg("--install " + build_path().string());
 

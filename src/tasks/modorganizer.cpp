@@ -96,15 +96,6 @@ namespace mob::tasks {
         return super_path() / name();
     }
 
-    fs::path modorganizer::project_file_path() const
-    {
-        // ask cmake for the build path it would use
-        const auto build_path = create_cmake_tool(source_path()).build_path();
-
-        // use the INSTALL project
-        return build_path / (project_ + ".sln");
-    }
-
     fs::path modorganizer::super_path()
     {
         return conf().path().build() / "modorganizer_super";
@@ -138,12 +129,6 @@ namespace mob::tasks {
         // cmake clean
         if (is_set(c, clean::reconfigure))
             run_tool(create_cmake_tool(cmake::clean));
-
-#ifdef _WIN32
-        // msbuild clean
-        if (is_set(c, clean::rebuild))
-            run_tool(create_msbuild_tool(msbuild::clean));
-#endif
     }
 
     void modorganizer::do_fetch()

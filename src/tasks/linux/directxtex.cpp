@@ -1,26 +1,23 @@
 #include "../pch.h"
 #include "../tasks.h"
-#include "../../tools/cmakebuild.h"
+#include "../../tools/cmake.h"
 
 #ifdef __unix__
-static constexpr const char* RELEASE_PRESET = "x64-Release-Linux";
-static constexpr const char* DEBUG_PRESET = "x64-Debug-Linux";
-static constexpr const char* LIB_NAME = "libDirectXTex.so";
+static constexpr const char* LIB_NAME = "libDirectXTex.a";
 #else
-static constexpr const char* RELEASE_PRESET = "x64-Release";
-static constexpr const char* DEBUG_PRESET = "x64-Debug";
 static constexpr const char* LIB_NAME = "DirectXTex.lib";
 #endif
 
+// todo: test this on windows
 namespace mob::tasks {
 
     namespace {
 
-        cmakebuild create_cmakebuild_tool(arch a, config config,
-                                    cmakebuild::ops o = cmakebuild::build)
+        cmake create_cmake_tool(arch a, config config,
+                                    cmake::ops o = cmake::build)
         {
-            return std::move(cmakebuild(o).architecture(a).configuration(config).sourcedir(
-                directxtex::source_path()));
+            return std::move(cmake(o).configuration(config).root(directxtex::source_path())
+                .prefix_path(conf().path().install()).output(directxtex::source_path() / "out"));
         }
 
     }  // namespace
@@ -50,8 +47,8 @@ namespace mob::tasks {
         }
 
         if (is_set(c, clean::rebuild)) {
-            run_tool(create_cmakebuild_tool(arch::x64, config::release, cmakebuild::clean));
-            run_tool(create_cmakebuild_tool(arch::x64, config::debug, cmakebuild::clean));
+            run_tool(create_cmake_tool(arch::x64, config::release, cmake::clean));
+            run_tool(create_cmake_tool(arch::x64, config::debug, cmake::clean));
         }
     }
 
@@ -69,24 +66,23 @@ namespace mob::tasks {
         op::create_directories(cx(), directxtex::source_path() / "Lib" / "Debug");
         op::create_directories(cx(), directxtex::source_path() / "Lib" / "Release");
 
+        const auto binary_path =
+            source_path() / "out/lib";
+
         // DO NOT run these in parallel because both generate files that are shared
         // between release and debug
-        run_tool(create_cmakebuild_tool(arch::x64, config::release));
-        run_tool(create_cmakebuild_tool(arch::x64, config::debug));
+        run_tool(create_cmake_tool(arch::x64, config::release));
+        op::copy_file_to_dir_if_better(cx(), binary_path / LIB_NAME,
+                                       source_path() / "Lib" / "Debug");
 
-        const auto binary_path_release =
-            source_path() / "out" / "build" / RELEASE_PRESET;
-        const auto binary_path_debug =
-            source_path() / "out" / "build" / DEBUG_PRESET;
+        run_tool(create_cmake_tool(arch::x64, config::debug));
+        op::copy_file_to_dir_if_better(cx(), binary_path / LIB_NAME,
+                                       source_path() / "Lib" / "Release");
 
         for (const auto& header : {"DDS.h", "DirectXTex.h", "DirectXTex.inl"}) {
             op::copy_file_to_dir_if_better(cx(), source_path() / "DirectXTex" / header,
                                            source_path() / "Include");
         }
-        op::copy_file_to_dir_if_better(cx(), binary_path_debug / "Debug" / LIB_NAME,
-                                       source_path() / "Lib" / "Debug");
-        op::copy_file_to_dir_if_better(cx(), binary_path_release / "Release" / LIB_NAME,
-                                       source_path() / "Lib" / "Release");
     }
 
 }  // namespace mob::tasks

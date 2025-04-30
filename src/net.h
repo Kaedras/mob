@@ -3,6 +3,7 @@
 #include "utility.h"
 #include <curl/system.h>
 #include <curl/curl.h>
+#include <format>
 
 namespace mob {
 

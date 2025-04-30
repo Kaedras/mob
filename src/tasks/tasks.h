@@ -163,24 +163,7 @@ namespace mob::tasks {
 
         // creates the cmake tool for this MO project
         //
-        cmake create_cmake_tool(cmake::ops o = cmake::generate);
-
-#ifdef _WIN32
-        // creates the msbuild tool for this MO project
-        //
-        msbuild create_msbuild_tool(msbuild::ops o = msbuild::build);
-#endif
-        // this is the file targeted by the msbuild tool
-        //
-        // it's not actually the .sln file because the cmake files have historically
-        // been inconsistent in what the main project in the solution is and whether
-        // the INSTALL project was enabled or not, so just building the .sln itself
-        // might not actually build everything
-        //
-        // by targeting the INSTALL project directly, everything will always be
-        // built correctly, regardless of how the solution file is generated
-        //
-        fs::path project_file_path() const;
+        cmake create_cmake_tool(cmake::ops o = cmake::build);
     };
 
     class spdlog : public basic_task<spdlog> {
