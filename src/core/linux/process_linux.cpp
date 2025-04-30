@@ -126,6 +126,36 @@ namespace mob {
             op::create_directories(*cx_, fs::absolute(cwd));
         }
 
+        // create argument list for execvp
+        std::vector<std::string> argument_strings;
+        std::istringstream iss(args);
+        std::string arg;
+        // Use std::quoted to handle quoted strings
+        while (iss >> std::quoted(arg)) {
+            // ignore empty strings
+            if (arg.empty()) {
+                continue;
+            }
+            // remove leading and trailing quotation marks
+            if (arg.front() == '\"' || arg.front() == '\'') {
+                arg.erase(0, 1);
+            }
+            if (arg.back() == '\"' || arg.back()== '\'') {
+                arg.pop_back();
+            }
+            argument_strings.push_back(arg);
+        }
+
+        // convert strings to c-strings
+        std::vector<const char*> arguments;
+        arguments.reserve(argument_strings.size());
+        for (const auto& argument : argument_strings) {
+            arguments.push_back(argument.c_str());
+        }
+
+        // array must be terminated by a null pointer
+        arguments.push_back(nullptr);
+
         pid_t pid = fork();
 
         // error
@@ -137,40 +167,6 @@ namespace mob {
 
         // child
         if (pid == 0) {
-            // create argument list for execvp
-            auto tmp = split(args, " ");
-
-            // clean up arguments
-            for (auto& arg : tmp) {
-                // remove leading and trailing quotation marks
-                if (arg.front() == '\"' || arg.front() == '\'') {
-                    arg.erase(0, 1);
-                }
-                if (arg.back() == '\"' || arg.back()== '\'') {
-                    arg.pop_back();
-                }
-            }
-            // remove '.exe' from command
-            if (tmp[0].ends_with(".exe")) {
-                tmp[0].erase(tmp[0].size() - 4);
-            }
-
-            // convert arguments from string to const char*
-            std::vector<const char*> argV = {};
-            argV.reserve(tmp.size() + 1);
-            for (auto& arg : tmp) {
-                // remove leading and trailing quotation marks
-                if (arg.front() == '\"' || arg.front() == '\'') {
-                    arg.erase(0, 1);
-                }
-                if (arg.back() == '\"' || arg.back()== '\'') {
-                    arg.pop_back();
-                }
-                argV.push_back(arg.c_str());
-            }
-            // array must be terminated by a null pointer
-            argV.push_back(nullptr);
-
             if (!cwd.empty()) {
                 chdir(cwd.c_str());
             }
@@ -185,11 +181,11 @@ namespace mob {
                 cx_->error(context::cmd, "failed to redirect stdErr");
             }
 
-            execvp(argV[0], const_cast<char* const*>(argV.data()));
+            execvp(arguments[0], const_cast<char* const*>(arguments.data()));
 
             // exec only returns on error
             const int e = errno;
-            cx_->error(context::cmd, "error running {}, {}", argV[0],
+            cx_->error(context::cmd, "exec failed trying to run {}, {}", arguments[0],
                        strerror(e));
             return;
         }
