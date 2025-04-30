@@ -169,7 +169,7 @@ namespace mob {
                      .arg("--no-warn-unused-cli");
 
         if (genstring_.empty()) {
-            if (!g.name.empty())  {
+            if (!g.name.empty()) {
                 // some generators don't need
                 // an architecture flag, like jom, so get_arch() might return an empty
                 // string
@@ -191,7 +191,6 @@ namespace mob {
         if (!prefix_path_.empty())
             p.arg("-DCMAKE_PREFIX_PATH=", prefix_path_);
 
-
         p.args(args_).arg("-B", build_path());
 
 #ifdef _WIN32
@@ -208,7 +207,8 @@ namespace mob {
         auto p = process()
                      .stdout_encoding(encodings::utf8)
                      .stderr_encoding(encodings::utf8)
-                     .binary(binary()).cwd(root_);
+                     .binary(binary())
+                     .cwd(root_);
 
         p.arg("--build", build_path());
 
@@ -227,9 +227,10 @@ namespace mob {
             cx().bail_out(context::generic, "cmake output path is empty");
 
         auto p = process()
-             .stdout_encoding(encodings::utf8)
-             .stderr_encoding(encodings::utf8)
-             .binary(binary()).cwd(root_);
+                     .stdout_encoding(encodings::utf8)
+                     .stderr_encoding(encodings::utf8)
+                     .binary(binary())
+                     .cwd(root_);
 
         p.arg("--install " + build_path().string());
 

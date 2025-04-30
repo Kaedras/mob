@@ -67,7 +67,6 @@ namespace mob {
         return {};
     }
 
-
     // mob's environment variables are only retrieved once and are kept in sync
     // after that; this must also be thread-safe
     static std::mutex g_sys_env_mutex;
@@ -85,8 +84,7 @@ namespace mob {
 
         // first time, get the variables from the system
 
-
-        for (int i  = 0; environ[i] != nullptr; i++) {
+        for (int i = 0; environ[i] != nullptr; i++) {
             char* name = environ[i];
             // equal sign
             const char* equal = std::strchr(name, '=');
@@ -103,7 +101,6 @@ namespace mob {
             // so just ignore them
             if (!key.empty())
                 g_sys_env.set(key, value);
-
         }
 
         g_sys_env_inited = true;
@@ -124,14 +121,14 @@ namespace mob {
 
         case env::append: {
             const std::string current = get_impl(k).value_or("");
-            wv                         = current + wv;
+            wv                        = current + wv;
             setenv(wk.c_str(), wv.c_str(), 1);
             break;
         }
 
         case env::prepend: {
             const std::string current = get_impl(k).value_or("");
-            wv                         = wv + current;
+            wv                        = wv + current;
             setenv(wk.c_str(), wv.c_str(), 1);
             break;
         }
@@ -148,7 +145,7 @@ namespace mob {
     void this_env::prepend_to_path(const fs::path& p)
     {
         gcx().trace(context::generic, "prepending to PATH: {}", p);
-        set("PATH",p.string() + ":", env::prepend);
+        set("PATH", p.string() + ":", env::prepend);
     }
 
     void this_env::append_to_path(const fs::path& p)

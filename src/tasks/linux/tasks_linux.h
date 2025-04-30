@@ -38,4 +38,4 @@ namespace mob::tasks {
         void do_build_and_install() override;
     };
 
-}
+}  // namespace mob::tasks

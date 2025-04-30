@@ -64,9 +64,9 @@
 
 #ifdef _WIN32
 #include <Shlobj.h>
-#include <shlwapi.h>
-#include <io.h>
 #include <imagehlp.h>
+#include <io.h>
+#include <shlwapi.h>
 #endif
 
 #include <fcntl.h>

@@ -10,7 +10,7 @@ namespace mob::tasks {
         {
             return sevenz::source_path() / "CPP" / "7zip" / "Bundles" / "Format7zF";
         }
-    }
+    }  // namespace
 
     void sevenz::build()
     {
@@ -24,4 +24,4 @@ namespace mob::tasks {
         p.cwd(module_to_build());
         p.run_and_join();
     }
-}
+}  // namespace mob::tasks

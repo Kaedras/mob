@@ -8,11 +8,10 @@ namespace mob::tasks {
 
     namespace {
 
-        cmake create_cmake_tool(config config,
-                            cmake::ops o = cmake::build)
+        cmake create_cmake_tool(config config, cmake::ops o = cmake::build)
         {
-            return std::move(cmake(o).configuration(config).root(
-                libloot::source_path()));
+            return std::move(
+                cmake(o).configuration(config).root(libloot::source_path()));
         }
 
     }  // namespace
@@ -49,9 +48,9 @@ namespace mob::tasks {
     void libloot::do_fetch()
     {
         run_tool(make_git()
-             .url(make_git_url("loot", "libloot"))
-             .branch(version())
-             .root(source_path()));
+                     .url(make_git_url("loot", "libloot"))
+                     .branch(version())
+                     .root(source_path()));
     }
 
     void libloot::do_build_and_install()

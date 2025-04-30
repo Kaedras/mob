@@ -8,12 +8,11 @@
 #ifdef __unix__
 #include "../linux_compatibility.h"
 static constexpr const char* newLine = "\n";
-static constexpr int newLineLength = 1;
+static constexpr int newLineLength   = 1;
 #else
 static constexpr const char* newLine = "\r\n";
-static constexpr int newLineLength = 2;
+static constexpr int newLineLength   = 2;
 #endif
-
 
 namespace mob {
 

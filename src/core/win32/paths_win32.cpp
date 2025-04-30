@@ -28,8 +28,8 @@ namespace mob {
     {
         const std::wstring wexe = utf8_to_utf16(exe);
 
-        constexpr std::size_t size   = MAX_PATH;
-        wchar_t buffer[size + 1] = {};
+        constexpr std::size_t size = MAX_PATH;
+        wchar_t buffer[size + 1]   = {};
 
         if (SearchPathW(nullptr, wexe.c_str(), nullptr, size, buffer, nullptr) == 0)
             return {};
@@ -45,13 +45,13 @@ namespace mob {
         if (try_parts(check, {"Qt", "Qt" + qt::version(),
                               "msvc" + qt::vs_version() + "_64", "bin", "qmake.exe"})) {
             return true;
-                              }
+        }
 
         // try Qt/5.14.2/msvc*/bin/qmake.exe
         if (try_parts(check, {"Qt", qt::version(), "msvc" + qt::vs_version() + "_64",
                               "bin", "qmake.exe"})) {
             return true;
-                              }
+        }
 
         return false;
     }
@@ -250,7 +250,6 @@ namespace mob {
         gcx().bail_out(context::conf, "can't find {} anywhere", iscc);
     }
 
-
     fs::path find_vcvars()
     {
         // check from the ini first
@@ -281,5 +280,4 @@ namespace mob {
         return bat;
     }
 
-
-}
+}  // namespace mob

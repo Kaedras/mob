@@ -1,11 +1,11 @@
 #include "../pch.h"
-#include "../../core/process.h"
 #include "../tools.h"
 
 namespace mob {
 
     cmake::cmake(ops o)
-        : basic_process_runner("cmake"), op_(o), gen_(jom), arch_(arch::def), config_(config::release)
+        : basic_process_runner("cmake"), op_(o), gen_(jom), arch_(arch::def),
+          config_(config::release)
     {
     }
 
@@ -17,9 +17,8 @@ namespace mob {
 
             {generators::vs,
              {"vsbuild", "Visual Studio " + vs::version() + " " + vs::year(), "Win32",
-              "x64"}}
-        };
+              "x64"}}};
         return map;
     }
 
-}
+}  // namespace mob

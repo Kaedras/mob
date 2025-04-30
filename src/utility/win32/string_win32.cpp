@@ -208,5 +208,4 @@ namespace mob {
         return bytes_to_utf8(e_, bytes_);
     }
 
-
-}
+}  // namespace mob

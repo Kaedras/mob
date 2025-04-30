@@ -15,9 +15,7 @@ namespace mob {
     void add_os_specific_tasks()
     {
         using namespace tasks;
-        add_task<parallel_tasks>()
-            .add_task<directxmath>()
-            .add_task<directxheaders>();
+        add_task<parallel_tasks>().add_task<directxmath>().add_task<directxheaders>();
     }
 #else
     void add_os_specific_tasks()
@@ -187,7 +185,7 @@ namespace mob {
         for (auto& c : commands)
             all_groups.push_back(c->group());
 
-            // vs reports a no-op on the left side of the command, which is incorrect
+        // vs reports a no-op on the left side of the command, which is incorrect
 #pragma warning(suppress : 4548)
         auto cli = (all_groups, command::common_options_group());
         auto pr  = clipp::parse(args, cli);

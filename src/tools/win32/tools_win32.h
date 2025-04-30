@@ -4,17 +4,16 @@
 
 namespace mob {
 
-// bundled with mob in third-party/bin
-//
-struct vswhere {
-    // runs the vswhere binary and returns the output, empty on error
+    // bundled with mob in third-party/bin
     //
-    // note that vswhere may return more than one line if there are multiple
-    // installations of vs found; this is handled in find_vs() in paths.cpp
-    //
-    static std::string find_vs();
-};
-
+    struct vswhere {
+        // runs the vswhere binary and returns the output, empty on error
+        //
+        // note that vswhere may return more than one line if there are multiple
+        // installations of vs found; this is handled in find_vs() in paths.cpp
+        //
+        static std::string find_vs();
+    };
 
     // tool that runs `nmake`
     //
@@ -65,7 +64,6 @@ struct vswhere {
         // set in architecture()
         arch arch_;
     };
-
 
     // tool that runs `jom`, an alternative to `nmake` that supports parallel
     // builds, bundled with mob in third-party/bin
@@ -225,5 +223,4 @@ struct vswhere {
         fs::path sln_;
     };
 
-
-}
+}  // namespace mob

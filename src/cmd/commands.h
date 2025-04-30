@@ -2,9 +2,9 @@
 
 #include "../utility/enum.h"
 #include <clipp.h>
-#include <regex>
-#include <optional>
 #include <filesystem>
+#include <optional>
+#include <regex>
 
 namespace mob::tasks {
     class modorganizer;

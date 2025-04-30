@@ -66,8 +66,7 @@ namespace mob {
                 if (p.filename().u8string() == u8"Debug" ||
                     p.filename().u8string() == u8"Release" ||
                     p.filename().u8string() == u8"debug" ||
-                    p.filename().u8string() == u8"release"
-                    ) {
+                    p.filename().u8string() == u8"release") {
                     if (verbose)
                         u8cout << "mob.exe is in its build directory, looking up\n";
 
@@ -109,7 +108,8 @@ namespace mob {
         std::error_code ec;
         fs::path p = fs::temp_directory_path(ec);
         if (ec) {
-            gcx().bail_out(context::conf, "can't get temp path", error_message(ec.value()));
+            gcx().bail_out(context::conf, "can't get temp path",
+                           error_message(ec.value()));
         }
         gcx().trace(context::conf, "temp dir is {}", p);
 

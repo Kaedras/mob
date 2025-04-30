@@ -7,16 +7,14 @@
 #include <csignal>
 #include <fstream>
 
-extern "C"
-{
+extern "C" {
 #include <sys/pidfd.h>
 }
 
 #define CTRL_BREAK_EVENT SIGINT
 
-using HANDLE = int;
+using HANDLE                              = int;
 static constexpr int INVALID_HANDLE_VALUE = -1;
-
 
 // Detect if the application is running inside a debugger.
 // Source: https://stackoverflow.com/a/69842462
@@ -41,8 +39,7 @@ inline void DebugBreak()
     raise(SIGTRAP);
 }
 
-class FdCloser
-{
+class FdCloser {
 public:
     FdCloser() : m_fd(-1) {}
     FdCloser(int fd) : m_fd(fd) {}

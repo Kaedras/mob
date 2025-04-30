@@ -130,7 +130,6 @@ namespace mob {
         static std::string vs_version();
     };
 
-
     // a tool that downloads a file, can be given multiple urls in case one fails;
     // if none of the given urls can be downloaded, bails out
     //

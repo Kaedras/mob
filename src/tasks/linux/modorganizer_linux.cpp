@@ -30,16 +30,15 @@ namespace mob::tasks {
 
     cmake modorganizer::create_cmake_tool(const fs::path& root, cmake::ops o, config c)
     {
-        return std::move(
-            cmake(o)
-                .generator(cmake::make)
-                .def("CMAKE_INSTALL_PREFIX:PATH", conf().path().install())
-                .def("DEPENDENCIES_DIR", conf().path().build())
-                .def("SPDLOG_ROOT", spdlog::source_path())
-                .def("LOOT_PATH", libloot::source_path())
-                .def("DIRECTXTEX_ROOT", directxtex::source_path())
-                .def("SEVENZ_ROOT", sevenz::source_path())
-                .root(root));
+        return std::move(cmake(o)
+                             .generator(cmake::make)
+                             .def("CMAKE_INSTALL_PREFIX:PATH", conf().path().install())
+                             .def("DEPENDENCIES_DIR", conf().path().build())
+                             .def("SPDLOG_ROOT", spdlog::source_path())
+                             .def("LOOT_PATH", libloot::source_path())
+                             .def("DIRECTXTEX_ROOT", directxtex::source_path())
+                             .def("SEVENZ_ROOT", sevenz::source_path())
+                             .root(root));
     }
 
-}
+}  // namespace mob::tasks

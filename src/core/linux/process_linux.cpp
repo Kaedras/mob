@@ -19,7 +19,8 @@ namespace mob {
     {
         if (p.extension() == ".exe") {
             exec_.bin = p.parent_path() / p.stem();
-        } else {
+        }
+        else {
             exec_.bin = p;
         }
         return *this;
@@ -29,7 +30,7 @@ namespace mob {
     {
         delete_external_log_file();
 
-        STARTUPINFOW si = {};
+        STARTUPINFOW si          = {};
         handle_ptr stdout_handle = redirect_stdout(si);
         handle_ptr stderr_handle = redirect_stderr(si);
         handle_ptr stdin_handle  = redirect_stdin(si);
@@ -37,12 +38,10 @@ namespace mob {
         io_.out.buffer = encoded_buffer(io_.out.encoding);
         io_.err.buffer = encoded_buffer(io_.err.encoding);
 
-        create("", what,  exec_.cwd.native(), si);
+        create("", what, exec_.cwd.native(), si);
     }
 
-    void process::create_job()
-    {
-    }
+    void process::create_job() {}
 
     handle_ptr process::redirect_stdout(STARTUPINFOW& si)
     {
@@ -52,8 +51,8 @@ namespace mob {
         case forward_to_log:
         case keep_in_string: {
             impl_.stdout_pipe = std::make_unique<async_pipe_stdout>((context)*cx_);
-            h             = impl_.stdout_pipe->create();
-            si.stdOut = h.get();
+            h                 = impl_.stdout_pipe->create();
+            si.stdOut         = h.get();
             break;
         }
 
@@ -79,8 +78,8 @@ namespace mob {
         case forward_to_log:
         case keep_in_string: {
             impl_.stderr_pipe = std::make_unique<async_pipe_stdout>(*cx_);
-            h            = impl_.stderr_pipe->create();
-            si.stdErr = h.get();
+            h                 = impl_.stderr_pipe->create();
+            si.stdErr         = h.get();
             break;
         }
 
@@ -104,7 +103,7 @@ namespace mob {
 
         if (io_.in) {
             impl_.stdin_pipe = std::make_unique<async_pipe_stdin>(*cx_);
-            h = impl_.stdin_pipe->create();
+            h                = impl_.stdin_pipe->create();
         }
         else {
             h.reset(get_bit_bucket());
@@ -131,8 +130,7 @@ namespace mob {
         // error
         if (pid == -1) {
             const int e = errno;
-            cx_->bail_out(context::cmd, "failed to start '{}', {}", args,
-                          strerror(e));
+            cx_->bail_out(context::cmd, "failed to start '{}', {}", args, strerror(e));
         }
 
         // child
@@ -155,7 +153,7 @@ namespace mob {
 
             // exec only returns on error
             const int e = errno;
-            cx_->error(context::cmd, "exec failed trying to run {}, {}",  args,
+            cx_->error(context::cmd, "exec failed trying to run {}, {}", args,
                        strerror(e));
             return;
         }
@@ -200,8 +198,7 @@ namespace mob {
             }
             else {
                 const int e = errno;
-                cx_->bail_out(context::cmd, "failed to wait on process",
-                              strerror(e));
+                cx_->bail_out(context::cmd, "failed to wait on process", strerror(e));
             }
         }
 
@@ -221,5 +218,4 @@ namespace mob {
         }
     }
 
-
-}
+}  // namespace mob

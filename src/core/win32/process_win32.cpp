@@ -46,7 +46,6 @@ namespace mob {
         create(cmd, args, cwd, si);
     }
 
-
     void process::create_job()
     {
         SetLastError(0);
@@ -287,5 +286,4 @@ namespace mob {
         ::TerminateProcess(impl_.handle.get(), exit_code);
     }
 
-
-}
+}  // namespace mob

@@ -163,7 +163,7 @@ namespace mob::tasks {
         msbuild create_msbuild_tool(msbuild::ops o = msbuild::build);
     };
 
- class openssl : public basic_task<openssl> {
+    class openssl : public basic_task<openssl> {
     public:
         struct version_info {
             std::string major, minor, patch;
@@ -371,4 +371,4 @@ namespace mob::tasks {
         msbuild create_msbuild_tool(msbuild::ops o = msbuild::build);
     };
 
-}
+}  // namespace mob::tasks

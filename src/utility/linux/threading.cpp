@@ -3,15 +3,14 @@
 #include "../pch.h"
 #include <execinfo.h>
 
-
 namespace mob {
 
-    constexpr std::size_t max_name_length      = 1000;
+    constexpr std::size_t max_name_length          = 1000;
     constexpr std::size_t max_frames               = 100;
     constexpr std::size_t exception_message_length = 5000;
 
     static void* frame_addresses[max_frames];
-    static char **strings;
+    static char** strings;
     // static char undecorated_name[max_name_length + 1] = {};
     // static unsigned char sym_buffer[sizeof(SYMBOL_INFOW) + max_name_length];
     // static SYMBOL_INFOW* sym = (SYMBOL_INFOW*)sym_buffer;
@@ -24,11 +23,11 @@ namespace mob {
         // don't use 8ucout, don't lock the global out mutex, this can be called
         // while the mutex is locked
         std::cerr << what << "\n\nmob has crashed\n"
-                   << "*****************************\n\n"
-                   << what << "\n\n";
+                  << "*****************************\n\n"
+                  << what << "\n\n";
 
         const int frame_count = backtrace(frame_addresses, max_frames);
-        strings = backtrace_symbols(frame_addresses, frame_count);
+        strings               = backtrace_symbols(frame_addresses, frame_count);
 
         for (std::size_t i = 0; i < frame_count; ++i) {
             std::cerr << strings[i] << "\n";

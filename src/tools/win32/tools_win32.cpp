@@ -115,5 +115,4 @@ namespace mob {
             sln_.parent_path()));
     }
 
-
-}
+}  // namespace mob

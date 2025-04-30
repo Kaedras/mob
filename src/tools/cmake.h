@@ -29,7 +29,7 @@ namespace mob {
             make = 0x01,
 
             // generates build files for ninja
-            ninja = 0x02,
+            ninja            = 0x02,
             ninjaMultiConfig = 0x03
         };
 #else

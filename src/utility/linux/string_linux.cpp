@@ -4,7 +4,6 @@
 
 namespace mob {
 
-
     std::wstring utf8_to_utf16(std::string_view s)
     {
         return std::wstring(s.begin(), s.end());
@@ -12,7 +11,7 @@ namespace mob {
 
     std::string utf16_to_utf8(std::wstring_view ws)
     {
-        return std::string(ws.begin(), ws.end());;
+        return std::string(ws.begin(), ws.end());
     }
 
     std::wstring cp_to_utf16(uint from, std::string_view s)
@@ -22,7 +21,7 @@ namespace mob {
 
     std::string utf16_to_cp(uint to, std::wstring_view ws)
     {
-        return std::string(ws.begin(), ws.end());;
+        return std::string(ws.begin(), ws.end());
     }
 
     std::string bytes_to_utf8(encodings e, std::string_view s)
@@ -32,7 +31,7 @@ namespace mob {
 
     std::string utf16_to_bytes(encodings e, std::wstring_view ws)
     {
-        return std::string(ws.begin(), ws.end());;
+        return std::string(ws.begin(), ws.end());
     }
 
     std::string utf8_to_bytes(encodings e, std::string_view utf8)
@@ -60,5 +59,4 @@ namespace mob {
         return bytes_to_utf8(e_, bytes_);
     }
 
-
-}
+}  // namespace mob

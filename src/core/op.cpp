@@ -92,11 +92,11 @@ namespace mob::op {
             do_delete_file(cx, p);
     }
 
-    bool wildcard_match(const std::filesystem::path& file, const std::string& spec) {
+    bool wildcard_match(const std::filesystem::path& file, const std::string& spec)
+    {
         std::string regexPattern;
         for (const char ch : spec) {
-            switch (ch)
-            {
+            switch (ch) {
             case '*':
                 regexPattern += ".*";
                 break;
@@ -126,11 +126,11 @@ namespace mob::op {
         return std::regex_match(file.c_str(), re);
     }
 
-    bool wildcard_match(const std::filesystem::path& file, const std::wstring& spec) {
+    bool wildcard_match(const std::filesystem::path& file, const std::wstring& spec)
+    {
         std::wstring regexPattern;
         for (const char ch : spec) {
-            switch (ch)
-            {
+            switch (ch) {
             case '*':
                 regexPattern += L".*";
                 break;
@@ -432,7 +432,9 @@ namespace mob::op {
 
             fs::rename(src, dest);
             return;
-        } catch (...) {}
+        }
+        catch (...) {
+        }
 
         const auto e = GetLastError();
 

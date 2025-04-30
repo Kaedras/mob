@@ -73,4 +73,4 @@ namespace mob::tasks {
                              .architecture(arch::x64));
     }
 
-}
+}  // namespace mob::tasks

@@ -6,16 +6,15 @@ namespace mob::tasks {
 
     namespace {
 
-        cmake create_cmake_tool(arch a, config config,
-                                    cmake::ops o = cmake::install)
+        cmake create_cmake_tool(arch a, config config, cmake::ops o = cmake::install)
         {
-            return std::move(cmake(o).configuration(config).root(
-                directxheaders::source_path())
-                .def("DXHEADERS_BUILD_TEST", "OFF")
-                .def("DXHEADERS_BUILD_GOOGLE_TEST", "OFF")
-                .output(directxheaders::source_path() / "out")
-                .prefix(conf().path().install())
-                );
+            return std::move(cmake(o)
+                                 .configuration(config)
+                                 .root(directxheaders::source_path())
+                                 .def("DXHEADERS_BUILD_TEST", "OFF")
+                                 .def("DXHEADERS_BUILD_GOOGLE_TEST", "OFF")
+                                 .output(directxheaders::source_path() / "out")
+                                 .prefix(conf().path().install()));
         }
 
     }  // namespace
@@ -62,7 +61,9 @@ namespace mob::tasks {
         run_tool(create_cmake_tool(arch::x64, config::release));
 
         // copy "dxgiformat.h" to install dir
-        op::copy_file_to_dir_if_better(cx(), source_path() / "include/directx/dxgiformat.h", conf().path().install() / "include");
+        op::copy_file_to_dir_if_better(cx(),
+                                       source_path() / "include/directx/dxgiformat.h",
+                                       conf().path().install() / "include");
     }
 
 }  // namespace mob::tasks

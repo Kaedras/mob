@@ -13,11 +13,13 @@ namespace mob::tasks {
 
     namespace {
 
-        cmake create_cmake_tool(arch a, config config,
-                                    cmake::ops o = cmake::build)
+        cmake create_cmake_tool(arch a, config config, cmake::ops o = cmake::build)
         {
-            return std::move(cmake(o).configuration(config).root(directxtex::source_path())
-                .prefix_path(conf().path().install()).output(directxtex::source_path() / "out"));
+            return std::move(cmake(o)
+                                 .configuration(config)
+                                 .root(directxtex::source_path())
+                                 .prefix_path(conf().path().install())
+                                 .output(directxtex::source_path() / "out"));
         }
 
     }  // namespace
@@ -66,8 +68,7 @@ namespace mob::tasks {
         op::create_directories(cx(), directxtex::source_path() / "Lib" / "Debug");
         op::create_directories(cx(), directxtex::source_path() / "Lib" / "Release");
 
-        const auto binary_path =
-            source_path() / "out/lib";
+        const auto binary_path = source_path() / "out/lib";
 
         // DO NOT run these in parallel because both generate files that are shared
         // between release and debug
@@ -85,7 +86,9 @@ namespace mob::tasks {
         }
 
         // copy "dxgiformat.h" from install dir
-        op::copy_file_to_dir_if_better(cx(), conf().path().install() / "include/dxgiformat.h", source_path() / "Include");
+        op::copy_file_to_dir_if_better(cx(),
+                                       conf().path().install() / "include/dxgiformat.h",
+                                       source_path() / "Include");
     }
 
 }  // namespace mob::tasks

@@ -71,6 +71,6 @@ namespace mob {
         // end of the pipe that is written to
         int pipe_;
     };
-}
+}  // namespace mob
 
-#endif //PIPE_LINUX_H
+#endif  // PIPE_LINUX_H

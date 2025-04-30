@@ -20,4 +20,4 @@ namespace mob {
         return dir / name;
     }
 
-}
+}  // namespace mob

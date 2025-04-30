@@ -10,7 +10,7 @@ namespace mob {
     fs::path find_in_path(std::string_view exe)
     {
         fs::path path;
-        const char *item;
+        const char* item;
         auto paths = getenv("PATH");
         while ((item = strsep(&paths, ":")) != nullptr) {
             std::string fullpath = std::format("{}/{}", item, exe);
@@ -25,8 +25,9 @@ namespace mob {
     {
         try {
             return fs::read_symlink("/proc/self/exe");
-        } catch (...) {
+        }
+        catch (...) {
             gcx().bail_out(context::conf, "can't get module filename");
         }
     }
-}
+}  // namespace mob

@@ -10,4 +10,4 @@ namespace mob {
         return strerror(id);
     }
 
-}
+}  // namespace mob

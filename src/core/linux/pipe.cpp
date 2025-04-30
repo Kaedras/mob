@@ -31,7 +31,7 @@ namespace mob {
             cx_.bail_out(context::cmd, "CreatePipe failed, {}", strerror(e));
         }
 
-        pipe_ = pipeFd[0];
+        pipe_   = pipeFd[0];
         closed_ = false;
 
         return pipeFd[1];

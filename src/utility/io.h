@@ -5,7 +5,7 @@
 #include <string_view>
 
 #ifdef __unix__
-using WORD = uint16_t;
+using WORD                = uint16_t;
 using CONSOLE_FONT_INFOEX = int;
 #endif
 

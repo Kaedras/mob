@@ -36,4 +36,4 @@ namespace mob {
         return utf16_to_utf8(s);
     }
 
-}
+}  // namespace mob

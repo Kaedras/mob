@@ -11,9 +11,7 @@ namespace mob {
     extern u8stream u8cout(false);
     extern u8stream u8cerr(true);
 
-    void set_std_streams()
-    {
-    }
+    void set_std_streams() {}
 
     std::mutex& global_output_mutex()
     {
@@ -51,7 +49,7 @@ namespace mob {
             std::cerr << s;
         }
         else {
-                std::cout << s;
+            std::cout << s;
         }
     }
 
@@ -90,7 +88,6 @@ namespace mob {
             u8cout << "\033[38;2;240;50;50m";
             break;
         }
-
     }
 
     console_color::~console_color()
@@ -101,16 +98,10 @@ namespace mob {
         u8cout << "\033[39m\033[49m";
     }
 
-    font_restorer::font_restorer() : restore_(false)
-    {
-    }
+    font_restorer::font_restorer() : restore_(false) {}
 
-    font_restorer::~font_restorer()
-    {
-    }
+    font_restorer::~font_restorer() {}
 
-    void font_restorer::restore()
-    {
-    }
+    void font_restorer::restore() {}
 
 }  // namespace mob

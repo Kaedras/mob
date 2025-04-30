@@ -15,7 +15,6 @@ static constexpr auto pathSeparator = ":";
 static constexpr auto pathSeparator = L";";
 #endif
 
-
 namespace mob {
 
     env::env() : own_(false)
@@ -153,7 +152,6 @@ namespace mob {
         }
     }
 
-
     env::map env::get_map() const
     {
         if (!data_)
@@ -210,4 +208,4 @@ namespace mob {
         own_ = true;
     }
 
-}
+}  // namespace mob
