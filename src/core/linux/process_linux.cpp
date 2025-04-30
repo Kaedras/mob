@@ -115,7 +115,7 @@ namespace mob {
         return h;
     }
 
-    void process::create(std::string, std::string args, std::string cwd,
+    void process::create(std::string, std::string args, std::filesystem::path cwd,
                          STARTUPINFOW si)
     {
         cx_->trace(context::cmd, "creating process");

@@ -484,7 +484,7 @@ namespace mob {
 
         // calls CreateProcess() with the given stuff
         //
-        void create(nativeString cmd, nativeString args, nativeString cwd,
+        void create(nativeString cmd, nativeString args, std::filesystem::path cwd,
                     STARTUPINFOW si);
 
         // called regularly in join(), checks for termination or interruption,

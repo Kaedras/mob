@@ -133,7 +133,7 @@ namespace mob {
         return h;
     }
 
-    void process::create(std::wstring cmd, std::wstring args, std::wstring cwd,
+    void process::create(std::wstring cmd, std::wstring args, std::filesystem::path cwd,
                          STARTUPINFOW si)
     {
         cx_->trace(context::cmd, "creating process");
