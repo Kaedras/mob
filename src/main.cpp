@@ -66,7 +66,7 @@ namespace mob {
         add_os_specific_tasks();
 
         add_task<parallel_tasks>()
-            .add_task<libbsarch>()
+            .add_task<libbsarchpp>()
             .add_task<libloot>()
             .add_task<directxtex>()
             .add_task<spdlog>();

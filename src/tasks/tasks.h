@@ -46,9 +46,9 @@ namespace mob::tasks {
         void do_build_and_install() override;
     };
 
-    class libbsarch : public basic_task<libbsarch> {
+    class libbsarchpp : public basic_task<libbsarchpp> {
     public:
-        libbsarch();
+        libbsarchpp();
 
         static std::string version();
         static config build_type();
