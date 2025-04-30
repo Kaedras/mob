@@ -1,0 +1,10 @@
+--- DirectXTex/DDS.h	2025-04-30 19:48:42.555459643 +0200
++++ DirectXTex/DDS.h	2025-04-30 19:53:06.816683361 +0200
+@@ -19,6 +19,7 @@
+ #pragma once
+ 
+ #include <cstddef>
++#include <cstdint>
+ 
+ namespace DirectX
+ {
