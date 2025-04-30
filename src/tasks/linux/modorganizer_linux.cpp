@@ -38,6 +38,7 @@ namespace mob::tasks {
                 .def("SPDLOG_ROOT", spdlog::source_path())
                 .def("LOOT_PATH", libloot::source_path())
                 .def("DIRECTXTEX_ROOT", directxtex::source_path())
+                .def("SEVENZ_ROOT", sevenz::source_path())
                 .root(root));
     }
 

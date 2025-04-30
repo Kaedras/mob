@@ -332,23 +332,6 @@ namespace mob::tasks {
         void convert_script_file_to_acp(const std::string& filename);
     };
 
-    class sevenz : public basic_task<sevenz> {
-    public:
-        sevenz();
-
-        static std::string version();
-        static bool prebuilt();
-        static fs::path source_path();
-
-    protected:
-        void do_clean(clean c) override;
-        void do_fetch() override;
-        void do_build_and_install() override;
-
-    private:
-        void build();
-    };
-
     class usvfs : public basic_task<usvfs> {
     public:
         usvfs();

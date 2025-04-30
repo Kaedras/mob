@@ -168,6 +168,23 @@ namespace mob::tasks {
         cmake create_cmake_tool(cmake::ops o = cmake::build);
     };
 
+    class sevenz : public basic_task<sevenz> {
+    public:
+        sevenz();
+
+        static std::string version();
+        static bool prebuilt();
+        static fs::path source_path();
+
+    protected:
+        void do_clean(clean c) override;
+        void do_fetch() override;
+        void do_build_and_install() override;
+
+    private:
+        void build();
+    };
+
     class spdlog : public basic_task<spdlog> {
     public:
         spdlog();

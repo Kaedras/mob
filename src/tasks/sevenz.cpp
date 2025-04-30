@@ -1,5 +1,13 @@
-#include "../pch.h"
-#include "../tasks.h"
+#include "pch.h"
+#include "tasks.h"
+
+#ifdef __unix__
+static constexpr std::string SEVENZ_OUTPUT_PATH = "_o";
+static constexpr std::string LIB_EXT = "so";
+#else
+static constexpr std::string SEVENZ_OUTPUT_PATH = "x64";
+static constexpr std::string LIB_EXT = "dll";
+#endif
 
 namespace mob::tasks {
 
@@ -58,7 +66,7 @@ namespace mob::tasks {
 
         // delete whole output directory
         if (is_set(c, clean::rebuild))
-            op::delete_directory(cx(), module_to_build() / "x64", op::optional);
+            op::delete_directory(cx(), module_to_build() / SEVENZ_OUTPUT_PATH, op::optional);
     }
 
     void sevenz::do_fetch()
@@ -73,22 +81,7 @@ namespace mob::tasks {
         build();
 
         // copy 7z.dll to install/bin/dlls
-        op::copy_file_to_dir_if_better(cx(), module_to_build() / "x64/7z.dll",
+        op::copy_file_to_dir_if_better(cx(), module_to_build() / SEVENZ_OUTPUT_PATH / ("7z." + LIB_EXT),
                                        conf().path().install_dlls());
     }
-
-    void sevenz::build()
-    {
-        build_loop(cx(), [&](bool mp) {
-            const int exit_code = run_tool(nmake()
-                                               .path(module_to_build())
-                                               .def("CPU=x64")
-                                               .def("NEW_COMPILER=1")
-                                               .def("MY_STATIC_LINK=1")
-                                               .def("NO_BUFFEROVERFLOWU=1"));
-
-            return (exit_code == 0);
-        });
-    }
-
 }  // namespace mob::tasks

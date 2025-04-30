@@ -25,7 +25,6 @@ namespace mob {
         using namespace tasks;
 
         add_task<parallel_tasks>()
-            .add_task<sevenz>()
             .add_task<gtest>()
             .add_task<zlib>()
             .add_task<openssl>()
@@ -66,6 +65,7 @@ namespace mob {
         add_os_specific_tasks();
 
         add_task<parallel_tasks>()
+            .add_task<sevenz>()
             .add_task<libbsarchpp>()
             .add_task<libloot>()
             .add_task<directxtex>()
