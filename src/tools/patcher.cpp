@@ -113,6 +113,7 @@ namespace mob {
         auto check = process(base)
                          .flags(process::allow_failure)
                          .arg("--dry-run")
+                         .arg("--binary")   // ignore different line endings
                          .arg("--force")    // no prompts
                          .arg("--reverse")  // swaps old and new files
                          .arg("--input", patch);
@@ -122,6 +123,7 @@ namespace mob {
             process(base)
                 .arg("--forward")  // don't try to reverse the patch if it fails
                 .arg("--batch")    // no prompts
+                .arg("--binary")   // ignore different line endings
                 .arg("--input", patch);
 
         cx().trace(context::generic, "trying to patch using {}", patch);
