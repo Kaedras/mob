@@ -26,7 +26,7 @@ namespace mob {
     {
         int pipeFd[2];
 
-        if (pipe(pipeFd) == -1) {
+        if (pipe2(pipeFd, O_NONBLOCK) == -1) {
             const int e = errno;
             cx_.bail_out(context::cmd, "CreatePipe failed, {}", strerror(e));
         }
@@ -74,6 +74,10 @@ namespace mob {
         }
 
         const int e = errno;
+        if (e == EAGAIN) {
+            // try again later
+            return {};
+        }
         if (e == EPIPE) {
             // broken pipe means the process is finished
             closed_ = true;
