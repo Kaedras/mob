@@ -8,7 +8,9 @@
 #include "task.h"
 #include <set>
 
-#ifdef _WIN32
+#ifdef __unix__
+#include "linux/tasks_linux.h"
+#else
 #include "win32/tasks_win32.h"
 #endif
 
