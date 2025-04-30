@@ -103,7 +103,7 @@ namespace mob {
         handle_ptr h;
 
         if (io_.in) {
-            impl_.stdin_pipe.reset(new async_pipe_stdin(*cx_));
+            impl_.stdin_pipe = std::make_unique<async_pipe_stdin>(*cx_);
             h = impl_.stdin_pipe->create();
         }
         else {

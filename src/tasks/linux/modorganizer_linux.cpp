@@ -26,9 +26,6 @@ namespace mob::tasks {
 
         // run cmake
         run_tool(create_cmake_tool());
-
-        // fixme: actually run build tool
-        // run_tool(create_msbuild_tool());
     }
 
     cmake modorganizer::create_cmake_tool(const fs::path& root, cmake::ops o, config c)
