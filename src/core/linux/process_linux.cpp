@@ -126,39 +126,6 @@ namespace mob {
             op::create_directories(*cx_, fs::absolute(cwd));
         }
 
-        // create argument list for execvp
-        std::vector<std::string> argument_strings;
-        std::istringstream iss(args);
-        std::string arg;
-        // Use std::quoted to handle quoted strings
-        while (iss >> std::quoted(arg)) {
-            // ignore empty strings
-            if (arg.empty()) {
-                continue;
-            }
-            // remove leading and trailing quotation marks
-            // avoid issues when argument is something like value="sdf"
-            if (arg.front() == '\"' && arg.back() == '\"') {
-                arg.erase(0, 1);
-                arg.pop_back();
-            }
-            if (arg.front() == '\'' && arg.back() == '\'') {
-                arg.erase(0, 1);
-                arg.pop_back();
-            }
-            argument_strings.push_back(arg);
-        }
-
-        // convert strings to c-strings
-        std::vector<const char*> arguments;
-        arguments.reserve(argument_strings.size());
-        for (const auto& argument : argument_strings) {
-            arguments.push_back(argument.c_str());
-        }
-
-        // array must be terminated by a null pointer
-        arguments.push_back(nullptr);
-
         pid_t pid = fork();
 
         // error
@@ -184,11 +151,11 @@ namespace mob {
                 cx_->error(context::cmd, "failed to redirect stdErr");
             }
 
-            execvp(arguments[0], const_cast<char* const*>(arguments.data()));
+            execl("/bin/sh", "sh", "-c", args.c_str(), nullptr);
 
             // exec only returns on error
             const int e = errno;
-            cx_->error(context::cmd, "exec failed trying to run {}, {}", arguments[0],
+            cx_->error(context::cmd, "exec failed trying to run {}, {}",  args,
                        strerror(e));
             return;
         }
