@@ -15,6 +15,12 @@ namespace mob {
         return ::CreateFileW(L"NUL", GENERIC_WRITE, 0, &sa, OPEN_EXISTING, 0, 0);
     }
 
+    process& process::binary(const fs::path& p)
+    {
+        exec_.bin = p;
+        return *this;
+    }
+
     void process::do_run(const std::string& what)
     {
         delete_external_log_file();

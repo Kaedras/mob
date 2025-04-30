@@ -15,6 +15,16 @@ namespace mob {
         return open("/dev/null", O_WRONLY);
     }
 
+    process& process::binary(const fs::path& p)
+    {
+        if (p.extension() == ".exe") {
+            exec_.bin = p.parent_path() / p.stem();
+        } else {
+            exec_.bin = p;
+        }
+        return *this;
+    }
+
     void process::do_run(const std::string& what)
     {
         delete_external_log_file();

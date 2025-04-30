@@ -92,12 +92,6 @@ namespace mob {
             return name_;
     }
 
-    process& process::binary(const fs::path& p)
-    {
-        exec_.bin = p;
-        return *this;
-    }
-
     const fs::path& process::binary() const
     {
         return exec_.bin;
