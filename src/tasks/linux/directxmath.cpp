@@ -56,12 +56,8 @@ namespace mob::tasks {
 
     void directxmath::do_build_and_install()
     {
-        run_tool(create_cmake_tool(arch::x64, config::release));
-
-        // download and copy sal.h
-        auto path = run_tool(downloader("https://raw.githubusercontent.com/dotnet/"
-                                        "runtime/main/src/coreclr/pal/inc/rt/sal.h"));
-        op::copy_file_to_dir_if_better(cx(), path, conf().path().install() / "include");
+        // copy sal.h
+        op::copy_file_to_dir_if_better(cx(), conf().path().third_party() / "include/sal.h", conf().path().install() / "include", op::unsafe);
     }
 
 }  // namespace mob::tasks
