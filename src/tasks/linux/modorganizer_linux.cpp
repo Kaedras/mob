@@ -38,6 +38,7 @@ namespace mob::tasks {
                              .def("LOOT_PATH", libloot::source_path())
                              .def("DIRECTXTEX_ROOT", directxtex::source_path())
                              .def("SEVENZ_ROOT", sevenz::source_path())
+                             .def("LIBBSARCHPP_ROOT", libbsarchpp::source_path())
                              .def("BOOST_DI_ROOT", boost_di::source_path())
                              .root(root));
     }

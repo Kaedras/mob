@@ -54,7 +54,7 @@ namespace mob::tasks {
                 .def("ZLIB_ROOT", zlib::source_path())
                 .def("PYTHON_ROOT", python::source_path())
                 .def("SEVENZ_ROOT", sevenz::source_path())
-                .def("LIBBSARCH_ROOT", libbsarch::source_path())
+                .def("LIBBSARCHPP_ROOT", libbsarchpp::source_path())
                 .def("BOOST_DI_ROOT", boost_di::source_path())
                 // gtest has no RelWithDebInfo, so simply use Debug/Release
                 .def("GTEST_ROOT",
