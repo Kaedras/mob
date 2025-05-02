@@ -18,6 +18,21 @@ namespace mob::tasks {
 
     // single header for all the tasks, not worth having a header per task
 
+    // needed by bsapacker
+    //
+    class boost_di : public basic_task<boost_di> {
+    public:
+        boost_di();
+
+        static std::string version();
+        static bool prebuilt();
+        static fs::path source_path();
+
+    protected:
+        void do_clean(clean c) override;
+        void do_fetch() override;
+    };
+
     class directxtex : public basic_task<directxtex> {
     public:
         directxtex();

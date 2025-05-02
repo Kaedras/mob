@@ -32,7 +32,6 @@ namespace mob {
             .add_task<tasks::python>()
             .add_task<lz4>()
             .add_task<boost>()
-            .add_task<boost_di>()
             .add_task<sip>();
 
         add_task<parallel_tasks>()
@@ -66,6 +65,7 @@ namespace mob {
             .add_task<libloot>()
             .add_task<directxtex>()
             .add_task<spdlog>()
+            .add_task<boost_di>()
             .add_task<stylesheets>()
             .add_task<licenses>();
 

@@ -47,21 +47,6 @@ namespace mob::tasks {
                    const std::string& runtime_link, arch a);
     };
 
-    // needed by bsapacker
-    //
-    class boost_di : public basic_task<boost_di> {
-    public:
-        boost_di();
-
-        static std::string version();
-        static bool prebuilt();
-        static fs::path source_path();
-
-    protected:
-        void do_clean(clean c) override;
-        void do_fetch() override;
-    };
-
     // needed by python
     //
     class bzip2 : public basic_task<bzip2> {
