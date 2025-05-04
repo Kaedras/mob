@@ -38,4 +38,18 @@ namespace mob::tasks {
         void do_build_and_install() override;
     };
 
+    class overlayfs : public basic_task<overlayfs> {
+    public:
+        overlayfs();
+
+        static std::string version();
+        static bool prebuilt();
+        static fs::path source_path();
+
+    protected:
+        void do_clean(clean c) override;
+        void do_fetch() override;
+        void do_build_and_install() override;
+    };
+
 }  // namespace mob::tasks

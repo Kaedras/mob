@@ -15,7 +15,10 @@ namespace mob {
     void add_os_specific_tasks()
     {
         using namespace tasks;
-        add_task<parallel_tasks>().add_task<directxmath>().add_task<directxheaders>();
+        add_task<parallel_tasks>()
+            .add_task<directxmath>()
+            .add_task<directxheaders>()
+            .add_task<overlayfs>();
     }
 #else
     void add_os_specific_tasks()
