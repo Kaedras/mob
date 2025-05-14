@@ -9,15 +9,25 @@ namespace mob {
     {
         static fs::path dir = conf().path().temp_dir();
 
-        char* name = std::tmpnam(nullptr);
-        if (name == nullptr) {
-            const auto e = GetLastError();
+        std::string templ = dir / "tmpXXXXXX";
+
+        // mkstemp requires a modifiable char array
+        char filename[templ.length() + 1];
+        strcpy(filename, templ.c_str());
+
+        int fd = mkstemp(filename);
+
+        if (fd == -1) {
+            const auto e = errno;
 
             gcx().bail_out(context::conf, "can't create temp file in {}, {}", dir,
                            error_message(e));
         }
 
-        return dir / name;
+        // Close the file descriptor since we only need the name
+        close(fd);
+
+        return std::filesystem::path(filename);
     }
 
 }  // namespace mob
