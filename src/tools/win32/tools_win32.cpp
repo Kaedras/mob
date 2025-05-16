@@ -115,4 +115,25 @@ namespace mob {
             sln_.parent_path()));
     }
 
+    iscc::iscc(fs::path iss) : basic_process_runner("iscc"), iss_(std::move(iss)) {}
+
+    fs::path iscc::binary()
+    {
+        return conf().tool().get("iscc");
+    }
+
+    iscc& iscc::iss(const fs::path& p)
+    {
+        iss_ = p;
+        return *this;
+    }
+
+    void iscc::do_run()
+    {
+        if (iss_.empty())
+            cx().bail_out(context::generic, "iscc missing iss file");
+
+        execute_and_join(process().binary(binary()).arg(iss_));
+    }
+
 }  // namespace mob

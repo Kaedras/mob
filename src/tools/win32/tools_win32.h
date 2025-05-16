@@ -223,4 +223,30 @@ namespace mob {
         fs::path sln_;
     };
 
+    // tool that runs Inno Setup's iscc.exe to create the installer
+    //
+    class iscc : public basic_process_runner {
+    public:
+        // path to the iscc.exe binary
+        //
+        static fs::path binary();
+
+        // iscc tool with an optional path to the .iss file
+        //
+        iscc(fs::path iss = {});
+
+        // .iss file
+        //
+        iscc& iss(const fs::path& p);
+
+    protected:
+        // runs iscc
+        //
+        void do_run() override;
+
+    private:
+        // path to the .iss file
+        fs::path iss_;
+    };
+
 }  // namespace mob
