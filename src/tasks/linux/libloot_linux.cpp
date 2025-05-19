@@ -8,10 +8,14 @@ namespace mob::tasks {
 
     namespace {
 
-        cmake create_cmake_tool(config config, cmake::ops o = cmake::build)
+        cmake create_cmake_tool(config config, cmake::ops o = cmake::install)
         {
-            return std::move(
-                cmake(o).configuration(config).root(libloot::source_path()));
+            return std::move(cmake(o)
+                                 .configuration(config)
+                                 .root(libloot::source_path())
+                                 .def("LIBLOOT_BUILD_TESTS", "OFF")
+                                 .def("LIBLOOT_INSTALL_DOCS", "OFF")
+                                 .prefix(conf().path().install()));
         }
 
     }  // namespace
