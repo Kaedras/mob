@@ -60,6 +60,10 @@ namespace mob::tasks {
     void libloot::do_build_and_install()
     {
         run_tool(create_cmake_tool(config::release));
+
+        op::copy_file_to_dir_if_better(cx(),
+                               conf().path().install() / "lib64/libloot.so.0",
+                               conf().path().install_bin() / "loot");
     }
 
 }  // namespace mob::tasks
