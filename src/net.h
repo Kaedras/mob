@@ -1,8 +1,8 @@
 #pragma once
 
 #include "utility.h"
-#include <curl/system.h>
 #include <curl/curl.h>
+#include <curl/system.h>
 #include <format>
 
 namespace mob {

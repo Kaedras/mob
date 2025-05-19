@@ -57,7 +57,9 @@ namespace mob::tasks {
     void directxmath::do_build_and_install()
     {
         // copy sal.h
-        op::copy_file_to_dir_if_better(cx(), conf().path().third_party() / "include/sal.h", conf().path().install() / "include", op::unsafe);
+        op::copy_file_to_dir_if_better(cx(),
+                                       conf().path().third_party() / "include/sal.h",
+                                       conf().path().install() / "include", op::unsafe);
     }
 
 }  // namespace mob::tasks
