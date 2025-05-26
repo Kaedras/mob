@@ -115,6 +115,7 @@ namespace mob::op {
             case '|':
             case '^':
             case '$':
+            case '.':
                 regexPattern += '\\';
                 [[fallthrough]];
             default:
@@ -149,6 +150,7 @@ namespace mob::op {
             case '|':
             case '^':
             case '$':
+            case '.':
                 regexPattern += '\\';
                 [[fallthrough]];
             default:
