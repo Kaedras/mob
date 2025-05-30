@@ -12,10 +12,12 @@ namespace mob::tasks {
 
     namespace {
 
-        cmake create_cmake_tool(arch a, config config, cmake::ops o = cmake::build)
+        cmake create_cmake_tool(arch a, config config, cmake::ops o = cmake::install)
         {
-            return std::move(
-                cmake(o).configuration(config).root(libbsarchpp::source_path()));
+            return std::move(cmake(o)
+                                 .configuration(config)
+                                 .root(libbsarchpp::source_path())
+                                 .prefix(conf().path().install()));
         }
 
     }  // namespace
@@ -69,13 +71,20 @@ namespace mob::tasks {
         run_tool(tool);
         run_tool(create_cmake_tool(arch::x64, config::debug));
 
-        // copy dll
+        // copy library
         op::copy_file_to_dir_if_better(cx(),
                                        tool.build_path() / ("libbsarchpp." + LIB_EXT),
                                        conf().path().install_dlls());
         op::copy_file_to_dir_if_better(cx(),
                                        tool.build_path() / ("libbsarchppd." + LIB_EXT),
                                        conf().path().install_dlls());
+
+        op::copy_file_to_dir_if_better(cx(),
+                                       tool.build_path() / ("libbsarchpp." + LIB_EXT),
+                                       source_path() / "lib");
+        op::copy_file_to_dir_if_better(cx(),
+                                       tool.build_path() / ("libbsarchppd." + LIB_EXT),
+                                       source_path() / "lib");
     }
 
 }  // namespace mob::tasks

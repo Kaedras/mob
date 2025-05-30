@@ -30,8 +30,8 @@ namespace mob::tasks {
 
     cmake modorganizer::create_cmake_tool(const fs::path& root, cmake::ops o, config c)
     {
-        return std::move(cmake(o)
-                             .generator(cmake::make)
+        return std::move(cmake(cmake::install)
+                             .configuration(c)
                              .def("CMAKE_INSTALL_PREFIX:PATH", conf().path().install())
                              .def("DEPENDENCIES_DIR", conf().path().build())
                              .def("SPDLOG_ROOT", spdlog::source_path())
