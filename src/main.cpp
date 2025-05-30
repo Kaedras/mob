@@ -11,40 +11,6 @@
 
 namespace mob {
 
-#ifdef __unix__
-    void add_os_specific_tasks()
-    {
-        using namespace tasks;
-        add_task<parallel_tasks>()
-            .add_task<directxmath>()
-            .add_task<directxheaders>()
-            .add_task<overlayfs>();
-    }
-#else
-    void add_os_specific_tasks()
-    {
-        using namespace tasks;
-
-        add_task<parallel_tasks>()
-            .add_task<gtest>()
-            .add_task<zlib>()
-            .add_task<openssl>()
-            .add_task<bzip2>();
-
-        add_task<parallel_tasks>()
-            .add_task<tasks::python>()
-            .add_task<lz4>()
-            .add_task<boost>()
-            .add_task<sip>();
-
-        add_task<parallel_tasks>()
-            .add_task<pyqt>()
-            .add_task<pybind11>()
-            .add_task<usvfs>()
-            .add_task<explorerpp>();
-    }
-#endif
-
     void add_tasks()
     {
         using namespace tasks;
@@ -58,30 +24,16 @@ namespace mob {
         // mob doesn't have a concept of task dependencies, just task ordering, so
         // if a task depends on another, it has to be earlier in the order
 
-        // third-party tasks
-
-        add_os_specific_tasks();
-
-        add_task<parallel_tasks>()
-            .add_task<sevenz>()
-            .add_task<libbsarchpp>()
-            .add_task<libloot>()
-            .add_task<directxtex>()
-            .add_task<spdlog>()
-            .add_task<boost_di>()
-            .add_task<stylesheets>()
-            .add_task<licenses>();
-
         // super tasks
 
         using mo = modorganizer;
 
         // most of the alternate names below are from the transifex slugs, which
         // are sometimes different from the project names, for whatever reason
-
-        add_task<parallel_tasks>()
-            .add_task<mo>("cmake_common")
-            .add_task<mo>("modorganizer-uibase");
+#ifdef _WIN32
+        add_task<parallel_tasks>().add_task<usvfs>().add_task<mo>("cmake_common");
+#endif
+        add_task<mo>("modorganizer-uibase");
 
         add_task<parallel_tasks>()
             .add_task<mo>("modorganizer-archive")
@@ -90,34 +42,13 @@ namespace mob {
             .add_task<mo>("modorganizer-bsatk")
             .add_task<mo>("modorganizer-nxmhandler")
             .add_task<mo>("modorganizer-helper")
-            .add_task<mo>("githubpp")
-            .add_task<mo>("modorganizer-game_gamebryo")
+            .add_task<mo>("modorganizer-game_bethesda");
+
+        add_task<parallel_tasks>()
             .add_task<mo>({"modorganizer-bsapacker", "bsa_packer"})
-            .add_task<mo>("modorganizer-preview_bsa");
-
-        // the gamebryo flag must be set for all game plugins that inherit from
-        // the gamebryo classes; this will merge the .ts file from gamebryo with
-        // the one from the specific plugin
-        add_task<parallel_tasks>()
-            .add_task<mo>("modorganizer-game_oblivion", mo::gamebryo)
-            .add_task<mo>("modorganizer-game_nehrim", mo::gamebryo)
-            .add_task<mo>("modorganizer-game_fallout3", mo::gamebryo)
-            .add_task<mo>("modorganizer-game_fallout4", mo::gamebryo)
-            .add_task<mo>("modorganizer-game_fallout4vr", mo::gamebryo)
-            .add_task<mo>("modorganizer-game_fallout76", mo::gamebryo)
-            .add_task<mo>("modorganizer-game_falloutnv", mo::gamebryo)
-            .add_task<mo>("modorganizer-game_morrowind", mo::gamebryo)
-            .add_task<mo>("modorganizer-game_skyrim", mo::gamebryo)
-            .add_task<mo>("modorganizer-game_skyrimse", mo::gamebryo)
-            .add_task<mo>("modorganizer-game_skyrimvr", mo::gamebryo)
-            .add_task<mo>("modorganizer-game_starfield", mo::gamebryo)
-            .add_task<mo>("modorganizer-game_ttw", mo::gamebryo)
-            .add_task<mo>("modorganizer-game_enderal", mo::gamebryo)
-            .add_task<mo>("modorganizer-game_enderalse", mo::gamebryo);
-
-        add_task<parallel_tasks>()
             .add_task<mo>({"modorganizer-tool_inieditor", "inieditor"})
             .add_task<mo>({"modorganizer-tool_inibakery", "inibakery"})
+            .add_task<mo>("modorganizer-preview_bsa")
             .add_task<mo>("modorganizer-preview_base")
             .add_task<mo>("modorganizer-diagnose_basic")
 #ifdef __unix__
@@ -130,12 +61,17 @@ namespace mob {
             .add_task<mo>("modorganizer-installer_quick")
             .add_task<mo>("modorganizer-installer_fomod")
             .add_task<mo>("modorganizer-installer_fomod_csharp")
-            .add_task<mo>("modorganizer-installer_omod", mo::nuget)
+            .add_task<mo>("modorganizer-installer_omod")
             .add_task<mo>("modorganizer-installer_wizard")
             .add_task<mo>("modorganizer-bsa_extractor")
             .add_task<mo>("modorganizer-plugin_python");
 
         add_task<parallel_tasks>()
+            .add_task<stylesheets>()
+            .add_task<licenses>()
+#ifdef _WIN32
+            .add_task<explorerpp>()
+#endif
             .add_task<mo>({"modorganizer-tool_configurator", "pycfg"})
             .add_task<mo>("modorganizer-fnistool")
             .add_task<mo>("modorganizer-basic_games")
@@ -146,7 +82,6 @@ namespace mob {
             .add_task<mo>({"modorganizer", "organizer"});
 
         // other tasks
-
         add_task<translations>();
         add_task<installer>();
     }
@@ -168,9 +103,9 @@ namespace mob {
             std::make_unique<list_command>(),
             std::make_unique<release_command>(),
             std::make_unique<git_command>(),
-            std::make_unique<cmake_command>(),
             std::make_unique<inis_command>(),
-            std::make_unique<tx_command>()};
+            std::make_unique<tx_command>(),
+            std::make_unique<cmake_config_command>()};
 
         // commands are shown in the help
         help->set_commands(commands);

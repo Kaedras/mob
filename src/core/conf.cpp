@@ -518,13 +518,13 @@ namespace mob {
         set_path_if_empty("pf_x86", find_program_files_x86);
         set_path_if_empty("pf_x64", find_program_files_x64);
         set_path_if_empty("vs", find_vs);
+#endif
+        set_path_if_empty("vcpkg", find_vcpkg);  // set after vs as it will use the VS
         set_path_if_empty("qt_install", find_qt);
+        set_path_if_empty("temp_dir", find_temp_dir);
+        set_path_if_empty("licenses", find_in_root("licenses"));
         set_path_if_empty("qt_bin", qt::installation_path() / "bin");
         set_path_if_empty("qt_translations", qt::installation_path() / "translations");
-#endif
-        set_path_if_empty("temp_dir", find_temp_dir);
-        set_path_if_empty("patches", find_in_root("patches"));
-        set_path_if_empty("licenses", find_in_root("licenses"));
 
         // second, if any of these paths are relative, they use the second argument
         // as the root; if they're empty, they combine the second and third
@@ -540,17 +540,15 @@ namespace mob {
         resolve_path("install", p.prefix(), "install");
         resolve_path("install_installer", p.install(), "installer");
         resolve_path("install_bin", p.install(), "bin");
-        resolve_path("install_libs", p.install(), "libs");
+        resolve_path("install_libs", p.install(), "lib");
         resolve_path("install_pdbs", p.install(), "pdb");
 #ifdef __unix__
         resolve_path("install_dlls", p.install_bin(), "lib");
 #else
         resolve_path("install_dlls", p.install_bin(), "dlls");
 #endif
-        resolve_path("install_loot", p.install_bin(), "loot");
         resolve_path("install_plugins", p.install_bin(), "plugins");
         resolve_path("install_licenses", p.install_bin(), "licenses");
-        resolve_path("install_pythoncore", p.install_bin(), "pythoncore");
         resolve_path("install_stylesheets", p.install_bin(), "stylesheets");
         resolve_path("install_translations", p.install_bin(), "translations");
 
@@ -696,11 +694,6 @@ namespace mob {
     }
 
     conf_transifex conf::transifex()
-    {
-        return {};
-    }
-
-    conf_prebuilt conf::prebuilt()
     {
         return {};
     }

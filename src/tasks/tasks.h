@@ -18,35 +18,6 @@ namespace mob::tasks {
 
     // single header for all the tasks, not worth having a header per task
 
-    // needed by bsapacker
-    //
-    class boost_di : public basic_task<boost_di> {
-    public:
-        boost_di();
-
-        static std::string version();
-        static bool prebuilt();
-        static fs::path source_path();
-
-    protected:
-        void do_clean(clean c) override;
-        void do_fetch() override;
-    };
-
-    class directxtex : public basic_task<directxtex> {
-    public:
-        directxtex();
-
-        static std::string version();
-        static bool prebuilt();
-        static fs::path source_path();
-
-    protected:
-        void do_clean(clean c) override;
-        void do_fetch() override;
-        void do_build_and_install() override;
-    };
-
     class installer : public basic_task<installer> {
     public:
         installer();
@@ -110,6 +81,10 @@ namespace mob::tasks {
     //
     class modorganizer : public task {
     public:
+        // build CMAKE_PREFIX_PATH for MO2 tasks
+        //
+        static std::string cmake_prefix_path();
+
         // path of the root modorganizer_super directory
         //
         static fs::path super_path();
@@ -121,34 +96,13 @@ namespace mob::tasks {
                                        cmake::ops o  = cmake::generate,
                                        config config = config::relwithdebinfo);
 
-        // flags for some MO projects
-        enum flags {
-            noflags = 0x00,
-
-            // gamebryo project, used by the translations task because these
-            // projects have multiple .ts files that have to be merged
-            gamebryo = 0x01,
-
-            // project that uses nuget, cmake doesn't support those right now, so
-            // `msbuild -t:restore` has to be run manually
-            nuget = 0x02,
-        };
-
         // some mo tasks have more than one name, mostly because the transifex slugs
         // are different than the names on github; the std::string and const char*
         // overloads are because they're constructed from initializer lists and it's
         // more convenient that way
-        modorganizer(std::string name, flags f = noflags);
-        modorganizer(std::vector<std::string> names, flags f = noflags);
-        modorganizer(std::vector<const char*> names, flags f = noflags);
-
-        // whether this project has the gamebryo flag on
-        //
-        bool is_gamebryo_plugin() const;
-
-        // whether this project has the nuget flag on
-        //
-        bool is_nuget_plugin() const;
+        modorganizer(std::string name);
+        modorganizer(std::vector<std::string> names);
+        modorganizer(std::vector<const char*> names);
 
         // url to the git repo
         //
@@ -176,41 +130,6 @@ namespace mob::tasks {
     private:
         std::string repo_;
         std::string project_;
-        flags flags_;
-
-        // creates the cmake tool for this MO project
-        //
-        cmake create_cmake_tool(cmake::ops o = cmake::build);
-    };
-
-    class sevenz : public basic_task<sevenz> {
-    public:
-        sevenz();
-
-        static std::string version();
-        static bool prebuilt();
-        static fs::path source_path();
-
-    protected:
-        void do_clean(clean c) override;
-        void do_fetch() override;
-        void do_build_and_install() override;
-
-    private:
-        void build();
-    };
-
-    class spdlog : public basic_task<spdlog> {
-    public:
-        spdlog();
-
-        static std::string version();
-        static bool prebuilt();
-        static fs::path source_path();
-
-    protected:
-        void do_clean(clean c) override;
-        void do_fetch() override;
     };
 
     class stylesheets : public task {
@@ -308,11 +227,6 @@ namespace mob::tasks {
             // duplicate warnings
             std::set<fs::path> warned_;
 
-            // whether the given project name is a gamebryo task, `dir` is just for
-            // logging
-            //
-            bool is_gamebryo_plugin(const std::string& dir, const std::string& project);
-
             // parses the directory name, walks all the .ts files, returns a project
             // object for them
             //
@@ -321,7 +235,7 @@ namespace mob::tasks {
             // returns a lang object that contains at least the given main_ts_file,
             // but might contain more if it's a gamebryo plugin
             //
-            lang create_lang(bool gamebryo, const std::string& project_name,
+            lang create_lang(const std::string& project_name,
                              const fs::path& main_ts_file);
         };
 

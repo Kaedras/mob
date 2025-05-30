@@ -59,18 +59,18 @@ namespace mob::tasks {
         g.init_repo();
     }
 
-    modorganizer::modorganizer(std::string long_name, flags f)
-        : modorganizer(std::vector<std::string>{long_name}, f)
+    modorganizer::modorganizer(std::string long_name)
+        : modorganizer(std::vector<std::string>{long_name})
     {
     }
 
-    modorganizer::modorganizer(std::vector<const char*> names, flags f)
-        : modorganizer(std::vector<std::string>(names.begin(), names.end()), f)
+    modorganizer::modorganizer(std::vector<const char*> names)
+        : modorganizer(std::vector<std::string>(names.begin(), names.end()))
     {
     }
 
-    modorganizer::modorganizer(std::vector<std::string> names, flags f)
-        : task(make_names(names)), repo_(names[0]), flags_(f)
+    modorganizer::modorganizer(std::vector<std::string> names)
+        : task(make_names(names)), repo_(names[0])
     {
         if (names.size() > 1) {
             project_ = names[1];
@@ -80,14 +80,11 @@ namespace mob::tasks {
         }
     }
 
-    bool modorganizer::is_gamebryo_plugin() const
+    std::string modorganizer::cmake_prefix_path()
     {
-        return is_set(flags_, gamebryo);
-    }
-
-    bool modorganizer::is_nuget_plugin() const
-    {
-        return is_set(flags_, nuget);
+        return conf().path().qt_install().string() + ";" +
+               (modorganizer::super_path() / "cmake_common").string() + ";" +
+               (conf().path().install() / "lib" / "cmake").string();
     }
 
     fs::path modorganizer::source_path() const
@@ -98,7 +95,7 @@ namespace mob::tasks {
 
     fs::path modorganizer::super_path()
     {
-        return conf().path().build() / "modorganizer_super";
+        return conf().path().build();
     }
 
     url modorganizer::git_url() const
@@ -128,7 +125,7 @@ namespace mob::tasks {
 
         // cmake clean
         if (is_set(c, clean::reconfigure))
-            run_tool(create_cmake_tool(cmake::clean));
+            run_tool(cmake(cmake::clean).root(source_path()));
     }
 
     void modorganizer::do_fetch()
@@ -150,9 +147,58 @@ namespace mob::tasks {
         run_tool(make_git().url(git_url()).branch(branch).root(source_path()));
     }
 
-    cmake modorganizer::create_cmake_tool(cmake::ops o)
+    void modorganizer::do_build_and_install()
     {
-        return create_cmake_tool(source_path(), o, task_conf().configuration());
+        // adds a git submodule in build for this project; note that
+        // git_submodule_adder runs a thread because adding submodules is slow, but
+        // can happen while stuff is building
+        git_submodule_adder::instance().queue(
+            std::move(git_submodule()
+                          .url(git_url())
+                          .branch(task_conf().mo_branch())
+                          .submodule(name())
+                          .root(super_path())));
+
+        // not all modorganizer projects need to actually be built, such as
+        // cmake_common, so don't try if there's no cmake file
+        if (!exists(source_path() / "CMakeLists.txt")) {
+            cx().trace(context::generic, "{} has no CMakeLists.txt, not building",
+                       repo_);
+
+            return;
+        }
+
+        // if there is a CMakeLists.txt, there must be a CMakePresets.json otherwise
+        // we cannot build
+        if (!exists(source_path() / "CMakePresets.json")) {
+            gcx().bail_out(context::generic,
+                           "{} has no CMakePresets.txt, aborting build", repo_);
+        }
+
+        // run cmake
+        run_tool(cmake(cmake::generate)
+                     .generator(cmake::vs)
+                     .def("CMAKE_INSTALL_PREFIX:PATH", conf().path().install())
+                     .def("CMAKE_PREFIX_PATH", cmake_prefix_path())
+                     .configuration_types({task_conf().configuration()})
+                     .preset("vs2022-windows")
+                     .root(source_path()));
+
+        // run cmake --build with default target
+        // TODO: handle rebuild by adding `--clean-first`
+        // TODO: have a way to specify the `--parallel` value - 16 is useful to build
+        // game_bethesda that has 15 games, so 15 projects
+        run_tool(cmake(cmake::build)
+                     .root(source_path())
+                     .arg("--parallel")
+                     .arg("16")
+                     .configuration(task_conf().configuration()));
+
+        // run cmake --install
+        run_tool(cmake(cmake::build)
+                     .root(source_path())
+                     .targets("INSTALL")
+                     .configuration(task_conf().configuration()));
     }
 
 }  // namespace mob::tasks

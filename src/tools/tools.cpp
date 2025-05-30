@@ -73,16 +73,6 @@ namespace mob {
             return gcx();
     }
 
-    fs::path perl::binary()
-    {
-        return conf().tool().get("perl");
-    }
-
-    fs::path nasm::binary()
-    {
-        return conf().tool().get("nasm");
-    }
-
     fs::path qt::installation_path()
     {
         return conf().path().qt_install();

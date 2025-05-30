@@ -246,7 +246,6 @@ namespace mob {
         VALUE(third_party);
         VALUE(prefix);
         VALUE(cache);
-        VALUE(patches);
         VALUE(licenses);
         VALUE(build);
 
@@ -257,14 +256,13 @@ namespace mob {
         VALUE(install_pdbs);
 
         VALUE(install_dlls);
-        VALUE(install_loot);
         VALUE(install_plugins);
         VALUE(install_stylesheets);
         VALUE(install_licenses);
-        VALUE(install_pythoncore);
         VALUE(install_translations);
 
         VALUE(vs);
+        VALUE(vcpkg);
         VALUE(qt_install);
         VALUE(qt_bin);
         VALUE(qt_translations);

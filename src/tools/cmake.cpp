@@ -4,23 +4,29 @@
 
 namespace mob {
 
+    namespace {
+        std::string config_to_string(config c)
+        {
+            switch (c) {
+            case config::debug:
+                return "Debug";
+            case config::release:
+                return "Release";
+            case config::relwithdebinfo:
+                return "RelWithDebInfo";
+            }
+            gcx().bail_out(context::generic, "unknow configuration type {}", c);
+        }
+    }  // namespace
+
+    cmake::cmake(ops o)
+        : basic_process_runner("cmake"), op_(o), gen_(vs), arch_(arch::def)
+    {
+    }
+
     fs::path cmake::binary()
     {
         return conf().tool().get("cmake");
-    }
-
-    std::string cmake::configuration_name(config c)
-    {
-        switch (c) {
-        case config::debug:
-            return "Debug";
-        case config::release:
-            return "Release";
-        case config::relwithdebinfo:
-            [[fallthrough]];
-        default:
-            return "RelWithDebInfo";
-        }
     }
 
     cmake& cmake::generator(generators g)
@@ -53,12 +59,6 @@ namespace mob {
         return *this;
     }
 
-    cmake& cmake::prefix_path(const fs::path& s)
-    {
-        prefix_path_ = s;
-        return *this;
-    }
-
     cmake& cmake::def(const std::string& name, const std::string& value)
     {
         arg("-D" + name + "=" + value);
@@ -77,6 +77,12 @@ namespace mob {
         return *this;
     }
 
+    cmake& cmake::preset(const std::string& s)
+    {
+        preset_ = s;
+        return *this;
+    }
+
     cmake& cmake::arg(std::string s)
     {
         std::replace(s.begin(), s.end(), '\\', '/');
@@ -90,9 +96,27 @@ namespace mob {
         return *this;
     }
 
-    cmake& cmake::configuration(config c)
+    cmake& cmake::targets(const std::string& target)
     {
-        config_ = c;
+        targets_ = {target};
+        return *this;
+    }
+
+    cmake& cmake::targets(const std::vector<std::string>& targets)
+    {
+        targets_ = targets;
+        return *this;
+    }
+
+    cmake& cmake::configuration(mob::config config)
+    {
+        config_ = config;
+        return *this;
+    }
+
+    cmake& cmake::configuration_types(const std::vector<mob::config>& configs)
+    {
+        config_types_ = configs;
         return *this;
     }
 
@@ -132,14 +156,11 @@ namespace mob {
         }
 
         case build: {
-            do_generate();
             do_build();
             break;
         }
 
         case install: {
-            do_generate();
-            do_build();
             do_install();
             break;
         }
@@ -160,62 +181,76 @@ namespace mob {
         auto p = process()
                      .stdout_encoding(encodings::utf8)
                      .stderr_encoding(encodings::utf8)
-                     .binary(binary())
-                     .cwd(root_)
-                     .arg("-DCMAKE_BUILD_TYPE=", configuration_name(config_))
-                     .arg("-DCMAKE_INSTALL_MESSAGE=",
-                          conf_cmake::to_string(conf().cmake().install_message()))
-                     .arg("--log-level=ERROR")
-                     .arg("--no-warn-unused-cli");
+                     .binary(binary());
 
-        if (genstring_.empty()) {
-            if (!g.name.empty()) {
-                // some generators don't need
+        if (!preset_.empty()) {
+            p = p.arg("--preset").arg(preset_);
+        }
+
+        if (!config_types_.empty()) {
+            std::string types;
+            for (const auto& c : config_types_) {
+                if (!types.empty())
+                    types += ";";
+                types += config_to_string(c);
+            }
+            p = p.arg("-DCMAKE_CONFIGURATION_TYPES=" + types);
+        }
+
+        p = p.arg("-DCMAKE_INSTALL_MESSAGE=" +
+                  conf_cmake::to_string(conf().cmake().install_message()))
+                .arg("--log-level=ERROR")
+                .arg("--no-warn-unused-cli");
+
+        // prefix
+        if (!prefix_.empty())
+            p.arg("-DCMAKE_INSTALL_PREFIX=", prefix_);
+
+        p.args(args_);
+
+        if (preset_.empty()) {
+
+            if (genstring_.empty()) {
+                // there's always a generator name, but some generators don't need
                 // an architecture flag, like jom, so get_arch() might return an empty
                 // string
                 p.arg("-G", "\"" + g.name + "\"")
                     .arg(g.get_arch(arch_))
                     .arg(g.get_host(conf().cmake().host()));
             }
+            else {
+                // verbatim generator string
+                p.arg("-G", "\"" + genstring_ + "\"");
+            }
+
+            // `..` by default, overriden by cmd()
+            if (cmd_.empty())
+                p.arg("..");
+            else
+                p.arg(cmd_);
         }
-        else {
-            // verbatim generator string
-            p.arg("-G", "\"" + genstring_ + "\"");
-        }
 
-        // install prefix
-        if (!prefix_.empty())
-            p.arg("-DCMAKE_INSTALL_PREFIX=", prefix_);
+        p.env(env::vs(arch_)
+                  .set("CXXFLAGS", "/wd4566")
+                  .set("VCPKG_ROOT", absolute(conf().path().vcpkg()).string()))
+            .cwd(preset_.empty() ? build_path() : root_);
 
-        // prefix path
-        if (!prefix_path_.empty())
-            p.arg("-DCMAKE_PREFIX_PATH=", prefix_path_);
-
-        p.args(args_).arg("-B", build_path());
-
-#ifdef _WIN32
-        p.env(env::vs(arch_).set("CXXFLAGS", "/wd4566")).cwd(build_path());
-#endif
         execute_and_join(p);
     }
 
     void cmake::do_build()
     {
-        if (root_.empty())
-            cx().bail_out(context::generic, "cmake output path is empty");
-
         auto p = process()
                      .stdout_encoding(encodings::utf8)
                      .stderr_encoding(encodings::utf8)
                      .binary(binary())
-                     .cwd(root_);
+                     .arg("--build")
+                     .arg(build_path())
+                     .arg("--config")
+                     .arg(config_to_string(config_));
 
-        p.arg("--build", build_path());
-
-        unsigned int threads = std::thread::hardware_concurrency();
-        if (threads > 1) {
-            cx().debug(context::generic, "setting -j to {}", threads);
-            p.arg("-j", threads);
+        for (auto& target : targets_) {
+            p = p.arg("--target").arg(target);
         }
 
         execute_and_join(p);
@@ -223,34 +258,33 @@ namespace mob {
 
     void cmake::do_install()
     {
-        if (root_.empty())
-            cx().bail_out(context::generic, "cmake output path is empty");
-
-        auto p = process()
-                     .stdout_encoding(encodings::utf8)
-                     .stderr_encoding(encodings::utf8)
-                     .binary(binary())
-                     .cwd(root_);
-
-        p.arg("--install " + build_path().string());
-
-        unsigned int threads = std::thread::hardware_concurrency();
-        if (threads > 1) {
-            cx().debug(context::generic, "setting -j to {}", threads);
-            p.arg("-j " + std::to_string(threads));
-        }
-
-        if (config_ == config::release) {
-            p.arg("--strip");
-        }
-
-        execute_and_join(p);
+        execute_and_join(process()
+                             .stdout_encoding(encodings::utf8)
+                             .stderr_encoding(encodings::utf8)
+                             .binary(binary())
+                             .arg("--install")
+                             .arg(build_path())
+                             .arg("--config")
+                             .arg(config_to_string(config_)));
     }
 
     void cmake::do_clean()
     {
         cx().trace(context::rebuild, "deleting all generator directories");
         op::delete_directory(cx(), build_path(), op::optional);
+    }
+
+    const std::map<cmake::generators, cmake::gen_info>& cmake::all_generators()
+    {
+        static const std::map<generators, gen_info> map = {
+            // jom doesn't need -A for architectures
+            {generators::jom, {"build", "NMake Makefiles JOM", "", ""}},
+
+            {generators::vs,
+             {"vsbuild", "Visual Studio " + vs::version() + " " + vs::year(), "Win32",
+              "x64"}}};
+
+        return map;
     }
 
     const cmake::gen_info& cmake::get_generator(generators g)
