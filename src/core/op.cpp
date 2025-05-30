@@ -176,7 +176,7 @@ namespace mob::op {
             const auto p    = e.path();
             const auto name = p.filename().native();
 
-            if (!wildcard_match(name.c_str(), wildcard.c_str())) {
+            if (!wildcard_match(name.c_str(), wildcard)) {
                 cx.trace(context::fs, "{} did not match {}; skipping", name, wildcard);
 
                 continue;
@@ -385,7 +385,7 @@ namespace mob::op {
         for (auto&& e : fs::directory_iterator(file_parent)) {
             const auto name = e.path().filename().native();
 
-            if (!wildcard_match(name.c_str(), wildcard.c_str())) {
+            if (!wildcard_match(name.c_str(), wildcard)) {
                 cx.trace(context::fs, "{} did not match {}; skipping", name, wildcard);
 
                 continue;
