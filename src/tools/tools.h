@@ -698,7 +698,9 @@ namespace mob {
 // more tools
 #include "cmake.h"
 #include "git.h"
-#ifdef _WIN32
+#ifdef __unix__
+#include "linux/tools_linux.h"
+#else
 #include "win32/msbuild.h"
 #include "win32/tools_win32.h"
 #endif

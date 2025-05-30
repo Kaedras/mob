@@ -1,7 +1,22 @@
-#include "pch.h"
-#include "tasks.h"
+#include "../pch.h"
+#include "../tasks.h"
+
+#define VERSION std::string("3.0.0")
 
 namespace mob::tasks {
+
+    namespace {
+        qtifw create_ifw_tool(const fs::path& config_path)
+        {
+            return std::move(
+                qtifw(config_path)
+                    .type(qtifw::offline)
+                    .resource(installer::source_path() / "resources/additional.qrc")
+                    .package(installer::source_path() / "packages")
+                    .output(conf().path().install_installer() /
+                            ("Mod.Organizer-" + VERSION)));
+        }
+    }  // namespace
 
     installer::installer() : basic_task("installer") {}
 
@@ -44,7 +59,8 @@ namespace mob::tasks {
 
     void installer::do_build_and_install()
     {
-        run_tool<iscc>(source_path() / "dist" / "MO2-Installer.iss");
+        auto tool = create_ifw_tool(source_path() / "config" / "config.xml");
+        run_tool(tool);
     }
 
 }  // namespace mob::tasks
