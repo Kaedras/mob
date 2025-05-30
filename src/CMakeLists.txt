@@ -37,3 +37,5 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}
 if (WIN32)
     set_property(DIRECTORY ${PROJECT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT mob)
 endif ()
+# this enables including pch.h from every directory, which fixes include sorting
+target_include_directories(mob PRIVATE ${CMAKE_SOURCE_DIR}/src)

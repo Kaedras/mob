@@ -1,6 +1,6 @@
 #include "pch.h"
-#include "tasks.h"
 #include "../tools/cmake.h"
+#include "tasks.h"
 
 #ifdef __unix__
 static constexpr std::string LIB_EXT = "so";

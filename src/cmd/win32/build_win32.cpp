@@ -1,6 +1,6 @@
+#include "pch.h"
 #include "../../core/conf.h"
 #include "../commands.h"
-#include "../pch.h"
 
 namespace mob {
     void build_command::terminate_msbuild()

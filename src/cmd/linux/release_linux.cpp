@@ -1,5 +1,5 @@
+#include "pch.h"
 #include "../commands.h"
-#include "../pch.h"
 
 namespace mob {
     std::string release_command::version_from_exe() const

@@ -1,4 +1,4 @@
-#include "../pch.h"
+#include "pch.h"
 #include "../../core/conf.h"
 #include "../../core/context.h"
 #include "../../core/ini.h"

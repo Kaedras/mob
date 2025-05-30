@@ -1,5 +1,5 @@
+#include "pch.h"
 #include "../commands.h"
-#include "../pch.h"
 
 namespace mob {
     void build_command::terminate_msbuild()

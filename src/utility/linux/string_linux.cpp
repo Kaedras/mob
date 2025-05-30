@@ -1,6 +1,6 @@
-#include "../pch.h"
-#include "../string.h"
-#include "../../utility.h"
+#include "pch.h"
+#include "string.h"
+#include "utility.h"
 
 namespace mob {
 
