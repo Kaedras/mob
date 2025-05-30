@@ -169,11 +169,11 @@ namespace mob {
         // create string if it doesn't exist
         {
             std::scoped_lock lock(data_->m);
-            if (data_->sys.empty())
+            if (data_->environ == nullptr)
                 create_sys();
         }
 
-        return (void*)data_->sys.c_str();
+        return data_->environ;
     }
 
     void env::copy_for_write()
@@ -182,8 +182,7 @@ namespace mob {
             // this is called every time something is about to change; if this
             // instance already owns the data, the sys strings must still be cleared
             // out so they're recreated if get_unicode_pointers() is every called
-            if (data_)
-                data_->sys.clear();
+            data_->clearEnviron();
 
             return;
         }

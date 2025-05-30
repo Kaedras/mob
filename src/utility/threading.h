@@ -1,8 +1,8 @@
 #pragma once
 
 #include <functional>
-#include <thread>
 #include <optional>
+#include <thread>
 
 namespace mob {
 

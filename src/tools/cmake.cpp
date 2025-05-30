@@ -2,6 +2,12 @@
 #include "../core/process.h"
 #include "tools.h"
 
+#ifdef __unix__
+static constexpr auto defaultGenerator = mob::cmake::generators::ninjaMultiConfig;
+#else
+static constexpr auto defaultGenerator = mob::cmake::generators::vs;
+#endif
+
 namespace mob {
 
     namespace {
@@ -20,7 +26,8 @@ namespace mob {
     }  // namespace
 
     cmake::cmake(ops o)
-        : basic_process_runner("cmake"), op_(o), gen_(vs), arch_(arch::def)
+        : basic_process_runner("cmake"), op_(o), gen_(defaultGenerator),
+          arch_(arch::def)
     {
     }
 
@@ -272,19 +279,6 @@ namespace mob {
     {
         cx().trace(context::rebuild, "deleting all generator directories");
         op::delete_directory(cx(), build_path(), op::optional);
-    }
-
-    const std::map<cmake::generators, cmake::gen_info>& cmake::all_generators()
-    {
-        static const std::map<generators, gen_info> map = {
-            // jom doesn't need -A for architectures
-            {generators::jom, {"build", "NMake Makefiles JOM", "", ""}},
-
-            {generators::vs,
-             {"vsbuild", "Visual Studio " + vs::version() + " " + vs::year(), "Win32",
-              "x64"}}};
-
-        return map;
     }
 
     const cmake::gen_info& cmake::get_generator(generators g)

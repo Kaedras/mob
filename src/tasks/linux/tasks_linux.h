@@ -8,35 +8,7 @@
 #include <set>
 
 namespace mob::tasks {
-    // header containing linux specific tasks
-
-    class directxmath : public basic_task<directxmath> {
-    public:
-        directxmath();
-
-        static std::string version();
-        static bool prebuilt();
-        static fs::path source_path();
-
-    protected:
-        void do_clean(clean c) override;
-        void do_fetch() override;
-        void do_build_and_install() override;
-    };
-
-    class directxheaders : public basic_task<directxheaders> {
-    public:
-        directxheaders();
-
-        static std::string version();
-        static bool prebuilt();
-        static fs::path source_path();
-
-    protected:
-        void do_clean(clean c) override;
-        void do_fetch() override;
-        void do_build_and_install() override;
-    };
+    // header containing linux-specific tasks
 
     class overlayfs : public basic_task<overlayfs> {
     public:

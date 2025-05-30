@@ -102,19 +102,6 @@ namespace mob {
         return trim_copy(p.stdout_string());
     }
 
-    nuget::nuget(fs::path sln) : basic_process_runner("nuget"), sln_(std::move(sln)) {}
-
-    fs::path nuget::binary()
-    {
-        return conf().tool().get("nuget");
-    }
-
-    void nuget::do_run()
-    {
-        execute_and_join(process().binary(binary()).arg("restore").arg(sln_).cwd(
-            sln_.parent_path()));
-    }
-
     iscc::iscc(fs::path iss) : basic_process_runner("iscc"), iss_(std::move(iss)) {}
 
     fs::path iscc::binary()

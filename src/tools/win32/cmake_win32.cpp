@@ -3,12 +3,6 @@
 
 namespace mob {
 
-    cmake::cmake(ops o)
-        : basic_process_runner("cmake"), op_(o), gen_(jom), arch_(arch::def),
-          config_(config::release)
-    {
-    }
-
     const std::map<cmake::generators, cmake::gen_info>& cmake::all_generators()
     {
         static const std::map<generators, gen_info> map = {

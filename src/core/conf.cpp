@@ -514,6 +514,7 @@ namespace mob {
         set_path_if_empty("third_party", find_third_party_directory);
         this_env::prepend_to_path(conf().path().third_party() / "bin");
 
+        // FIXME: clean up this function
 #ifdef _WIN32
         set_path_if_empty("pf_x86", find_program_files_x86);
         set_path_if_empty("pf_x64", find_program_files_x64);
@@ -524,7 +525,9 @@ namespace mob {
         set_path_if_empty("temp_dir", find_temp_dir);
         set_path_if_empty("licenses", find_in_root("licenses"));
         set_path_if_empty("qt_bin", qt::installation_path() / "bin");
+#ifdef _WIN32
         set_path_if_empty("qt_translations", qt::installation_path() / "translations");
+#endif
 
         // second, if any of these paths are relative, they use the second argument
         // as the root; if they're empty, they combine the second and third

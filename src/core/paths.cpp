@@ -3,6 +3,7 @@
 #include "../tasks/task_manager.h"
 #include "../tasks/tasks.h"
 #include "../utility/string.h"
+#include "env.h"
 
 #ifdef __unix__
 static constexpr auto BUILD_DIR = u8"src";

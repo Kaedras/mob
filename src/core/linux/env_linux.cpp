@@ -35,18 +35,22 @@ namespace mob {
 
     void env::create_sys() const
     {
-        // CreateProcess() wants a string where every key=value is separated by a
-        // null and also terminated by a null, so there are two null characters at
-        // the end
+        // Execle() expects an array of pointers to strings.
+        // By convention, these strings have the form "name=value".
+        // The last pointer in this array must have the value NULL
 
-        data_->sys.clear();
+        data_->clearEnviron();
 
+        data_->environ =
+            static_cast<char**>(malloc((data_->vars.size() + 1) * sizeof(char*)));
+
+        int i = 0;
         for (auto&& v : data_->vars) {
-            data_->sys += v.first + "=" + v.second;
-            data_->sys.append(1, '\0');
+            std::string tmp     = v.first + "=" + v.second;
+            data_->environ[i++] = strdup(tmp.c_str());
         }
 
-        data_->sys.append(1, '\0');
+        data_->environ[i] = nullptr;
     }
 
     std::string* env::find(std::string_view name)

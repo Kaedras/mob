@@ -1,6 +1,12 @@
 #include "pch.h"
 #include "tasks.h"
 
+#ifdef __unix__
+static constexpr auto defaultGenerator = mob::cmake::generators::ninjaMultiConfig;
+#else
+static constexpr auto defaultGenerator = mob::cmake::generators::vs;
+#endif
+
 namespace mob::tasks {
 
     // given a vector of names (some projects have more than one, see add_tasks() in
@@ -177,7 +183,7 @@ namespace mob::tasks {
 
         // run cmake
         run_tool(cmake(cmake::generate)
-                     .generator(cmake::vs)
+                     .generator(defaultGenerator)
                      .def("CMAKE_INSTALL_PREFIX:PATH", conf().path().install())
                      .def("CMAKE_PREFIX_PATH", cmake_prefix_path())
                      .configuration_types({task_conf().configuration()})

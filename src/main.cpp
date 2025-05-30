@@ -9,6 +9,11 @@
 #include "utility.h"
 #include "utility/threading.h"
 
+#ifdef __unix__
+using usvfs = mob::tasks::overlayfs;
+#else
+#endif
+
 namespace mob {
 
     void add_tasks()
@@ -30,9 +35,7 @@ namespace mob {
 
         // most of the alternate names below are from the transifex slugs, which
         // are sometimes different from the project names, for whatever reason
-#ifdef _WIN32
         add_task<parallel_tasks>().add_task<usvfs>().add_task<mo>("cmake_common");
-#endif
         add_task<mo>("modorganizer-uibase");
 
         add_task<parallel_tasks>()

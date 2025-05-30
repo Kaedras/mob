@@ -149,7 +149,8 @@ namespace mob {
                 cx_->error(context::cmd, "failed to redirect stdErr");
             }
 
-            execl("/bin/sh", "sh", "-c", args.c_str(), nullptr);
+            char** environment = static_cast<char**>(exec_.env.get_unicode_pointers());
+            execle("/bin/sh", "sh", "-c", args.c_str(), nullptr, environment);
 
             // exec only returns on error
             const int e = errno;

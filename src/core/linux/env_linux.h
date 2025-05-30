@@ -73,8 +73,21 @@ namespace mob {
             std::mutex m;
             map vars;
 
-            // unicode strings, see get_unicode_pointers()
-            mutable std::string sys;
+            // environment, see get_unicode_pointers()
+            char** environ = nullptr;
+
+            // free malloc'd strings
+            void clearEnviron()
+            {
+                if (environ != nullptr) {
+                    for (char** p = environ; *p; p++) {
+                        free(*p);
+                    }
+                    free(environ);
+                    environ = nullptr;
+                }
+            }
+            ~data() { clearEnviron(); }
         };
 
         // shared data
@@ -84,7 +97,7 @@ namespace mob {
         // when the data must be modified
         bool own_;
 
-        // creates the unicode strings
+        // creates the environment strings
         //
         void create_sys() const;
 
