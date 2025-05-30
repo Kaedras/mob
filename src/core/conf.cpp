@@ -542,7 +542,11 @@ namespace mob {
         resolve_path("install_bin", p.install(), "bin");
         resolve_path("install_libs", p.install(), "libs");
         resolve_path("install_pdbs", p.install(), "pdb");
+#ifdef __unix__
+        resolve_path("install_dlls", p.install_bin(), "lib");
+#else
         resolve_path("install_dlls", p.install_bin(), "dlls");
+#endif
         resolve_path("install_loot", p.install_bin(), "loot");
         resolve_path("install_plugins", p.install_bin(), "plugins");
         resolve_path("install_licenses", p.install_bin(), "licenses");
