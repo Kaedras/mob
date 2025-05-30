@@ -120,6 +120,9 @@ namespace mob {
             .add_task<mo>({"modorganizer-tool_inibakery", "inibakery"})
             .add_task<mo>("modorganizer-preview_base")
             .add_task<mo>("modorganizer-diagnose_basic")
+#ifdef __unix__
+            .add_task<mo>("modorganizer-diagnose_case-sensitive-fs")
+#endif
             .add_task<mo>("modorganizer-check_fnis")
             .add_task<mo>("modorganizer-installer_bain")
             .add_task<mo>("modorganizer-installer_manual")
