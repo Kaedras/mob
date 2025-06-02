@@ -155,7 +155,7 @@ namespace mob {
             const int e = errno;
             cx_->error(context::cmd, "exec failed trying to run {}, {}", args,
                        strerror(e));
-            return;
+            exit(e);
         }
 
         // parent
