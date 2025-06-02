@@ -100,9 +100,6 @@ namespace mob {
             const char* value_start = equal + 1;
             std::string value(value_start);
 
-            // the strings contain all sorts of weird stuff, like variables to
-            // keep track of the current directory, those start with an equal sign,
-            // so just ignore them
             if (!key.empty())
                 g_sys_env.set(key, value);
         }
@@ -114,26 +111,36 @@ namespace mob {
 
     void this_env::set(const std::string& k, const std::string& v, env::flags f)
     {
-        const std::string wk = k;
-        std::string wv       = v;
-
+        std::string newV = v;
         switch (f) {
         case env::replace: {
-            setenv(wk.c_str(), wv.c_str(), 1);
+            int result = setenv(k.c_str(), v.c_str(), 1);
+            if (result != 0) {
+                const int e = errno;
+                gcx().bail_out(context::generic, "setenv failed: {}", strerror(e));
+            }
             break;
         }
 
         case env::append: {
             const std::string current = get_impl(k).value_or("");
-            wv                        = current + wv;
-            setenv(wk.c_str(), wv.c_str(), 1);
+            newV                      = current + newV;
+            int result                = setenv(k.c_str(), newV.c_str(), 1);
+            if (result != 0) {
+                const int e = errno;
+                gcx().bail_out(context::generic, "setenv failed: {}", strerror(e));
+            }
             break;
         }
 
         case env::prepend: {
             const std::string current = get_impl(k).value_or("");
-            wv                        = wv + current;
-            setenv(wk.c_str(), wv.c_str(), 1);
+            newV                      = newV + current;
+            int result                = setenv(k.c_str(), newV.c_str(), 1);
+            if (result != 0) {
+                const int e = errno;
+                gcx().bail_out(context::generic, "setenv failed: {}", strerror(e));
+            }
             break;
         }
         }
@@ -142,7 +149,7 @@ namespace mob {
         {
             std::scoped_lock lock(g_sys_env_mutex);
             if (g_sys_env_inited)
-                g_sys_env.set(k, v);
+                g_sys_env.set(k, newV);
         }
     }
 
