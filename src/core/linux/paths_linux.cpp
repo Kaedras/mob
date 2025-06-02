@@ -3,6 +3,7 @@
 #include "../../tasks/tasks.h"
 #include "../../utility/string.h"
 #include "../paths.h"
+#include <ranges>
 
 namespace mob {
 
@@ -12,10 +13,12 @@ namespace mob {
     //
     fs::path find_in_path(std::string_view exe)
     {
-        fs::path path;
-        const char* item;
-        auto paths = getenv("PATH");
-        while ((item = strsep(&paths, ":")) != nullptr) {
+        auto path = getenv("PATH");
+        std::string_view pathView(path);
+        auto paths = pathView | std::views::split(':');
+
+        for (const auto& pathPart : paths) {
+            std::string_view item(pathPart.begin(), pathPart.end());
             std::string fullpath = std::format("{}/{}", item, exe);
             if (fs::exists(fullpath)) {
                 return fullpath;
