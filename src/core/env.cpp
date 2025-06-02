@@ -4,6 +4,7 @@
 #include "../utility.h"
 #include "conf.h"
 #include "context.h"
+#include "nativeString.h"
 #include "op.h"
 #include "process.h"
 
@@ -161,50 +162,34 @@ namespace mob {
         return data_->vars;
     }
 
-    void* env::get_unicode_pointers() const
+    nativeString* env::find(nativeStringView name)
     {
-        if (!data_ || data_->vars.empty())
-            return nullptr;
-
-        // create string if it doesn't exist
-        {
-            std::scoped_lock lock(data_->m);
-            if (data_->environ == nullptr)
-                create_sys();
-        }
-
-        return data_->environ;
+        return const_cast<std::string*>(std::as_const(*this).find(name));
     }
 
-    void env::copy_for_write()
+    const nativeString* env::find(nativeStringView name) const
     {
-        if (own_) {
-            // this is called every time something is about to change; if this
-            // instance already owns the data, the sys strings must still be cleared
-            // out so they're recreated if get_unicode_pointers() is every called
-            data_->clearEnviron();
+        if (!data_)
+            return {};
 
-            return;
+        for (auto& var : data_->vars) {
+            if (_wcsicmp(var.first.c_str(), name.data()) == 0)
+                return &var.second;
         }
 
-        if (data_) {
-            // remember the shared data
-            auto shared = data_;
+        return {};
+    }
 
-            // create a new owned instance
-            data_.reset(new data);
+    void this_env::prepend_to_path(const fs::path& p)
+    {
+        gcx().trace(context::generic, "prepending to PATH: {}", p);
+        set("PATH", path_to_utf8(p) + pathSeparator, env::prepend);
+    }
 
-            // copying
-            std::scoped_lock lock(shared->m);
-            data_->vars = shared->vars;
-        }
-        else {
-            // creating own, empty data
-            data_.reset(new data);
-        }
-
-        // this instance owns the data
-        own_ = true;
+    void this_env::append_to_path(const fs::path& p)
+    {
+        gcx().trace(context::generic, "appending to PATH: {}", p);
+        set("PATH", pathSeparator + path_to_utf8(p), env::append);
     }
 
 }  // namespace mob

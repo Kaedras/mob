@@ -74,20 +74,20 @@ namespace mob {
             map vars;
 
             // environment, see get_unicode_pointers()
-            char** environ = nullptr;
+            char** env = nullptr;
 
             // free malloc'd strings
-            void clearEnviron()
+            void clearEnv()
             {
-                if (environ != nullptr) {
-                    for (char** p = environ; *p; p++) {
-                        free(*p);
+                if (env != nullptr) {
+                    for (int i = 0; env[i] != nullptr; i++) {
+                        free(env[i]);
                     }
-                    free(environ);
-                    environ = nullptr;
+                    free(env);
+                    env = nullptr;
                 }
             }
-            ~data() { clearEnviron(); }
+            ~data() { clearEnv(); }
         };
 
         // shared data

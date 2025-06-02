@@ -39,36 +39,65 @@ namespace mob {
         // By convention, these strings have the form "name=value".
         // The last pointer in this array must have the value NULL
 
-        data_->clearEnviron();
+        data_->clearEnv();
 
-        data_->environ =
+        data_->env =
             static_cast<char**>(malloc((data_->vars.size() + 1) * sizeof(char*)));
 
         int i = 0;
         for (auto&& v : data_->vars) {
-            std::string tmp     = v.first + "=" + v.second;
-            data_->environ[i++] = strdup(tmp.c_str());
+            std::string tmp = v.first + "=" + v.second;
+            data_->env[i++] = strdup(tmp.c_str());
         }
 
-        data_->environ[i] = nullptr;
+        data_->env[i] = nullptr;
     }
 
-    std::string* env::find(std::string_view name)
+    void* env::get_unicode_pointers() const
     {
-        return const_cast<std::string*>(std::as_const(*this).find(name));
-    }
+        if (!data_ || data_->vars.empty())
+            return nullptr;
 
-    const std::string* env::find(std::string_view name) const
-    {
-        if (!data_)
-            return {};
-
-        for (auto itor = data_->vars.begin(); itor != data_->vars.end(); ++itor) {
-            if (strcasecmp(itor->first.c_str(), name.data()) == 0)
-                return &itor->second;
+        // create string if it doesn't exist
+        {
+            std::scoped_lock lock(data_->m);
+            if (data_->env == nullptr)
+                create_sys();
         }
 
-        return {};
+        return data_->env;
+    }
+
+    void env::copy_for_write()
+    {
+        if (own_) {
+            // this is called every time something is about to change; if this
+            // instance already owns the data, the sys strings must still be cleared
+            // out so they're recreated if get_unicode_pointers() is every called
+            if (data_)
+                data_->clearEnv();
+
+            return;
+        }
+
+        if (data_) {
+            // remember the shared data
+            auto shared = data_;
+
+            // create a new owned instance
+            data_ = std::make_shared<data>();
+
+            // copying
+            std::scoped_lock lock(shared->m);
+            data_->vars = shared->vars;
+        }
+        else {
+            // creating own, empty data
+            data_ = std::make_shared<data>();
+        }
+
+        // this instance owns the data
+        own_ = true;
     }
 
     // mob's environment variables are only retrieved once and are kept in sync
@@ -151,18 +180,6 @@ namespace mob {
             if (g_sys_env_inited)
                 g_sys_env.set(k, newV);
         }
-    }
-
-    void this_env::prepend_to_path(const fs::path& p)
-    {
-        gcx().trace(context::generic, "prepending to PATH: {}", p);
-        set("PATH", p.string() + ":", env::prepend);
-    }
-
-    void this_env::append_to_path(const fs::path& p)
-    {
-        gcx().trace(context::generic, "appending to PATH: {}", p);
-        set("PATH", ":" + p.string(), env::append);
     }
 
     std::string this_env::get(const std::string& name)

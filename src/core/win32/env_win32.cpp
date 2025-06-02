@@ -326,6 +326,53 @@ namespace mob {
         return {};
     }
 
+    void* env::get_unicode_pointers() const
+    {
+        if (!data_ || data_->vars.empty())
+            return nullptr;
+
+        // create string if it doesn't exist
+        {
+            std::scoped_lock lock(data_->m);
+            if (data_->sys.empty())
+                create_sys();
+        }
+
+        return (void*)data_->sys.c_str();
+    }
+
+    void env::copy_for_write()
+    {
+        if (own_) {
+            // this is called every time something is about to change; if this
+            // instance already owns the data, the sys strings must still be cleared
+            // out so they're recreated if get_unicode_pointers() is every called
+            if (data_)
+                data_->sys.clear();
+
+            return;
+        }
+
+        if (data_) {
+            // remember the shared data
+            auto shared = data_;
+
+            // create a new owned instance
+            data_.reset(new data);
+
+            // copying
+            std::scoped_lock lock(shared->m);
+            data_->vars = shared->vars;
+        }
+        else {
+            // creating own, empty data
+            data_.reset(new data);
+        }
+
+        // this instance owns the data
+        own_ = true;
+    }
+
     // mob's environment variables are only retrieved once and are kept in sync
     // after that; this must also be thread-safe
     static std::mutex g_sys_env_mutex;

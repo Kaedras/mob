@@ -3,6 +3,7 @@
 #include "../utility.h"
 #include "context.h"
 #include "env.h"
+#include "nativeString.h"
 #include <set>
 
 #ifdef __unix__
@@ -12,10 +13,6 @@ struct STARTUPINFOW {
     int stdOut;
     int stdErr;
 };
-
-using nativeString = std::string;
-#else
-using nativeString = std::wstring;
 #endif
 
 namespace mob {
