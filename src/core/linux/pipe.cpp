@@ -17,7 +17,8 @@ namespace mob {
         if (pipe_ != -1) {
             if (close(pipe_) == -1) {
                 const int e = errno;
-                cx_.error(context::cmd, "failed to close pipe, {}", strerror(e));
+                cx_.error(context::cmd, "failed to close pipe (fd {}), {}", pipe_,
+                          strerror(e));
             }
         }
     }
@@ -133,7 +134,15 @@ namespace mob {
 
     void async_pipe_stdin::close()
     {
-        ::close(pipe_);
+        if (pipe_ == -1) {
+            return;
+        }
+
+        if (::close(pipe_) == -1) {
+            const int e = errno;
+            cx_.error(context::cmd, "failed to close pipe (fd {}), {}", pipe_,
+                      strerror(e));
+        }
     }
 
 }  // namespace mob
