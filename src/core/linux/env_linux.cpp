@@ -53,7 +53,7 @@ namespace mob {
         data_->env[i] = nullptr;
     }
 
-    void* env::get_unicode_pointers() const
+    char** env::get_envp() const
     {
         if (!data_ || data_->vars.empty())
             return nullptr;

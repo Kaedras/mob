@@ -61,10 +61,10 @@ namespace mob {
         //
         map get_map() const;
 
-        // passed to CreateProcess() in the process class; returns a pointer to a
-        // block of utf16 strings, owned by this, created on demand
+        // passed to execle() in the process class; returns a pointer to a
+        // block of strings, owned by this, created on demand
         //
-        void* get_unicode_pointers() const;
+        char** get_envp() const;
 
     private:
         // shared between copies
