@@ -68,7 +68,7 @@ namespace mob {
 
     cmake& cmake::def(const std::string& name, const std::string& value)
     {
-        arg("-D" + name + "=" + value);
+        arg("-D" + name + "=\"" + value + "\"");
         return *this;
     }
 
