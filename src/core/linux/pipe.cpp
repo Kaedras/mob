@@ -110,7 +110,7 @@ namespace mob {
         // keep the end that's written to
         pipe_ = pipeFd[1];
 
-        // give to other end to the new process
+        // give the other end to the new process
         return pipeFd[0];
     }
 
