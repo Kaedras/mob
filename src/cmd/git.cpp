@@ -3,6 +3,12 @@
 #include "../tools/tools.h"
 #include "commands.h"
 
+#ifdef __unix__
+namespace mob::tasks {
+    using usvfs = mob::tasks::overlayfs;
+}
+#endif
+
 namespace mob {
 
     git_command::git_command() : command(requires_options) {}
@@ -221,11 +227,9 @@ namespace mob {
     {
         std::vector<fs::path> v;
 
-#ifdef _WIN32
         // usvfs
         if (fs::exists(tasks::usvfs::source_path()))
             v.push_back(tasks::usvfs::source_path());
-#endif
         const auto super = tasks::modorganizer::super_path();
 
         // all directories in super except for those starting with a dot
