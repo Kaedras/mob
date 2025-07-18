@@ -335,19 +335,19 @@ namespace mob {
         // maximum lengths of the various components below, used for padding
 
         // mob shouldn't run for more than three hours, includes space
-        const std::size_t timestamp_max_length = 8;  // '0000.00 '
+        constexpr std::size_t timestamp_max_length = 8;  // '0000.00 '
 
         // cut task name at 15, +3 because brackets + space at the end
-        const std::size_t longest_task_name    = 15;
-        const std::size_t task_name_max_length = longest_task_name + 3;
+        constexpr std::size_t longest_task_name    = 15;
+        constexpr std::size_t task_name_max_length = longest_task_name + 3;
 
         // cut tool name at 7, +3 because brackets + space at the end
-        const std::size_t longest_tool_name    = 7;
-        const std::size_t tool_name_max_length = longest_tool_name + 3;
+        constexpr std::size_t longest_tool_name    = 7;
+        constexpr std::size_t tool_name_max_length = longest_tool_name + 3;
 
         // cut reason name at 7, +3 because brackets + space at the end
-        const std::size_t longest_reason    = 7;
-        const std::size_t reason_max_length = longest_reason + 3;
+        constexpr std::size_t longest_reason    = 7;
+        constexpr std::size_t reason_max_length = longest_reason + 3;
 
         // keep a thread local string to avoid memory allocations
         static thread_local std::string ls;
