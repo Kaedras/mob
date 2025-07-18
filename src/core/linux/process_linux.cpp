@@ -135,7 +135,11 @@ namespace mob {
         // child
         if (pid == 0) {
             if (!cwd.empty()) {
-                chdir(cwd.c_str());
+                if (chdir(cwd.c_str()) == -1) {
+                    const int e = errno;
+                    cx_->error(context::cmd, "failed to change directory to '{}', {}",
+                               cwd, strerror(e));
+                }
             }
 
             // set stdin
@@ -167,8 +171,13 @@ namespace mob {
 
         cx_->trace(context::cmd, "pid {}", pid);
 
-        // pid fd
-        impl_.handle.reset(pidfd_open(pid, 0));
+        // open pid fd
+        int pidFd = pidfd_open(pid, 0);
+        if (pidFd == -1) {
+            const int e = errno;
+            cx_->error(context::cmd, "failed to open pidfd, {}", strerror(e));
+        }
+        impl_.handle.reset(pidFd);
     }
 
     nativeString process::make_cmd_args(const std::string& what) const
