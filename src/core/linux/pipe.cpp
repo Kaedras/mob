@@ -93,6 +93,7 @@ namespace mob {
             cx_.bail_out(context::cmd, "async_pipe_stdout read failed, {}",
                          strerror(e));
         }
+        return {};
     }
 
     async_pipe_stdin::async_pipe_stdin(const context& cx) : cx_(cx), pipe_(-1) {}
