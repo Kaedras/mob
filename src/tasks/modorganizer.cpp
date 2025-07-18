@@ -3,8 +3,10 @@
 
 #ifdef __unix__
 static constexpr auto defaultGenerator = mob::cmake::generators::ninjaMultiConfig;
+static constexpr std::string PRESET    = "linux";
 #else
 static constexpr auto defaultGenerator = mob::cmake::generators::vs;
+static constexpr std::string PRESET    = "vs2022-windows";
 #endif
 
 namespace mob::tasks {
@@ -187,7 +189,7 @@ namespace mob::tasks {
                      .def("CMAKE_INSTALL_PREFIX:PATH", conf().path().install())
                      .def("CMAKE_PREFIX_PATH", cmake_prefix_path())
                      .configuration_types({task_conf().configuration()})
-                     .preset("vs2022-windows")
+                     .preset(PRESET)
                      .root(source_path()));
 
         // run cmake --build with default target
