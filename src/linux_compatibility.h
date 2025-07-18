@@ -41,18 +41,18 @@ inline void DebugBreak()
 
 class FdCloser {
 public:
-    FdCloser() : m_fd(-1) {}
-    FdCloser(int fd) : m_fd(fd) {}
-    FdCloser(const FdCloser& other) : m_fd(other.m_fd) {}
+    FdCloser() noexcept : m_fd(-1) {}
+    FdCloser(int fd) noexcept : m_fd(fd) {}
+    FdCloser(const FdCloser& other) noexcept : m_fd(other.m_fd) {}
 
-    ~FdCloser()
+    ~FdCloser() noexcept
     {
         if (m_fd != -1) {
             close(m_fd);
         }
     }
 
-    FdCloser& operator=(FdCloser&& other)
+    FdCloser& operator=(FdCloser&& other) noexcept
     {
         if (m_fd != other.m_fd) {
             if (m_fd != -1) {
@@ -63,7 +63,7 @@ public:
         return *this;
     }
 
-    FdCloser& operator=(int fd)
+    FdCloser& operator=(int fd) noexcept
     {
         // don't close if m_fd and fd are identical
         if (m_fd != fd) {
@@ -77,8 +77,8 @@ public:
 
     operator bool() const noexcept { return m_fd != -1; }
 
-    int get() const { return m_fd; }
-    void reset(int value = -1)
+    int get() const noexcept { return m_fd; }
+    void reset(int value = -1) noexcept
     {
         // don't close if m_fd and fd are identical
         if (m_fd == value) {
@@ -91,7 +91,7 @@ public:
         m_fd = value;
     }
 
-    int release()
+    int release() noexcept
     {
         int tmp = m_fd;
         m_fd    = -1;
