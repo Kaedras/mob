@@ -4,19 +4,14 @@
 
 namespace mob::tasks {
 
-    namespace {
+    std::string overlayfs::cmake_prefix_path()
+    {
+        return conf().path().qt_install().string() + ";" +
+               (modorganizer::super_path() / "cmake_common").string() + ";" +
+               (conf().path().install() / "lib" / "cmake").string();
+    }
 
-        cmake create_cmake_tool(arch a, config config, cmake::ops o = cmake::install)
-        {
-            return std::move(cmake(o)
-                                 .configuration(config)
-                                 .root(overlayfs::source_path())
-                                 .prefix(conf().path().install()));
-        }
-
-    }  // namespace
-
-    overlayfs::overlayfs() : basic_task("overlayfs") {}
+    overlayfs::overlayfs() : basic_task("overlayfs"), repo_("mo2-overlayfs") {}
 
     std::string overlayfs::version()
     {
@@ -26,6 +21,21 @@ namespace mob::tasks {
     bool overlayfs::prebuilt()
     {
         return false;
+    }
+
+    url overlayfs::git_url() const
+    {
+        return make_git_url(task_conf().mo_org(), repo_);
+    }
+
+    std::string overlayfs::org() const
+    {
+        return task_conf().mo_org();
+    }
+
+    std::string overlayfs::repo() const
+    {
+        return repo_;
     }
 
     fs::path overlayfs::source_path()
@@ -41,22 +51,48 @@ namespace mob::tasks {
         }
 
         if (is_set(c, clean::rebuild)) {
-            run_tool(create_cmake_tool(arch::x64, config::release, cmake::clean));
+            run_tool(cmake(cmake::clean).root(source_path()));
         }
     }
 
     void overlayfs::do_fetch()
     {
-        run_tool(make_git()
-                     .url(make_git_url("Kaedras", "mo2-overlayfs"))
-                     .branch(version())
-                     .root(source_path()));
+        run_tool(make_git().url(git_url()).branch(version()).root(source_path()));
     }
 
     void overlayfs::do_build_and_install()
     {
-        auto tool = create_cmake_tool(arch::x64, config::release);
-        run_tool(tool);
+        if (!exists(source_path() / "CMakeLists.txt")) {
+            gcx().bail_out(context::generic, "{} has no CMakeLists.txt, not building",
+                           repo_);
+
+            return;
+        }
+
+        // there must be a CMakePresets.json otherwise
+        // we cannot build
+        if (!exists(source_path() / "CMakePresets.json")) {
+            gcx().bail_out(context::generic,
+                           "{} has no CMakePresets.txt, aborting build", repo_);
+        }
+
+        run_tool(cmake(cmake::generate)
+                     .generator(cmake::ninjaMultiConfig)
+                     .def("CMAKE_INSTALL_PREFIX:PATH", conf().path().install())
+                     .def("CMAKE_PREFIX_PATH", cmake_prefix_path())
+                     .configuration_types({task_conf().configuration()})
+                     .preset("linux")
+                     .root(source_path()));
+
+        run_tool(cmake(cmake::build)
+                     .root(source_path())
+                     .arg("--parallel")
+                     .arg(std::to_string(std::thread::hardware_concurrency()))
+                     .configuration(task_conf().configuration()));
+
+        run_tool(cmake(cmake::install)
+                     .root(source_path())
+                     .configuration(task_conf().configuration()));
     }
 
 }  // namespace mob::tasks
