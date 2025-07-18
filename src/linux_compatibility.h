@@ -65,11 +65,13 @@ public:
 
     FdCloser& operator=(int fd)
     {
-        if (m_fd != -1) {
-            close(m_fd);
+        // don't close if m_fd and fd are identical
+        if (m_fd != fd) {
+            if (m_fd != -1) {
+                close(m_fd);
+            }
+            m_fd = fd;
         }
-        m_fd = fd;
-
         return *this;
     }
 
@@ -78,7 +80,12 @@ public:
     int get() const { return m_fd; }
     void reset(int value = -1)
     {
-        if (m_fd != -1) {
+        // don't close if m_fd and fd are identical
+        if (m_fd == value) {
+            return;
+        }
+
+        if (isValid()) {
             close(m_fd);
         }
         m_fd = value;
