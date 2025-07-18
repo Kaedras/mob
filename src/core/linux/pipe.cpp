@@ -14,7 +14,12 @@ namespace mob {
 
     async_pipe_stdout::~async_pipe_stdout()
     {
-        close(pipe_);
+        if (pipe_ != -1) {
+            if (close(pipe_) == -1) {
+                const int e = errno;
+                cx_.error(context::cmd, "failed to close pipe, {}", strerror(e));
+            }
+        }
     }
 
     bool async_pipe_stdout::closed() const
