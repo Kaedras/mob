@@ -9,9 +9,9 @@
 
 namespace mob {
 
-    env env::vs(arch a)
+    env env::vs(arch)
     {
-        return {};
+        return this_env::get();
     }
 
     env& env::set(std::string_view k, std::string_view v, flags f)
