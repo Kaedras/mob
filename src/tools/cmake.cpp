@@ -238,7 +238,9 @@ namespace mob {
         }
 
         p.env(env::vs(arch_)
+#ifdef _MSC_VER
                   .set("CXXFLAGS", "/wd4566")
+#endif
                   .set("VCPKG_ROOT", absolute(conf().path().vcpkg()).string()))
             .cwd(preset_.empty() ? build_path() : root_);
 
