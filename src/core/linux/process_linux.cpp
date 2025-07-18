@@ -49,7 +49,7 @@ namespace mob {
         switch (io_.out.flags) {
         case forward_to_log:
         case keep_in_string: {
-            impl_.stdout_pipe = std::make_unique<async_pipe_stdout>((context)*cx_);
+            impl_.stdout_pipe = std::make_unique<async_pipe_stdout>(*cx_);
             h                 = impl_.stdout_pipe->create();
             si.stdOut         = h.get();
             break;
