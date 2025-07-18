@@ -138,12 +138,17 @@ namespace mob {
                 chdir(cwd.c_str());
             }
 
+            // set stdin
             if (dup2(si.stdIn, 0) == -1) {
                 cx_->error(context::cmd, "failed to redirect stdIn");
             }
+
+            // set stdout
             if (dup2(si.stdOut, 1) == -1) {
                 cx_->error(context::cmd, "failed to redirect stdOut");
             }
+
+            // set stderr
             if (dup2(si.stdErr, 2) == -1) {
                 cx_->error(context::cmd, "failed to redirect stdErr");
             }
@@ -159,6 +164,7 @@ namespace mob {
         }
 
         // parent
+
         cx_->trace(context::cmd, "pid {}", pid);
 
         // pid fd
