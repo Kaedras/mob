@@ -43,12 +43,24 @@ class FdCloser {
 public:
     FdCloser() : m_fd(-1) {}
     FdCloser(int fd) : m_fd(fd) {}
+    FdCloser(const FdCloser& other) : m_fd(other.m_fd) {}
 
     ~FdCloser()
     {
         if (m_fd != -1) {
             close(m_fd);
         }
+    }
+
+    FdCloser& operator=(FdCloser&& other)
+    {
+        if (m_fd != other.m_fd) {
+            if (m_fd != -1) {
+                close(m_fd);
+            }
+            m_fd = other.m_fd;
+        }
+        return *this;
     }
 
     FdCloser& operator=(int fd)
