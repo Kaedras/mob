@@ -95,7 +95,7 @@ namespace mob {
         }
     }
 
-    async_pipe_stdin::async_pipe_stdin(const context& cx) : cx_(cx) {}
+    async_pipe_stdin::async_pipe_stdin(const context& cx) : cx_(cx), pipe_(-1) {}
 
     int async_pipe_stdin::create()
     {
