@@ -191,7 +191,7 @@ namespace mob {
                      .binary(binary());
 
         if (!preset_.empty()) {
-            p = p.arg("--preset").arg(preset_);
+            p.arg("--preset").arg(preset_);
         }
 
         if (!config_types_.empty()) {
@@ -201,13 +201,13 @@ namespace mob {
                     types += ";";
                 types += config_to_string(c);
             }
-            p = p.arg("-DCMAKE_CONFIGURATION_TYPES=" + types);
+            p.arg("-DCMAKE_CONFIGURATION_TYPES=" + types);
         }
 
-        p = p.arg("-DCMAKE_INSTALL_MESSAGE=" +
-                  conf_cmake::to_string(conf().cmake().install_message()))
-                .arg("--log-level=ERROR")
-                .arg("--no-warn-unused-cli");
+        p.arg("-DCMAKE_INSTALL_MESSAGE=" +
+              conf_cmake::to_string(conf().cmake().install_message()))
+            .arg("--log-level=ERROR")
+            .arg("--no-warn-unused-cli");
 
         // prefix
         if (!prefix_.empty())
