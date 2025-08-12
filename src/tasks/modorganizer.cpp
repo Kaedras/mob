@@ -203,9 +203,8 @@ namespace mob::tasks {
                      .configuration(task_conf().configuration()));
 
         // run cmake --install
-        run_tool(cmake(cmake::build)
+        run_tool(cmake(cmake::install)
                      .root(source_path())
-                     .targets("INSTALL")
                      .configuration(task_conf().configuration()));
     }
 
