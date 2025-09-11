@@ -7,30 +7,34 @@ CONFIG="Release"
 
 usage() {
   echo ""
-  echo "Usage: $0 [-v] [-c <config>]"
+  echo "Usage: $0 [-Verbose] [-Config <config>]"
   echo "Options:"
-  echo "  -v            Enable verbose output"
-  echo "  -c <config>   Set the configuration (Debug, RelWithDebInfo, Release)"
+  echo "  -Verbose           Enable verbose output"
+  echo "  -Config <config>   Set the configuration (Debug, RelWithDebInfo, Release)"
   exit 1
 }
 
-while getopts "vc:" opt; do
-  case "$opt" in
-    v)
+# Parse arguments
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -Verbose)
       VERBOSE=1
+      shift 1
       ;;
-    c)
-      case "$OPTARG" in
+    -Config)
+      case "$2" in
         Debug|RelWithDebInfo|Release)
-          CONFIG="$OPTARG"
+          CONFIG="$2"
           ;;
         *)
-          echo "Invalid configuration: $OPTARG"
+          echo "Invalid configuration: $2"
           usage
           ;;
       esac
+      shift 2
       ;;
     *)
+      echo "Unknown option: $1"
       usage
       ;;
   esac
