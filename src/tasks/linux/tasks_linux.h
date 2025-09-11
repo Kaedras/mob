@@ -1,11 +1,7 @@
 #pragma once
 
-#include "../../core/conf.h"
-#include "../../core/op.h"
 #include "../../net.h"
-#include "../../tools/tools.h"
-#include "../../utility.h"
-#include <set>
+#include "../task.h"
 
 namespace mob::tasks {
     // header containing linux-specific tasks

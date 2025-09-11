@@ -2,10 +2,6 @@
 
 #include <filesystem>
 
-#ifdef __unix__
-#include "../linux_compatibility.h"
-#endif
-
 namespace fs = std::filesystem;
 
 namespace mob {

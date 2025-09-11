@@ -4,6 +4,10 @@
 #include "./formatters.h"
 #include <iostream>
 
+#ifdef __unix__
+#include "linux_compatibility.h"
+#endif
+
 namespace mob {
 
     class tool;

@@ -1,6 +1,7 @@
 #include "../threading.h"
 #include "../../utility.h"
 #include "../pch.h"
+#include "linux_compatibility.h"
 #include <execinfo.h>
 
 namespace mob {
@@ -36,7 +37,7 @@ namespace mob {
         free(strings);
 
         if (IsDebuggerPresent())
-            raise(SIGTRAP);
+            DebugBreak();
         else
             exit(1);
     }
