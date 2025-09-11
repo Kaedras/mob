@@ -7,7 +7,7 @@ CONFIG="Release"
 
 usage() {
   echo ""
-  echo "Usage: $0 [-Verbose] [-Config <config>]"
+  echo "Usage: $(basename $0) [-Verbose] [-Config <config>]"
   echo "Options:"
   echo "  -Verbose           Enable verbose output"
   echo "  -Config <config>   Set the configuration (Debug, RelWithDebInfo, Release)"
