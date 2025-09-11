@@ -1,5 +1,5 @@
-#ifndef PIPE_LINUX_H
-#define PIPE_LINUX_H
+#ifndef PIPE_H
+#define PIPE_H
 
 #include "../../utility.h"
 #include <cstddef>
@@ -73,4 +73,4 @@ namespace mob {
     };
 }  // namespace mob
 
-#endif  // PIPE_LINUX_H
+#endif  // PIPE_H

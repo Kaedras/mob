@@ -1,7 +1,7 @@
 #include "pch.h"
+#include "pipe.h"
 #include "../context.h"
 #include "../process.h"
-#include "pipe_linux.h"
 
 namespace mob {
 
