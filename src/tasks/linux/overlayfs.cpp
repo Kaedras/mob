@@ -11,7 +11,7 @@ namespace mob::tasks {
                (conf().path().install() / "lib" / "cmake").string();
     }
 
-    overlayfs::overlayfs() : basic_task("overlayfs"), repo_("mo2-overlayfs") {}
+    overlayfs::overlayfs() : basic_task("overlayfs"), repo_("modorganizer-overlayfs") {}
 
     std::string overlayfs::version()
     {
