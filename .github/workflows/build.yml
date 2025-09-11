@@ -8,9 +8,21 @@ on:
 
 jobs:
   build:
-    runs-on: windows-2022
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ windows-2022, ubuntu-24.04 ]
+        include:
+          - os: windows-2022
+            shell: pwsh
+            ext: ps1
+          - os: ubuntu-24.04
+            shell: bash
+            ext: sh
+
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       - name: Build Mob
-        shell: pwsh
-        run: ./bootstrap.ps1 -Verbose
+        shell: ${{ matrix.shell }}
+        run: ./bootstrap.${{ matrix.ext }} -Verbose
