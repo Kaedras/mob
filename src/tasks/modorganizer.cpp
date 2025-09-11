@@ -4,9 +4,11 @@
 #ifdef __unix__
 static constexpr auto defaultGenerator = mob::cmake::generators::ninjaMultiConfig;
 static constexpr std::string PRESET    = "linux";
+static constexpr std::string TARGET    = "install";
 #else
 static constexpr auto defaultGenerator = mob::cmake::generators::vs;
 static constexpr std::string PRESET    = "vs2022-windows";
+static constexpr std::string TARGET    = "INSTALL";
 #endif
 
 namespace mob::tasks {
@@ -203,8 +205,9 @@ namespace mob::tasks {
                      .configuration(task_conf().configuration()));
 
         // run cmake --install
-        run_tool(cmake(cmake::install)
+        run_tool(cmake(cmake::build)
                      .root(source_path())
+                     .targets(TARGET)
                      .configuration(task_conf().configuration()));
     }
 
