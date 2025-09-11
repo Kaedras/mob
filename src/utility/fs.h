@@ -17,7 +17,19 @@ namespace mob {
     fs::path make_temp_file();
 
 #ifdef __unix__
-    using handle_ptr = FdCloser;
+    class fd {
+    public:
+        fd() : m_fd(-1) {}
+        fd(int fd) : m_fd(fd) {}
+        int get() const { return m_fd; }
+        void reset(int fd) { m_fd = fd; }
+        operator bool() const noexcept { return m_fd != -1; }
+
+    private:
+        int m_fd;
+    };
+
+    using handle_ptr = fd;
 #else
     struct handle_closer {
         using pointer = HANDLE;
