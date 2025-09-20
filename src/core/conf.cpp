@@ -12,7 +12,7 @@
 #ifdef __unix__
 inline const wchar_t* GetCommandLineW()
 {
-    // stub
+#warning STUB!
     return L"";
 }
 #endif
