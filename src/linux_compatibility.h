@@ -2,6 +2,7 @@
 
 #include <cerrno>
 #include <csignal>
+#include <cstring>
 #include <fstream>
 #include <poll.h>
 #include <sys/types.h>
@@ -43,6 +44,7 @@ inline void CloseHandle(int h)
 {
     close(h);
 }
+
 inline int GetLastError()
 {
     return errno;
