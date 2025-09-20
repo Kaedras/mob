@@ -124,34 +124,34 @@ namespace mob::op {
         }
 
         std::regex re(regexPattern);
-        return std::regex_match(file.c_str(), re);
+        return std::regex_match(file.string(), re);
     }
 
     bool wildcard_match(const std::filesystem::path& file, const std::wstring& spec)
     {
         std::wstring regexPattern;
-        for (const char ch : spec) {
+        for (const wchar_t ch : spec) {
             switch (ch) {
-            case '*':
+            case L'*':
                 regexPattern += L".*";
                 break;
-            case '?':
+            case L'?':
                 regexPattern += L".{1}";
                 break;
 
-            case '[':
-            case ']':
-            case '{':
-            case '}':
-            case '(':
-            case ')':
-            case '\\':
-            case '+':
-            case '|':
-            case '^':
-            case '$':
-            case '.':
-                regexPattern += '\\';
+            case L'[':
+            case L']':
+            case L'{':
+            case L'}':
+            case L'(':
+            case L')':
+            case L'\\':
+            case L'+':
+            case L'|':
+            case L'^':
+            case L'$':
+            case L'.':
+                regexPattern += L'\\';
                 [[fallthrough]];
             default:
                 regexPattern += ch;
@@ -661,7 +661,7 @@ namespace mob::op {
 
             const std::string scut = s.substr(0, prefix.size());
 
-            if (strcasecmp(scut.c_str(), prefix.c_str()) != 0)
+            if (_stricmp(scut.c_str(), prefix.c_str()) != 0)
                 return false;
 
             return true;

@@ -2,9 +2,11 @@
 #include "../../tasks/task_manager.h"
 #include "../../tasks/tasks.h"
 #include "../../utility/string.h"
-#include "paths.h"
+#include "../paths.h"
 
 namespace mob {
+
+    extern bool try_parts(fs::path& check, const std::vector<std::string>& parts);
 
     // returns a path to the given known folder, empty on error
     //

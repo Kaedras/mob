@@ -272,7 +272,7 @@ namespace mob {
 
         cx_.trace(context::net, "opening {}", path_);
 
-        FILE* f = fopen(path_.native().c_str(), "wb");
+        FILE* f = fopen(path_.string().c_str(), "wb");
 
         if (f == nullptr) {
             const auto e = GetLastError();

@@ -187,7 +187,7 @@ namespace mob {
             if (!exists(p.parent_path()))
                 op::create_directories(gcx(), mob::conf().path().prefix());
 
-            FILE* f = fopen(p.native().c_str(), "wt");
+            FILE* f = fopen(p.string().c_str(), "wt");
 
             if (f == nullptr) {
                 const auto e = GetLastError();

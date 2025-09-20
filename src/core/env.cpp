@@ -9,11 +9,13 @@
 #include "process.h"
 
 #ifdef __unix__
-#define PATH "PATH"
-static constexpr auto pathSeparator = ":";
+static constexpr const char* PATH    = "PATH";
+static constexpr auto pathSeparator  = ":";
+static constexpr auto pathSeparatorS = ":";
 #else
-#define PATH L"PATH"
-static constexpr auto pathSeparator = L";";
+static constexpr const wchar_t* PATH = L"PATH";
+static constexpr auto pathSeparator  = L";";
+static constexpr auto pathSeparatorS = ";";
 #endif
 
 namespace mob {
@@ -164,7 +166,7 @@ namespace mob {
 
     nativeString* env::find(nativeStringView name)
     {
-        return const_cast<std::string*>(std::as_const(*this).find(name));
+        return const_cast<nativeString*>(std::as_const(*this).find(name));
     }
 
     const nativeString* env::find(nativeStringView name) const
@@ -183,13 +185,13 @@ namespace mob {
     void this_env::prepend_to_path(const fs::path& p)
     {
         gcx().trace(context::generic, "prepending to PATH: {}", p);
-        set("PATH", path_to_utf8(p) + pathSeparator, env::prepend);
+        set("PATH", path_to_utf8(p) + pathSeparatorS, env::prepend);
     }
 
     void this_env::append_to_path(const fs::path& p)
     {
         gcx().trace(context::generic, "appending to PATH: {}", p);
-        set("PATH", pathSeparator + path_to_utf8(p), env::append);
+        set("PATH", pathSeparatorS + path_to_utf8(p), env::append);
     }
 
 }  // namespace mob

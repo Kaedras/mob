@@ -70,3 +70,8 @@ inline bool GetExitCodeProcess(int pidFd, int* exitCode)
     *exitCode = info.si_status;
     return true;
 }
+
+inline int _stricmp(const char* str1, const char* str2)
+{
+    return strcasecmp(str1, str2);
+}
