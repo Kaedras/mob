@@ -13,15 +13,13 @@ jobs:
       matrix:
         include:
           - os: windows-2022
-            shell: pwsh
             ext: ps1
           - os: ubuntu-24.04
-            shell: bash
             ext: sh
 
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       - name: Build Mob
-        shell: ${{ matrix.shell }}
+        shell: ${{ runner.os == 'Windows' && 'pwsh' || 'bash' }}
         run: ./bootstrap.${{ matrix.ext }} -Verbose
