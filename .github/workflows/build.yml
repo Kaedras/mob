@@ -21,5 +21,4 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Build Mob
-        shell: ${{ runner.os == 'Windows' && 'pwsh' || 'bash' }}
         run: ./bootstrap.${{ matrix.ext }} -Verbose
