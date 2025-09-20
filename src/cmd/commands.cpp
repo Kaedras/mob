@@ -7,6 +7,7 @@
 #include "../tools/tools.h"
 #include "../utility.h"
 #include "../utility/threading.h"
+#include <csignal>
 
 namespace mob {
 
