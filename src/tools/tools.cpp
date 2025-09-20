@@ -10,7 +10,7 @@ namespace mob {
     }
 
     tool::tool(tool&& t)
-        : name_(std::move(t.name_)), interrupted_(t.interrupted_.load())
+        : cx_(t.cx_), name_(std::move(t.name_)), interrupted_(t.interrupted_.load())
     {
     }
 
