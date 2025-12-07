@@ -9,6 +9,16 @@
 
 namespace mob {
 
+    env env::vs_x86()
+    {
+        return vs(arch::dont_care);
+    }
+
+    env env::vs_x64()
+    {
+        return vs(arch::dont_care);
+    }
+
     env env::vs(arch)
     {
         return this_env::get();
