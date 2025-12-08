@@ -76,4 +76,22 @@ namespace mob {
         static std::string archiveFormatToString(archive_format af);
     };
 
+    // tool that runs linuxdeploy to create the appimage
+    //
+    class linuxdeploy : public basic_process_runner {
+    public:
+        // path to linuxdeploy-x86_64.AppImage
+        //
+        static fs::path binary();
+
+        // linuxdeploy tool
+        //
+        linuxdeploy();
+
+    protected:
+        // runs linuxdeploy
+        //
+        void do_run() override;
+    };
+
 }  // namespace mob

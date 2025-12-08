@@ -524,8 +524,8 @@ namespace mob {
         set_path_if_empty("qt_install", find_qt);
         set_path_if_empty("temp_dir", find_temp_dir);
         set_path_if_empty("licenses", find_in_root("licenses"));
-        set_path_if_empty("qt_bin", qt::installation_path() / "bin");
 #ifdef _WIN32
+        set_path_if_empty("qt_bin", qt::installation_path() / "bin");
         set_path_if_empty("qt_translations", qt::installation_path() / "translations");
 #endif
 
@@ -540,15 +540,20 @@ namespace mob {
 
         resolve_path("cache", p.prefix(), "downloads");
         resolve_path("build", p.prefix(), "build");
+#ifdef _WIN32
         resolve_path("install", p.prefix(), "install");
+#else
+        resolve_path("install", p.prefix(), "install/usr");
+        resolve_path("install_appimage", p.prefix(), "AppDir");
+#endif
         resolve_path("install_installer", p.install(), "installer");
         resolve_path("install_bin", p.install(), "bin");
         resolve_path("install_libs", p.install(), "lib");
         resolve_path("install_pdbs", p.install(), "pdb");
-#ifdef __unix__
-        resolve_path("install_dlls", p.install_bin(), "lib");
-#else
+#ifdef _WIN32
         resolve_path("install_dlls", p.install_bin(), "dlls");
+#else
+        resolve_path("install_dlls", p.install_bin(), "lib");
 #endif
         resolve_path("install_plugins", p.install_bin(), "plugins");
         resolve_path("install_licenses", p.install_bin(), "licenses");

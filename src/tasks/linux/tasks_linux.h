@@ -42,4 +42,19 @@ namespace mob::tasks {
         std::string project_;
     };
 
+    class appimage : public basic_task<appimage> {
+    public:
+        appimage();
+
+        static std::string version();
+        static bool prebuilt();
+
+        static fs::path source_path();
+
+    protected:
+        void do_clean(clean c) override;
+        void do_fetch() override;
+        void do_build_and_install() override;
+    };
+
 }  // namespace mob::tasks

@@ -251,6 +251,9 @@ namespace mob {
 
         VALUE(install);
         VALUE(install_installer);
+#ifdef __unix__
+        VALUE(install_appimage);
+#endif
         VALUE(install_bin);
         VALUE(install_libs);
         VALUE(install_pdbs);

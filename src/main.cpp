@@ -87,6 +87,7 @@ namespace mob {
         // other tasks
         add_task<translations>();
         add_task<installer>();
+        add_task<appimage>();
     }
 
     // figures out which command to run and returns it, if any
