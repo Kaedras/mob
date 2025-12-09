@@ -84,6 +84,22 @@ namespace mob {
         //
         static fs::path binary();
 
+        // output path
+        //
+        linuxdeploy& output(const fs::path& p);
+
+        // appdir path
+        //
+        linuxdeploy& appdir(const fs::path& p);
+
+        // path to executable
+        //
+        linuxdeploy& executable(const fs::path& p);
+
+        linuxdeploy& icon(const fs::path& p);
+
+        linuxdeploy& nostrip();
+
         // linuxdeploy tool
         //
         linuxdeploy();
@@ -92,6 +108,18 @@ namespace mob {
         // runs linuxdeploy
         //
         void do_run() override;
+
+    private:
+        // path to the output file
+        fs::path output_;
+        // path to the executable file
+        fs::path executable_;
+        // path to the icon
+        fs::path icon_;
+        // appdir path
+        fs::path appdir_;
+        // nostrip
+        bool nostrip_ = false;
     };
 
 }  // namespace mob
