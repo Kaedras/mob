@@ -148,17 +148,17 @@ namespace mob {
             }
 
             // set stdin
-            if (dup2(si.stdIn, 0) == -1) {
+            if (dup2(si.stdIn, STDIN_FILENO) == -1) {
                 cx_->error(context::cmd, "failed to redirect stdIn");
             }
 
             // set stdout
-            if (dup2(si.stdOut, 1) == -1) {
+            if (dup2(si.stdOut, STDOUT_FILENO) == -1) {
                 cx_->error(context::cmd, "failed to redirect stdOut");
             }
 
             // set stderr
-            if (dup2(si.stdErr, 2) == -1) {
+            if (dup2(si.stdErr, STDERR_FILENO) == -1) {
                 cx_->error(context::cmd, "failed to redirect stdErr");
             }
 
