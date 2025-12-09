@@ -47,6 +47,8 @@
 #include <array>
 #include <atomic>
 #include <charconv>
+#include <condition_variable>
+#include <csignal>
 #include <filesystem>
 #include <format>
 #include <fstream>
@@ -59,7 +61,9 @@
 #include <set>
 #include <sstream>
 #include <string>
+#include <string_view>
 #include <thread>
+#include <type_traits>
 #include <vector>
 
 #ifdef _WIN32
@@ -67,6 +71,16 @@
 #include <imagehlp.h>
 #include <io.h>
 #include <shlwapi.h>
+#endif
+
+#ifdef __unix__
+#include <execinfo.h>
+#include <sys/poll.h>
+#include <sys/stat.h>
+
+extern "C" {
+#include <sys/pidfd.h>
+}
 #endif
 
 #include <fcntl.h>
