@@ -21,6 +21,7 @@ namespace mob {
 
     process& process::binary(const fs::path& p)
     {
+        // remove any `.exe` file extension to call e.g. `git` instead of `git.exe`
         if (p.extension() == ".exe") {
             exec_.bin = p.parent_path() / p.stem();
         }
