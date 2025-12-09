@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "../commands.h"
 
 namespace mob {

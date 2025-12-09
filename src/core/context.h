@@ -5,7 +5,7 @@
 #include <iostream>
 
 #ifdef __unix__
-#include "linux_compatibility.h"
+#include "../linux_compatibility.h"
 #endif
 
 namespace mob {

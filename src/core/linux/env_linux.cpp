@@ -1,4 +1,4 @@
-#include "pch.h"
+#include "../../nativeString.h"
 #include "../../tools/tools.h"
 #include "../../utility.h"
 #include "../conf.h"

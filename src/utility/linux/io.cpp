@@ -1,5 +1,4 @@
 #include "../io.h"
-#include "../pch.h"
 #include "../string.h"
 
 namespace mob {

@@ -1,10 +1,9 @@
-#include "pch.h"
 #include "env.h"
+#include "../nativeString.h"
 #include "../tools/tools.h"
 #include "../utility.h"
 #include "conf.h"
 #include "context.h"
-#include "nativeString.h"
 #include "op.h"
 #include "process.h"
 

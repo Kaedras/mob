@@ -1,9 +1,9 @@
 #pragma once
 
+#include "../nativeString.h"
 #include "../utility.h"
 #include "context.h"
 #include "env.h"
-#include "nativeString.h"
 #include <set>
 
 #ifdef __unix__
