@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "op.h"
 #include "../tools/tools.h"
 #include "../utility.h"

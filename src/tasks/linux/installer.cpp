@@ -1,4 +1,3 @@
-#include "../pch.h"
 #include "../tasks.h"
 
 #define VERSION std::string("3.0.0")

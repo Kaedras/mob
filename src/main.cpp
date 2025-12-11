@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "cmd/commands.h"
 #include "core/conf.h"
 #include "core/op.h"

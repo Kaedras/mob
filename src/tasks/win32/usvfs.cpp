@@ -1,4 +1,3 @@
-#include "../pch.h"
 #include "../tasks.h"
 
 // note that usvfs is the only project that has to be built for both 32- and

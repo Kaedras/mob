@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "paths.h"
 #include "../tasks/task_manager.h"
 #include "../tasks/tasks.h"

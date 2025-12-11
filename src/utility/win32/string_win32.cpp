@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "../../utility.h"
 #include "../string.h"
 

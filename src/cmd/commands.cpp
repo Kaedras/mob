@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "commands.h"
 #include "../core/conf.h"
 #include "../core/ini.h"
