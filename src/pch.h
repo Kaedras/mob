@@ -77,6 +77,7 @@
 #include <execinfo.h>
 #include <sys/poll.h>
 #include <sys/stat.h>
+#include <unistd.h>
 
 extern "C" {
 #include <sys/pidfd.h>
