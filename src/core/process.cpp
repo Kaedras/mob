@@ -10,12 +10,6 @@
 #endif
 
 namespace mob {
-#ifdef __unix__
-    extern file_ptr get_bit_bucket();
-#else
-    extern HANDLE get_bit_bucket();
-#endif
-
     process::filter::filter(std::string_view line, context::reason r, context::level lv)
         : line(line), r(r), lv(lv), discard(false)
     {
