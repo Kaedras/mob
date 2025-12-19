@@ -22,6 +22,12 @@ namespace mob {
         return *this;
     }
 
+    linuxdeploy& linuxdeploy::iconFileName(const std::string& p)
+    {
+        iconFileName_ = p;
+        return *this;
+    }
+
     linuxdeploy& linuxdeploy::executable(const fs::path& p)
     {
         executable_ = p;
@@ -61,7 +67,7 @@ namespace mob {
                              .arg("--appdir", appdir_)
                              .arg("--executable", executable_)
                              .arg("--icon-file", icon_)
-                             .arg("--icon-filename", "ModOrganizer")
+                             .arg("--icon-filename", iconFileName_)
                              .arg("--create-desktop-file")
                              .arg("--output", "appimage"));
     }

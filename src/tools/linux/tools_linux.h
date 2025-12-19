@@ -92,6 +92,10 @@ namespace mob {
         //
         linuxdeploy& appdir(const fs::path& p);
 
+        // icon file name
+        //
+        linuxdeploy& iconFileName(const std::string& p);
+
         // path to executable
         //
         linuxdeploy& executable(const fs::path& p);
@@ -118,6 +122,8 @@ namespace mob {
         fs::path icon_;
         // appdir path
         fs::path appdir_;
+        // icon file name
+        std::string iconFileName_;
         // nostrip
         bool nostrip_ = false;
     };
