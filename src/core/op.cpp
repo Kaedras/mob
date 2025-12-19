@@ -497,7 +497,31 @@ namespace mob::op {
             return;
 
         {
+            // create the parent directory if it does not exist
+            const auto parentDir = p.parent_path();
+            if (!fs::exists(parentDir)) {
+                std::error_code ec;
+                fs::create_directories(parentDir, ec);
+                if (ec) {
+                    if (f & optional) {
+                        cx.debug(context::fs,
+                                 "can't create directory {} (optional): {}", parentDir,
+                                 ec.message());
+                        return;
+                    }
+                    cx.bail_out(context::fs, "can't create directory {}: {}", parentDir,
+                                ec.message());
+                }
+            }
+
             std::ofstream out(p, std::ios::binary);
+            if (!out.is_open()) {
+                if (f & optional) {
+                    cx.debug(context::fs, "can't open {} for writing (optional)", p);
+                    return;
+                }
+                cx.bail_out(context::fs, "can't open {} for writing", p);
+            }
             out.write(bytes.data(), static_cast<std::streamsize>(bytes.size()));
             out.close();
 
