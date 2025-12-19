@@ -3,6 +3,8 @@
 
 #include <sys/stat.h>
 
+using namespace std;
+
 namespace mob::tasks {
 
     namespace {
@@ -13,16 +15,16 @@ namespace mob::tasks {
                    conf().version().get("linuxdeploy") + "/linuxdeploy-x86_64.AppImage";
         }
 
-        linuxdeploy create_tool()
+        linuxdeploy create_tool(const string& executable, const fs::path& appDirPath,
+                                const fs::path& icon)
         {
-            const auto appDirPath = conf().path().install_appimage();
             return std::move(linuxdeploy()
                                  .output(conf().path().prefix())
                                  .nostrip()
                                  .appdir(appDirPath)
-                                 .executable(appDirPath / "usr/bin/ModOrganizer")
-                                 .icon(conf().path().build() /
-                                       "modorganizer/src/resources/mo_icon.png"));
+                                 .executable(appDirPath / ("usr/bin/" + executable))
+                                 .iconFileName(executable)
+                                 .icon(icon));
         }
 
     }  // namespace
@@ -128,19 +130,22 @@ namespace mob::tasks {
         // "ModOrganizer.desktop",
         //                     desktopFileContent);
 
-        run_tool(create_tool());
+        run_tool(create_tool("ModOrganizer", conf().path().install_appimage(),
+                             conf().path().build() /
+                                 "modorganizer/src/resources/mo_icon.png"));
 
-        // chmod u+x
-        std::string file = conf().path().prefix().string();
-        struct stat st{};
-        if (stat(file.c_str(), &st) == -1) {
-            const int e = errno;
-            cx().bail_out(context::reason::cmd, "stat() failed: {}", strerror(e));
-        }
-        if (chmod(file.c_str(), st.st_mode | S_IXUSR) == -1) {
-            const int e = errno;
-            cx().bail_out(context::reason::cmd, "chmod() failed: {}", strerror(e));
-        }
+        // create nxmhandler.AppImage
+        fs::path appDir_nxmhandler =
+            conf().path().install_appimage().string() + "_nxmhandler";
+
+        op::copy_file_to_file_if_better(cx(), appDir / "usr/bin/nxmhandler",
+                                        appDir_nxmhandler / "usr/bin/nxmhandler");
+        op::copy_file_to_file_if_better(cx(), appDir / "usr/bin/libuibase.so",
+                                        appDir_nxmhandler / "usr/bin/libuibase.so");
+
+        run_tool(create_tool(
+            "nxmhandler", conf().path().install_appimage().string() + "_nxmhandler",
+            conf().path().build() / "modorganizer/src/resources/mo_icon.png"));
     }
 
 }  // namespace mob::tasks
