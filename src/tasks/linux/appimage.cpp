@@ -16,7 +16,7 @@ namespace mob::tasks {
         }
 
         linuxdeploy create_tool(const string& executable, const fs::path& appDirPath,
-                                const fs::path& icon)
+                                const fs::path& icon, const fs::path& desktopFile = {})
         {
             return std::move(linuxdeploy()
                                  .output(conf().path().prefix())
@@ -24,7 +24,8 @@ namespace mob::tasks {
                                  .appdir(appDirPath)
                                  .executable(appDirPath / ("usr/bin/" + executable))
                                  .iconFileName(executable)
-                                 .icon(icon));
+                                 .icon(icon)
+                                 .desktopFile(desktopFile));
         }
 
     }  // namespace
@@ -125,19 +126,20 @@ namespace mob::tasks {
         }
 
         // create the desktop file
-        // std::string desktopFileContent = "[Desktop Entry]\n"
-        //                                  "Name=ModOrganizer\n"
-        //                                  "Exec=ModOrganizer\n"
-        //                                  "Icon=ModOrganizer\n"
-        //                                  "Type=Application\n"
-        //                                  "Categories=Utility;\n";
-        // op::write_text_file(cx(), encodings::dont_know, appDir /
-        // "ModOrganizer.desktop",
-        //                     desktopFileContent);
+        string desktopFileContent = "[Desktop Entry]\n"
+                                    "Name=ModOrganizer\n"
+                                    "Exec=ModOrganizer\n"
+                                    "Icon=ModOrganizer\n"
+                                    "Type=Application\n"
+                                    "Categories=Utility;\n";
+        op::write_text_file(cx(), encodings::dont_know,
+                            conf().path().temp_dir() / "ModOrganizer.desktop",
+                            desktopFileContent);
 
         run_tool(create_tool("ModOrganizer", conf().path().install_appimage(),
                              conf().path().build() /
-                                 "modorganizer/src/resources/mo_icon.png"));
+                                 "modorganizer/src/resources/mo_icon.png",
+                             conf().path().temp_dir() / "ModOrganizer.desktop"));
 
         // create nxmhandler.AppImage
         fs::path appDir_nxmhandler =
