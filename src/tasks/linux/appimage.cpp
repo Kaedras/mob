@@ -48,7 +48,19 @@ namespace mob::tasks {
 
     void appimage::do_clean(clean c)
     {
-        op::delete_directory(cx(), conf().path().install_appimage());
+        switch (c) {
+        case clean::redownload:
+            op::delete_file(cx(),
+                            conf().path().prefix() / "linuxdeploy-x86_64.AppImage",
+                            op::optional);
+            break;
+        default:
+            op::delete_directory(cx(), conf().path().install_appimage(), op::optional);
+            op::delete_directory(
+                cx(), conf().path().install_appimage().string() + "_nxmhandler",
+                op::optional);
+            break;
+        }
     }
 
     void appimage::do_fetch()
