@@ -87,33 +87,26 @@ namespace mob::tasks {
     {
         auto appDir = conf().path().install_appimage();
 
+        // copy bin
         op::copy_glob_to_dir_if_better(cx(), conf().path().install_bin(),
                                        appDir / "usr",
                                        op::flags::copy_files | op::flags::copy_dirs);
+        // copy lib
         op::copy_glob_to_dir_if_better(cx(), conf().path().install_libs(),
                                        appDir / "usr",
                                        op::flags::copy_files | op::flags::copy_dirs);
+        // copy lib64
         op::copy_glob_to_dir_if_better(cx(), conf().path().install() / "lib64",
                                        appDir / "usr",
                                        op::flags::copy_files | op::flags::copy_dirs);
 
         // remove unneeded files
-        // op::delete_directory(cx(), appDir / "usr/include");
         op::delete_directory(cx(), appDir / "usr/lib/cmake");
 
-        // copy icons
         // TODO: copy high res icon
-        // op::copy_file_to_file_if_better(
-        //     cx(), conf().path().build() / "modorganizer/src/resources/mo_icon.png",
-        //     appDir / "ModOrganizer.png");
-
-        // op::copy_file_to_dir_if_better(cx(), conf().path().install() /
-        // "lib64/liboverlayfs.so", conf().path().install_dlls());
-        // op::copy_file_to_dir_if_better(cx(), conf().path().install_libs() /
-        // "libarchive.so", conf().path().install_dlls());
 
         // strip files
-        std::vector filesToStrip = {
+        vector filesToStrip = {
             appDir / "usr/bin/ModOrganizer", appDir / "usr/bin/helper",
             appDir / "usr/bin/nxmhandler",   appDir / "usr/bin/libuibase.so",
             appDir / "usr/bin/loot/lootcli", appDir / "usr/bin/loot/libloot.*",
@@ -126,8 +119,8 @@ namespace mob::tasks {
             // using `/bin/sh -c` is required to use wildcards in paths
             // TODO: check why this is, process is already run as fork -> execle /bin/sh
             // -c
-            process p = process::raw(
-                cx(), std::format("/bin/sh -c \"strip -d {}\"", file.string()));
+            process p =
+                process::raw(cx(), format("/bin/sh -c \"strip -d {}\"", file.string()));
             run_tool(process_runner(p));
         }
 
