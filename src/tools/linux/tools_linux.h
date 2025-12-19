@@ -100,8 +100,15 @@ namespace mob {
         //
         linuxdeploy& executable(const fs::path& p);
 
+        // path to icon
+        //
         linuxdeploy& icon(const fs::path& p);
 
+        // path to desktop file
+        //
+        linuxdeploy& desktopFile(const fs::path& p);
+
+        // set NO_STRIP environment variable to 1
         linuxdeploy& nostrip();
 
         // linuxdeploy tool
@@ -124,6 +131,8 @@ namespace mob {
         fs::path appdir_;
         // icon file name
         std::string iconFileName_;
+        // desktop file
+        fs::path desktopFile_;
         // nostrip
         bool nostrip_ = false;
     };

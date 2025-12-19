@@ -40,6 +40,12 @@ namespace mob {
         return *this;
     }
 
+    linuxdeploy& linuxdeploy::desktopFile(const fs::path& p)
+    {
+        desktopFile_ = p;
+        return *this;
+    }
+
     linuxdeploy& linuxdeploy::nostrip()
     {
         nostrip_ = true;
@@ -58,18 +64,26 @@ namespace mob {
                         appdir_, appdir_, appdir_);
         e.set("LD_LIBRARY_PATH", ldLibraryPath, env::append);
 
-        execute_and_join(process()
-                             .binary(binary())
-                             .cwd(output_)
-                             .env(e)
-                             // .arg("--verbosity", "0", process::log_debug)
-                             .arg("--verbosity", "3", process::log_quiet)
-                             .arg("--appdir", appdir_)
-                             .arg("--executable", executable_)
-                             .arg("--icon-file", icon_)
-                             .arg("--icon-filename", iconFileName_)
-                             .arg("--create-desktop-file")
-                             .arg("--output", "appimage"));
+        process p;
+        p.binary(binary())
+            .cwd(output_)
+            .env(e)
+            // .arg("--verbosity", "0", process::log_debug)
+            .arg("--verbosity", "3", process::log_quiet)
+            .arg("--appdir", appdir_)
+            .arg("--executable", executable_)
+            .arg("--icon-file", icon_)
+            .arg("--icon-filename", iconFileName_)
+            .arg("--output", "appimage");
+
+        if (desktopFile_.empty()) {
+            p.arg("--create-desktop-file");
+        }
+        else {
+            p.arg("--desktop-file", desktopFile_);
+        }
+
+        execute_and_join(p);
     }
 
 }  // namespace mob
