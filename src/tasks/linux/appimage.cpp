@@ -126,33 +126,47 @@ namespace mob::tasks {
         }
 
         // create the desktop file
+        fs::path moDesktopFilePath =
+            conf().path().temp_dir() / "org.modorganizer2.ModOrganizer.desktop";
         string desktopFileContent = "[Desktop Entry]\n"
                                     "Name=ModOrganizer\n"
                                     "Exec=ModOrganizer\n"
                                     "Icon=ModOrganizer\n"
                                     "Type=Application\n"
                                     "Categories=Utility;\n";
-        op::write_text_file(cx(), encodings::dont_know,
-                            conf().path().temp_dir() / "ModOrganizer.desktop",
+        op::write_text_file(cx(), encodings::dont_know, moDesktopFilePath,
                             desktopFileContent);
 
         run_tool(create_tool("ModOrganizer", conf().path().install_appimage(),
                              conf().path().build() /
                                  "modorganizer/src/resources/mo_icon.png",
-                             conf().path().temp_dir() / "ModOrganizer.desktop"));
+                             moDesktopFilePath));
 
         // create nxmhandler.AppImage
-        fs::path appDir_nxmhandler =
+        fs::path nxmHandlerAppDir =
             conf().path().install_appimage().string() + "_nxmhandler";
 
         op::copy_file_to_file_if_better(cx(), appDir / "usr/bin/nxmhandler",
-                                        appDir_nxmhandler / "usr/bin/nxmhandler");
+                                        nxmHandlerAppDir / "usr/bin/nxmhandler");
         op::copy_file_to_file_if_better(cx(), appDir / "usr/bin/libuibase.so",
-                                        appDir_nxmhandler / "usr/bin/libuibase.so");
+                                        nxmHandlerAppDir / "usr/bin/libuibase.so");
+
+        // create the desktop file
+        fs::path nxmHandlerDesktopFilePath =
+            conf().path().temp_dir() / "org.modorganizer2.nxmhandler.desktop";
+        string nxmHandlerDesktopFileContent = "[Desktop Entry]\n"
+                                              "Name=nxmhandler\n"
+                                              "Exec=nxmhandler\n"
+                                              "Icon=nxmhandler\n"
+                                              "Type=Application\n"
+                                              "Categories=Utility;\n";
+        op::write_text_file(cx(), encodings::dont_know, nxmHandlerDesktopFilePath,
+                            nxmHandlerDesktopFileContent);
 
         run_tool(create_tool(
             "nxmhandler", conf().path().install_appimage().string() + "_nxmhandler",
-            conf().path().build() / "modorganizer/src/resources/mo_icon.png"));
+            conf().path().build() / "modorganizer/src/resources/mo_icon.png",
+            nxmHandlerDesktopFilePath));
     }
 
 }  // namespace mob::tasks
