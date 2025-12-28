@@ -117,26 +117,22 @@ namespace mob::tasks {
         };
 
         for (const auto& file : filesToStrip) {
-            // using `/bin/sh -c` is required to use wildcards in paths
-            // TODO: check why this is, process is already run as fork -> execle /bin/sh
-            // -c
-            process p =
-                process::raw(cx(), format("/bin/sh -c \"strip -d {}\"", file.string()));
+            process p = process::raw(cx(), format("strip -d {}", file.string()));
             run_tool(process_runner(p));
         }
 
-        // create the desktop file
-        fs::path moDesktopFilePath =
-            conf().path().build() /
-            "modorganizer/src/resources/linux/org.modorganizer2.ModOrganizer.desktop";
-
-        fs::path metaInfoPath = conf().path().build() /
-                                "modorganizer/src/resources/linux/"
-                                "org.modorganizer2.ModOrganizer.metainfo.xml";
+        // copy metainfo
+        const fs::path metaInfoPath = conf().path().build() /
+                                      "modorganizer/src/resources/linux/"
+                                      "org.modorganizer2.ModOrganizer.metainfo.xml";
 
         op::copy_file_to_dir_if_better(cx(), metaInfoPath,
                                        conf().path().install_appimage() /
                                            "usr/share/metainfo/");
+
+        const fs::path moDesktopFilePath =
+            conf().path().build() /
+            "modorganizer/src/resources/linux/org.modorganizer2.ModOrganizer.desktop";
 
         run_tool(create_tool("ModOrganizer", conf().path().install_appimage(),
                              conf().path().build() /
