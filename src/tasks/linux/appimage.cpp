@@ -130,11 +130,11 @@ namespace mob::tasks {
             conf().path().build() /
             "modorganizer/src/resources/linux/org.modorganizer2.ModOrganizer.desktop";
 
-        fs::path metInfoPath = conf().path().build() /
-                               "modorganizer/src/resources/linux/"
-                               "org.modorganizer2.ModOrganizer.metainfo.xml";
+        fs::path metaInfoPath = conf().path().build() /
+                                "modorganizer/src/resources/linux/"
+                                "org.modorganizer2.ModOrganizer.metainfo.xml";
 
-        op::copy_file_to_dir_if_better(cx(), metInfoPath,
+        op::copy_file_to_dir_if_better(cx(), metaInfoPath,
                                        conf().path().install_appimage() /
                                            "usr/share/metainfo/");
 
