@@ -8,15 +8,24 @@
 #include "task.h"
 #include <set>
 
-#ifdef __unix__
-#include "linux/tasks_linux.h"
-#else
-#include "win32/tasks_win32.h"
-#endif
-
 namespace mob::tasks {
 
     // single header for all the tasks, not worth having a header per task
+
+#ifdef _WIN32
+    class explorerpp : public basic_task<explorerpp> {
+    public:
+        explorerpp();
+
+        static std::string version();
+        static bool prebuilt();
+        static fs::path source_path();
+
+    protected:
+        void do_clean(clean c) override;
+        void do_fetch() override;
+    };
+#endif
 
     class installer : public basic_task<installer> {
     public:
@@ -278,5 +287,22 @@ namespace mob::tasks {
                                     config = config::release) const;
 #endif
     };
+
+#ifdef __unix__
+    class appimage : public basic_task<appimage> {
+    public:
+        appimage();
+
+        static std::string version();
+        static bool prebuilt();
+
+        static fs::path source_path();
+
+    protected:
+        void do_clean(clean c) override;
+        void do_fetch() override;
+        void do_build_and_install() override;
+    };
+#endif
 
 }  // namespace mob::tasks
