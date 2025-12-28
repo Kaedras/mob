@@ -8,11 +8,6 @@
 #include "utility.h"
 #include "utility/threading.h"
 
-#ifdef __unix__
-using usvfs = mob::tasks::overlayfs;
-#else
-#endif
-
 namespace mob {
 
     void add_tasks()

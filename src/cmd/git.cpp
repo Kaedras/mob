@@ -2,12 +2,6 @@
 #include "../tools/tools.h"
 #include "commands.h"
 
-#ifdef __unix__
-namespace mob::tasks {
-    using usvfs = mob::tasks::overlayfs;
-}
-#endif
-
 namespace mob {
 
     git_command::git_command() : command(requires_options) {}

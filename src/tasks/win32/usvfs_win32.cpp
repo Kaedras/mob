@@ -12,23 +12,6 @@
 
 namespace mob::tasks {
 
-    usvfs::usvfs() : basic_task("usvfs") {}
-
-    std::string usvfs::version()
-    {
-        return conf().version().get("usvfs");
-    }
-
-    bool usvfs::prebuilt()
-    {
-        return false;
-    }
-
-    fs::path usvfs::source_path()
-    {
-        return conf().path().build() / "usvfs";
-    }
-
     void usvfs::do_clean(clean c)
     {
         // delete the whole directory
@@ -51,24 +34,6 @@ namespace mob::tasks {
             run_tool(create_msbuild_tool(arch::x64, msbuild::clean,
                                          task_conf().configuration()));
         }
-    }
-
-    void usvfs::do_fetch()
-    {
-        fetch_from_source();
-    }
-
-    void usvfs::do_build_and_install()
-    {
-        build_and_install_from_source();
-    }
-
-    void usvfs::fetch_from_source()
-    {
-        run_tool(make_git()
-                     .url(make_git_url(task_conf().mo_org(), "usvfs"))
-                     .branch(version())
-                     .root(source_path()));
     }
 
     void usvfs::build_and_install_from_source()
