@@ -127,15 +127,16 @@ namespace mob::tasks {
 
         // create the desktop file
         fs::path moDesktopFilePath =
-            conf().path().temp_dir() / "org.modorganizer2.ModOrganizer.desktop";
-        string desktopFileContent = "[Desktop Entry]\n"
-                                    "Name=ModOrganizer\n"
-                                    "Exec=ModOrganizer\n"
-                                    "Icon=ModOrganizer\n"
-                                    "Type=Application\n"
-                                    "Categories=Utility;\n";
-        op::write_text_file(cx(), encodings::dont_know, moDesktopFilePath,
-                            desktopFileContent);
+            conf().path().build() /
+            "modorganizer/src/resources/linux/org.modorganizer2.ModOrganizer.desktop";
+
+        fs::path metInfoPath = conf().path().build() /
+                               "modorganizer/src/resources/linux/"
+                               "org.modorganizer2.ModOrganizer.metainfo.xml";
+
+        op::copy_file_to_dir_if_better(cx(), metInfoPath,
+                                       conf().path().install_appimage() /
+                                           "usr/share/metainfo/");
 
         run_tool(create_tool("ModOrganizer", conf().path().install_appimage(),
                              conf().path().build() /
