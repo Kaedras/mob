@@ -543,15 +543,16 @@ namespace mob {
         resolve_path("install", p.prefix(), "install");
 #else
         resolve_path("install", p.prefix(), "install/usr");
-        resolve_path("install_appimage", p.prefix(), "AppDir");
+        resolve_path("install_appimage", p.install(), "AppImage");
 #endif
         resolve_path("install_installer", p.install(), "installer");
         resolve_path("install_bin", p.install(), "bin");
         resolve_path("install_libs", p.install(), "lib");
-        resolve_path("install_pdbs", p.install(), "pdb");
 #ifdef _WIN32
+        resolve_path("install_pdbs", p.install(), "pdb");
         resolve_path("install_dlls", p.install_bin(), "dlls");
 #else
+        resolve_path("install_pdbs", p.install(), "debug");
         resolve_path("install_dlls", p.install_bin(), "lib");
 #endif
         resolve_path("install_plugins", p.install_bin(), "plugins");

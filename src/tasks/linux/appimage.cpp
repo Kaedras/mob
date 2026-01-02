@@ -86,7 +86,7 @@ namespace mob::tasks {
 
     void appimage::do_build_and_install()
     {
-        auto appDir = conf().path().install_appimage();
+        auto appDir = conf().path().build() / "AppDir";
 
         // copy bin
         op::copy_glob_to_dir_if_better(cx(), conf().path().install_bin(),
@@ -106,35 +106,58 @@ namespace mob::tasks {
 
         // TODO: copy high res icon
 
-        // strip files
-        vector filesToStrip = {
+        // strip files and save debug symbols
+        const vector executables = {
             appDir / "usr/bin/ModOrganizer", appDir / "usr/bin/helper",
-            appDir / "usr/bin/nxmhandler",   appDir / "usr/bin/libuibase.so",
-            appDir / "usr/bin/loot/lootcli", appDir / "usr/bin/loot/libloot.*",
-            appDir / "usr/bin/lib/*.so",     appDir / "usr/bin/plugins/*.so",
-            appDir / "usr/lib/*.so",         appDir / "usr/lib/*.a",
-            appDir / "usr/lib64/*.so",
+            appDir / "usr/bin/loot/lootcli", appDir / "usr/bin/nxmhandler"};
+        const vector dirs = {
+            appDir / "usr/bin/", appDir / "usr/bin/loot/", appDir / "usr/bin/plugins/",
+            appDir / "usr/lib/", appDir / "usr/lib64/",
         };
 
-        for (const auto& file : filesToStrip) {
-            process p = process::raw(cx(), format("strip -d {}", file.string()));
-            run_tool(process_runner(p));
+        op::create_directories(cx(), conf().path().install_pdbs());
+
+        auto copyDebugSymbols = [this](const fs::path& file, const fs::path& out) {
+            process proc = process::raw(cx(), format("objcopy --only-keep-debug {} {}",
+                                                     file.string(), out.string()));
+            run_tool(process_runner(proc));
+        };
+        auto stripDebugSymbols = [this](const fs::path& file) {
+            process proc = process::raw(cx(), format("strip -d {}", file.string()));
+            run_tool(process_runner(proc));
+        };
+
+        for (const fs::path& dir : dirs) {
+            for (const fs::directory_entry& file : fs::directory_iterator(dir)) {
+                const fs::path ext = file.path().extension();
+                if (ext == ".so" || ext == ".a" ||
+                    file.path().filename().string().find(".so.") != string::npos) {
+                    copyDebugSymbols(file.path(),
+                                     conf().path().install_pdbs() /
+                                         (file.path().filename().string() + ".debug"));
+                    stripDebugSymbols(file.path());
+                }
+            }
+        }
+
+        for (const fs::path& file : executables) {
+            copyDebugSymbols(file, conf().path().install_pdbs() /
+                                       (file.filename().string() + ".debug"));
+            stripDebugSymbols(file);
         }
 
         // copy metainfo
         const fs::path metaInfoPath = conf().path().build() /
                                       "modorganizer/src/resources/linux/"
                                       "org.modorganizer2.ModOrganizer.metainfo.xml";
-
         op::copy_file_to_dir_if_better(cx(), metaInfoPath,
-                                       conf().path().install_appimage() /
-                                           "usr/share/metainfo/");
+                                       appDir / "usr/share/metainfo/");
 
         const fs::path moDesktopFilePath =
             conf().path().build() /
             "modorganizer/src/resources/linux/org.modorganizer2.ModOrganizer.desktop";
 
-        run_tool(create_tool("ModOrganizer", conf().path().install_appimage(),
+        run_tool(create_tool("ModOrganizer", appDir,
                              conf().path().build() /
                                  "modorganizer/src/resources/mo_icon.png",
                              moDesktopFilePath));
@@ -160,10 +183,10 @@ namespace mob::tasks {
         op::write_text_file(cx(), encodings::dont_know, nxmHandlerDesktopFilePath,
                             nxmHandlerDesktopFileContent);
 
-        run_tool(create_tool(
-            "nxmhandler", conf().path().install_appimage().string() + "_nxmhandler",
-            conf().path().build() / "modorganizer/src/resources/mo_icon.png",
-            nxmHandlerDesktopFilePath));
+        run_tool(create_tool("nxmhandler", nxmHandlerAppDir,
+                             conf().path().build() /
+                                 "modorganizer/src/resources/mo_icon.png",
+                             nxmHandlerDesktopFilePath));
     }
 
 }  // namespace mob::tasks
