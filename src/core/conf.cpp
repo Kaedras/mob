@@ -539,10 +539,8 @@ namespace mob {
 
         resolve_path("cache", p.prefix(), "downloads");
         resolve_path("build", p.prefix(), "build");
-#ifdef _WIN32
         resolve_path("install", p.prefix(), "install");
-#else
-        resolve_path("install", p.prefix(), "install/usr");
+#ifdef __unix__
         resolve_path("install_appimage", p.install(), "AppImage");
 #endif
         resolve_path("install_installer", p.install(), "installer");

@@ -17,7 +17,7 @@ namespace mob::tasks {
                                 const fs::path& icon, const fs::path& desktopFile = {})
         {
             return std::move(linuxdeploy()
-                                 .output(conf().path().prefix())
+                                 .output(conf().path().install_appimage())
                                  .nostrip()
                                  .appdir(appDirPath)
                                  .executable(appDirPath / ("usr/bin/" + executable))
@@ -42,7 +42,7 @@ namespace mob::tasks {
 
     fs::path appimage::source_path()
     {
-        return modorganizer::super_path() / "appimage";
+        return modorganizer::super_path() / "AppImage";
     }
 
     void appimage::do_clean(clean c)
@@ -55,9 +55,8 @@ namespace mob::tasks {
             break;
         default:
             op::delete_directory(cx(), conf().path().install_appimage(), op::optional);
-            op::delete_directory(
-                cx(), conf().path().install_appimage().string() + "_nxmhandler",
-                op::optional);
+            op::delete_directory(cx(), conf().path().build() / "AppImage",
+                                 op::optional);
             break;
         }
     }
@@ -84,34 +83,35 @@ namespace mob::tasks {
 
     void appimage::do_build_and_install()
     {
-        const fs::path appDir           = conf().path().build() / "AppDir";
-        const fs::path nxmHandlerAppDir = conf().path().build() / "AppDir_nxmhandler";
+        const fs::path appDirMo = source_path() / "ModOrganizer";
+        const fs::path appDirNh = source_path() / "nxmhandler";
 
         // copy bin
         op::copy_glob_to_dir_if_better(cx(), conf().path().install_bin(),
-                                       appDir / "usr",
+                                       appDirMo / "usr",
                                        op::flags::copy_files | op::flags::copy_dirs);
         // copy lib
         op::copy_glob_to_dir_if_better(cx(), conf().path().install_libs(),
-                                       appDir / "usr",
+                                       appDirMo / "usr",
                                        op::flags::copy_files | op::flags::copy_dirs);
         // copy lib64
         op::copy_glob_to_dir_if_better(cx(), conf().path().install() / "lib64",
-                                       appDir / "usr",
+                                       appDirMo / "usr",
                                        op::flags::copy_files | op::flags::copy_dirs);
 
         // remove unneeded files
-        op::delete_directory(cx(), appDir / "usr/lib/cmake");
+        op::delete_directory(cx(), appDirMo / "usr/lib/cmake");
 
         // TODO: copy high res icon
 
         // strip files and save debug symbols
         const vector executables = {
-            appDir / "usr/bin/ModOrganizer", appDir / "usr/bin/helper",
-            appDir / "usr/bin/loot/lootcli", appDir / "usr/bin/nxmhandler"};
+            appDirMo / "usr/bin/ModOrganizer", appDirMo / "usr/bin/helper",
+            appDirMo / "usr/bin/loot/lootcli", appDirMo / "usr/bin/nxmhandler"};
         const vector dirs = {
-            appDir / "usr/bin/", appDir / "usr/bin/loot/", appDir / "usr/bin/plugins/",
-            appDir / "usr/lib/", appDir / "usr/lib64/",
+            appDirMo / "usr/bin/",         appDirMo / "usr/bin/loot/",
+            appDirMo / "usr/bin/plugins/", appDirMo / "usr/lib/",
+            appDirMo / "usr/lib64/",
         };
 
         op::create_directories(cx(), conf().path().install_pdbs());
@@ -150,22 +150,22 @@ namespace mob::tasks {
                                       "modorganizer/src/resources/linux/"
                                       "org.modorganizer2.ModOrganizer.metainfo.xml";
         op::copy_file_to_dir_if_better(cx(), metaInfoPath,
-                                       appDir / "usr/share/metainfo/");
+                                       appDirMo / "usr/share/metainfo/");
 
         const fs::path moDesktopFilePath =
             conf().path().build() /
             "modorganizer/src/resources/linux/org.modorganizer2.ModOrganizer.desktop";
 
-        run_tool(create_tool("ModOrganizer", appDir,
+        run_tool(create_tool("ModOrganizer", appDirMo,
                              conf().path().build() /
                                  "modorganizer/src/resources/mo_icon.png",
                              moDesktopFilePath));
 
         // create nxmhandler.AppImage
-        op::copy_file_to_file_if_better(cx(), appDir / "usr/bin/nxmhandler",
-                                        nxmHandlerAppDir / "usr/bin/nxmhandler");
-        op::copy_file_to_file_if_better(cx(), appDir / "usr/bin/libuibase.so",
-                                        nxmHandlerAppDir / "usr/bin/libuibase.so");
+        op::copy_file_to_file_if_better(cx(), appDirMo / "usr/bin/nxmhandler",
+                                        appDirNh / "usr/bin/nxmhandler");
+        op::copy_file_to_file_if_better(cx(), appDirMo / "usr/bin/libuibase.so",
+                                        appDirNh / "usr/bin/libuibase.so");
 
         // create the desktop file
         fs::path nxmHandlerDesktopFilePath =
@@ -179,7 +179,7 @@ namespace mob::tasks {
         op::write_text_file(cx(), encodings::dont_know, nxmHandlerDesktopFilePath,
                             nxmHandlerDesktopFileContent);
 
-        run_tool(create_tool("nxmhandler", nxmHandlerAppDir,
+        run_tool(create_tool("nxmhandler", appDirNh,
                              conf().path().build() /
                                  "modorganizer/src/resources/mo_icon.png",
                              nxmHandlerDesktopFilePath));
