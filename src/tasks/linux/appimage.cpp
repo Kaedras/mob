@@ -1,8 +1,6 @@
 #include "../../core/process.h"
 #include "../tasks.h"
 
-#include <sys/stat.h>
-
 using namespace std;
 
 namespace mob::tasks {
