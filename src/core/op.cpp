@@ -658,6 +658,9 @@ namespace mob::op {
 
     void do_rename(const context& cx, const fs::path& src, const fs::path& dest)
     {
+        if (!fs::exists(dest.parent_path()))
+            op::create_directories(cx, dest.parent_path());
+
         std::error_code ec;
         fs::rename(src, dest, ec);
 
