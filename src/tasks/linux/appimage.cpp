@@ -84,7 +84,8 @@ namespace mob::tasks {
 
     void appimage::do_build_and_install()
     {
-        auto appDir = conf().path().build() / "AppDir";
+        const fs::path appDir           = conf().path().build() / "AppDir";
+        const fs::path nxmHandlerAppDir = conf().path().build() / "AppDir_nxmhandler";
 
         // copy bin
         op::copy_glob_to_dir_if_better(cx(), conf().path().install_bin(),
@@ -161,9 +162,6 @@ namespace mob::tasks {
                              moDesktopFilePath));
 
         // create nxmhandler.AppImage
-        fs::path nxmHandlerAppDir =
-            conf().path().install_appimage().string() + "_nxmhandler";
-
         op::copy_file_to_file_if_better(cx(), appDir / "usr/bin/nxmhandler",
                                         nxmHandlerAppDir / "usr/bin/nxmhandler");
         op::copy_file_to_file_if_better(cx(), appDir / "usr/bin/libuibase.so",
