@@ -4,12 +4,6 @@
 #include "../op.h"
 #include "../pipe.h"
 #include "../process.h"
-#include <csignal>
-#include <sys/poll.h>
-
-extern "C" {
-#include <sys/pidfd.h>
-}
 
 namespace mob {
     // handle to dev/null

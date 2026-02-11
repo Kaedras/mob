@@ -1,17 +1,5 @@
 #pragma once
 
-#include <cerrno>
-#include <csignal>
-#include <cstring>
-#include <fstream>
-#include <poll.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-
-extern "C" {
-#include <sys/pidfd.h>
-}
-
 #define CTRL_BREAK_EVENT SIGINT
 
 using HANDLE                              = int;

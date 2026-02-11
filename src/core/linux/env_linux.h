@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../../utility.h"
-#include <map>
 
 namespace mob {
 

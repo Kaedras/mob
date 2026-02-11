@@ -57,6 +57,7 @@
 #include <map>
 #include <mutex>
 #include <optional>
+#include <ranges>
 #include <regex>
 #include <set>
 #include <sstream>
@@ -74,9 +75,13 @@
 #endif
 
 #ifdef __unix__
+#include <cerrno>
+#include <cstring>
 #include <execinfo.h>
-#include <sys/poll.h>
+#include <poll.h>
 #include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 #include <unistd.h>
 
 extern "C" {
