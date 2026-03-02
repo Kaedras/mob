@@ -92,9 +92,12 @@ namespace mob::tasks {
                                        op::flags::copy_files | op::flags::copy_dirs);
 
         // copy libraries that are not inside the lib directory
-        op::copy_file_to_dir_if_better(cx(), appDir / "usr/bin/libuibase.so", appDir / "usr/lib");
-        op::copy_file_to_dir_if_better(cx(), appDir / "usr/bin/loot/libloot.so.0", appDir / "usr/lib");
-        op::copy_file_to_dir_if_better(cx(), appDir / "usr/bin/lib/libbsarchpp.so", appDir / "usr/lib");
+        op::copy_file_to_dir_if_better(cx(), appDir / "usr/bin/libuibase.so",
+                                       appDir / "usr/lib");
+        op::copy_file_to_dir_if_better(cx(), appDir / "usr/bin/loot/libloot.so.0",
+                                       appDir / "usr/lib");
+        op::copy_file_to_dir_if_better(cx(), appDir / "usr/bin/lib/libbsarchpp.so",
+                                       appDir / "usr/lib");
 
         // remove unneeded files
         op::delete_directory(cx(), appDir / "usr/lib/cmake");
@@ -108,8 +111,10 @@ namespace mob::tasks {
             appDir / "usr/bin/ModOrganizer", appDir / "usr/bin/helper",
             appDir / "usr/bin/loot/lootcli", appDir / "usr/bin/nxmhandler"};
         const vector dirs = {
-            appDir / "usr/bin/",         appDir / "usr/bin/loot/",
-            appDir / "usr/bin/plugins/", appDir / "usr/lib/",
+            appDir / "usr/bin/",
+            appDir / "usr/bin/loot/",
+            appDir / "usr/bin/plugins/",
+            appDir / "usr/lib/",
         };
 
         op::create_directories(cx(), conf().path().install_pdbs());
@@ -148,23 +153,24 @@ namespace mob::tasks {
         //                               "modorganizer/src/resources/linux/"
         //                               "ModOrganizer.metainfo.xml";
         // op::copy_file_to_file_if_better(cx(), metaInfoPath,
-        //                                appDir / "usr/share/metainfo/ModOrganizer.appdata.xml");
+        //                                appDir /
+        //                                "usr/share/metainfo/ModOrganizer.appdata.xml");
 
         // copy icon
-        op::copy_file_to_dir_if_better(cx(), conf().path().build() /
-    "modorganizer/src/resources/linux/ModOrganizer.svg", appDir / "usr/share/icons/hicolor/scalable/apps");
+        op::copy_file_to_dir_if_better(
+            cx(),
+            conf().path().build() / "modorganizer/src/resources/linux/ModOrganizer.svg",
+            appDir / "usr/share/icons/hicolor/scalable/apps");
 
-        const fs::path desktopFilePath = appDir / "usr/share/applications/ModOrganizer.desktop";
+        const fs::path desktopFilePath =
+            appDir / "usr/share/applications/ModOrganizer.desktop";
 
         // copy desktop file
-        op::copy_file_to_dir_if_better(cx(), conf().path().build() /
-            "modorganizer/src/resources/linux/ModOrganizer.desktop", appDir / "usr/share/applications");
-
-        // replace icon name in the desktop file
-        // {
-        //     process proc = process::raw(cx(), format("sed -i '{}' {}", "s/Icon=.*/Icon=ModOrganizer/", desktopFilePath.string()));
-        //     run_tool(process_runner(proc));
-        // }
+        op::copy_file_to_dir_if_better(
+            cx(),
+            conf().path().build() /
+                "modorganizer/src/resources/linux/ModOrganizer.desktop",
+            appDir / "usr/share/applications");
 
         run_tool(create_tool(appDir));
     }

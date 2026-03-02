@@ -96,7 +96,8 @@ namespace mob {
         }
         if (createDesktopFile_) {
             p.arg("--create-desktop-file");
-        } else if (!iconFileName_.empty()) {
+        }
+        else if (!iconFileName_.empty()) {
             p.arg("--desktop-file", desktopFile_);
         }
 
