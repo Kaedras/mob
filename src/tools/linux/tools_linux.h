@@ -96,6 +96,10 @@ namespace mob {
         //
         linuxdeploy& iconFileName(const std::string& p);
 
+        // custom AppRun file
+        //
+        linuxdeploy& customAppRun(const fs::path& p);
+
         // path to executable
         //
         linuxdeploy& executable(const fs::path& p);
@@ -107,6 +111,9 @@ namespace mob {
         // path to desktop file
         //
         linuxdeploy& desktopFile(const fs::path& p);
+
+        // pass --create-desktop-file
+        linuxdeploy& createDesktopFile();
 
         // set NO_STRIP environment variable to 1
         linuxdeploy& nostrip();
@@ -125,6 +132,8 @@ namespace mob {
         fs::path output_;
         // path to the executable file
         fs::path executable_;
+        // path to the AppRun file
+        fs::path customAppRun_;
         // path to the icon
         fs::path icon_;
         // appdir path
@@ -135,6 +144,8 @@ namespace mob {
         fs::path desktopFile_;
         // nostrip
         bool nostrip_ = false;
+        // create a desktop file
+        bool createDesktopFile_ = false;
     };
 
 }  // namespace mob

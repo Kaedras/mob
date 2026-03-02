@@ -28,6 +28,12 @@ namespace mob {
         return *this;
     }
 
+    linuxdeploy& linuxdeploy::customAppRun(const fs::path& p)
+    {
+        customAppRun_ = p;
+        return *this;
+    }
+
     linuxdeploy& linuxdeploy::executable(const fs::path& p)
     {
         executable_ = p;
@@ -43,6 +49,12 @@ namespace mob {
     linuxdeploy& linuxdeploy::desktopFile(const fs::path& p)
     {
         desktopFile_ = p;
+        return *this;
+    }
+
+    linuxdeploy& linuxdeploy::createDesktopFile()
+    {
+        createDesktopFile_ = true;
         return *this;
     }
 
@@ -71,15 +83,20 @@ namespace mob {
             // .arg("--verbosity", "0", process::log_debug)
             .arg("--verbosity", "3", process::log_quiet)
             .arg("--appdir", appdir_)
-            .arg("--executable", executable_)
-            .arg("--icon-file", icon_)
-            .arg("--icon-filename", iconFileName_)
             .arg("--output", "appimage");
 
-        if (desktopFile_.empty()) {
-            p.arg("--create-desktop-file");
+        if (!customAppRun_.empty()) {
+            p.arg("--custom-apprun", customAppRun_.string());
         }
-        else {
+        if (!executable_.empty()) {
+            p.arg("--executable", executable_);
+        }
+        if (!icon_.empty()) {
+            p.arg("--icon-file", icon_);
+        }
+        if (createDesktopFile_) {
+            p.arg("--create-desktop-file");
+        } else if (!iconFileName_.empty()) {
             p.arg("--desktop-file", desktopFile_);
         }
 
