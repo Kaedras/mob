@@ -96,8 +96,8 @@ namespace mob::tasks {
                                        appDir / "usr/lib");
         op::copy_file_to_dir_if_better(cx(), appDir / "usr/bin/loot/libloot.so.0",
                                        appDir / "usr/lib");
-        op::copy_file_to_dir_if_better(cx(), appDir / "usr/bin/lib/libbsarchpp.so",
-                                       appDir / "usr/lib");
+        op::copy_glob_to_dir_if_better(cx(), appDir / "usr/bin/lib/*.so",
+                                       appDir / "usr/lib", op::flags::copy_files);
 
         // remove unneeded files
         op::delete_directory(cx(), appDir / "usr/lib/cmake");
@@ -105,6 +105,7 @@ namespace mob::tasks {
         op::delete_file(cx(), appDir / "usr/bin/loot/libloot.so.0");
         op::delete_file_glob(cx(), appDir / "usr/lib/*.a");
         op::delete_file(cx(), appDir / "usr/bin/libuibase.so");
+        op::delete_directory(cx(), appDir / "usr/bin/lib");
 
         // strip files and save debug symbols
         const vector executables = {
