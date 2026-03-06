@@ -58,7 +58,12 @@ namespace mob {
             ".*\\.log",        ".*\\.tlog",   ".*\\.dll",
             ".*\\.exe",        ".*\\.lib",    ".*\\.obj",
             ".*\\.ts",         ".*\\.aps",    "(bin|lib)",
-            "vsbuild(32|64)?", "build",       "AppImage"};
+            "vsbuild(32|64)?",
+#ifdef __unix__
+            ".*\\.o",          ".*\\.so",     ".*\\.a",
+            "build",           "AppImage"
+#endif
+        };
 
         const std::vector<std::regex> ignore_re(ignore.begin(), ignore.end());
 
