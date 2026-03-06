@@ -287,7 +287,7 @@ namespace mob {
         void make_bin();
         void make_pdbs();
         void make_src();
-#ifdef __WIN32
+#ifdef _WIN32
         void make_installer();
 #else
         void make_appimage();
