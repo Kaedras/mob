@@ -25,14 +25,17 @@ namespace mob {
         op::write_text_file(gcx(), encodings::utf8, list_file, list_file_text);
         op::create_directories(cx, out.parent_path());
 
-        auto p = process()
-                     .binary("tar")
-                     .arg("-c")                      // create archive
-                     .arg("-a")                      // auto-compress
-                     .arg("-f", out)                 // output file
-                     .arg("-X", list_file)           // file exclusion list
-                     .arg("-C", glob.parent_path())  // input directory
-                     .arg(".");
+        auto p = process().binary("tar").arg("-c");  // create archive
+        if (out.extension() == ".zst") {
+            p.arg("-I 'zstd -19 -T0 --auto-threads=logical -q'");
+        }
+        else {
+            p.arg("-a");  // auto-compress
+        }
+        p.arg("-f", out)                    // output file
+            .arg("-X", list_file)           // file exclusion list
+            .arg("-C", glob.parent_path())  // input directory
+            .arg(".");
 
         p.run();
         p.join();
@@ -70,13 +73,16 @@ namespace mob {
         op::write_text_file(gcx(), encodings::utf8, list_file, list_file_text);
         op::create_directories(cx, out.parent_path());
 
-        auto p = process()
-                     .binary("tar")
-                     .arg("-c")       // create
-                     .arg("-a")       // auto-compress
-                     .arg("-f", out)  // output file
-                     .arg("-C", files_root)
-                     .arg("-T", list_file);
+        auto p = process().binary("tar").arg("-c");  // create
+        if (out.extension() == ".zst") {
+            p.arg("-I 'zstd -19 -T0 --auto-threads=logical -q'");
+        }
+        else {
+            p.arg("-a");  // auto-compress
+        }
+        p.arg("-f", out)  // output file
+            .arg("-C", files_root)
+            .arg("-T", list_file);
 
         p.run();
         p.join();
