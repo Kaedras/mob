@@ -8,6 +8,16 @@
 #include "../utility/threading.h"
 #include "commands.h"
 
+namespace {
+
+#ifdef _WIN32
+    inline constexpr const char* archiveExtension = ".7z";
+#else
+    inline constexpr const char* archiveExtension = ".tar.zst";
+#endif
+
+}  // namespace
+
 namespace mob {
 
     void set_sigint_handler();
@@ -44,11 +54,11 @@ namespace mob {
 
         const std::vector<std::string> ignore = {
             "\\..+",  // dot files
-            "explorer\\+\\+", "stylesheets", "transifex-translations",
-            ".*\\.log",       ".*\\.tlog",   ".*\\.dll",
-            ".*\\.exe",       ".*\\.lib",    ".*\\.obj",
-            ".*\\.ts",        ".*\\.aps",    "(bin|lib)",
-            "vsbuild(32|64)?"};
+            "explorer\\+\\+",  "stylesheets", "transifex-translations",
+            ".*\\.log",        ".*\\.tlog",   ".*\\.dll",
+            ".*\\.exe",        ".*\\.lib",    ".*\\.obj",
+            ".*\\.ts",         ".*\\.aps",    "(bin|lib)",
+            "vsbuild(32|64)?", "build",       "AppImage"};
 
         const std::vector<std::regex> ignore_re(ignore.begin(), ignore.end());
 
@@ -77,17 +87,6 @@ namespace mob {
         }
 
         op::archive_from_files(gcx(), files, tasks::modorganizer::super_path(), out);
-    }
-
-    void release_command::make_installer()
-    {
-        const auto file = "Mod.Organizer-" + version_ + ".exe";
-        const auto src  = conf().path().install_installer() / file;
-        const auto dest = out_;
-
-        u8cout << "copying installer " << file << "\n";
-
-        op::copy_file_to_dir_if_better(gcx(), src, dest);
     }
 
     void release_command::walk_dir(const fs::path& dir, std::vector<fs::path>& files,
@@ -135,7 +134,7 @@ namespace mob {
         if (!what.empty())
             filename += "-" + what;
 
-        filename += ".7z";
+        filename += archiveExtension;
 
         return filename;
     }
@@ -161,13 +160,18 @@ namespace mob {
                       clipp::option("--no-src").set(src_, false)) %
                          "sets whether the source archive is created [default: yes]",
 
+#ifdef __unix__
+                     (clipp::option("--appimage").set(appimage_, true) |
+                      clipp::option("--no-appimage").set(appimage_, false)) %
+                         "sets whether the appimage is copied [default: no]",
+#else
                      (clipp::option("--inst").set(installer_, true) |
                       clipp::option("--no-inst").set(installer_, false)) %
                          "sets whether the installer is copied [default: no]",
-
                      clipp::option("--version-from-exe").set(version_exe_) %
                          "retrieves version information from ModOrganizer.exe "
                          "[default]",
+#endif
 
                      clipp::option("--version-from-rc").set(version_rc_) %
                          "retrieves version information from "
@@ -248,10 +252,13 @@ namespace mob {
 
         if (src_)
             make_src();
-
+#ifdef _WIN32
         if (installer_)
             make_installer();
-
+#else
+        if (appimage_)
+            make_appimage();
+#endif
         return 0;
     }
 
@@ -274,7 +281,11 @@ namespace mob {
         make_bin();
         make_pdbs();
         make_src();
+#ifdef _WIN32
         make_installer();
+#else
+        make_appimage();
+#endif
 
         return 0;
     }

@@ -287,7 +287,11 @@ namespace mob {
         void make_bin();
         void make_pdbs();
         void make_src();
+#ifdef __WIN32
         void make_installer();
+#else
+        void make_appimage();
+#endif
 
     protected:
         clipp::group do_group() override;
@@ -298,11 +302,15 @@ namespace mob {
     private:
         enum class modes { none = 0, devbuild, official };
 
-        modes mode_     = modes::none;
-        bool bin_       = true;
-        bool src_       = true;
-        bool pdbs_      = true;
+        modes mode_ = modes::none;
+        bool bin_   = true;
+        bool src_   = true;
+        bool pdbs_  = true;
+#ifdef _WIN32
         bool installer_ = false;
+#else
+        bool appimage_ = false;
+#endif
         std::string utf8out_;
         fs::path out_;
         std::string version_;

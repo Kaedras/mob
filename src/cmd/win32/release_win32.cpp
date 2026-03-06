@@ -78,4 +78,15 @@ namespace mob {
             std::wstring(static_cast<wchar_t*>(value_pointer), value_size - 1));
     }
 
+    void release_command::make_installer()
+    {
+        const auto file = "Mod.Organizer-" + version_ + ".exe";
+        const auto src  = conf().path().install_installer() / file;
+        const auto dest = out_;
+
+        u8cout << "copying installer " << file << "\n";
+
+        op::copy_file_to_dir_if_better(gcx(), src, dest);
+    }
+
 }  // namespace mob
