@@ -107,48 +107,6 @@ namespace mob::tasks {
         op::delete_file(cx(), appDir / "usr/bin/libuibase.so");
         op::delete_directory(cx(), appDir / "usr/bin/lib");
 
-        // strip files and save debug symbols
-        const vector executables = {
-            appDir / "usr/bin/ModOrganizer", appDir / "usr/bin/helper",
-            appDir / "usr/bin/loot/lootcli", appDir / "usr/bin/nxmhandler"};
-        const vector dirs = {
-            appDir / "usr/bin/",
-            appDir / "usr/bin/loot/",
-            appDir / "usr/bin/plugins/",
-            appDir / "usr/lib/",
-        };
-
-        op::create_directories(cx(), conf().path().install_pdbs());
-
-        auto copyDebugSymbols = [this](const fs::path& file, const fs::path& out) {
-            process proc = process::raw(cx(), format("objcopy --only-keep-debug {} {}",
-                                                     file.string(), out.string()));
-            run_tool(process_runner(proc));
-        };
-        auto stripDebugSymbols = [this](const fs::path& file) {
-            process proc = process::raw(cx(), format("strip -d {}", file.string()));
-            run_tool(process_runner(proc));
-        };
-
-        for (const fs::path& dir : dirs) {
-            for (const fs::directory_entry& file : fs::directory_iterator(dir)) {
-                const fs::path ext = file.path().extension();
-                if (ext == ".so" || ext == ".a" ||
-                    file.path().filename().string().find(".so.") != string::npos) {
-                    copyDebugSymbols(file.path(),
-                                     conf().path().install_pdbs() /
-                                         (file.path().filename().string() + ".debug"));
-                    stripDebugSymbols(file.path());
-                }
-            }
-        }
-
-        for (const fs::path& file : executables) {
-            copyDebugSymbols(file, conf().path().install_pdbs() /
-                                       (file.filename().string() + ".debug"));
-            stripDebugSymbols(file);
-        }
-
         // copy metainfo
         // const fs::path metaInfoPath = conf().path().build() /
         //                               "modorganizer/src/resources/linux/"
