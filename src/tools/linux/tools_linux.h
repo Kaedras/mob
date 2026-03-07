@@ -100,6 +100,14 @@ namespace mob {
         //
         linuxdeploy& customAppRun(const fs::path& p);
 
+        // libraries to exclude
+        //
+        linuxdeploy& excludeLibraries(const std::vector<std::string>& excludeLibraries);
+
+        // libraries to exclude
+        //
+        linuxdeploy& excludeLibraries(const std::string& excludeLibraries);
+
         // path to executable
         //
         linuxdeploy& executable(const fs::path& p);
@@ -142,6 +150,8 @@ namespace mob {
         std::string iconFileName_;
         // desktop file
         fs::path desktopFile_;
+        // libraries to exclude
+        std::vector<std::string> excludeLibraries_;
         // nostrip
         bool nostrip_ = false;
         // create a desktop file

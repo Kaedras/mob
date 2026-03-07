@@ -14,12 +14,21 @@ namespace mob::tasks {
                    conf().version().get("linuxdeploy") + "/linuxdeploy-x86_64.AppImage";
         }
 
+        url plugin_qt_url()
+        {
+            return "https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/"
+                   "download/" +
+                   conf().version().get("linuxdeploy-plugin-qt") +
+                   "/linuxdeploy-plugin-qt-x86_64.AppImage";
+        }
+
         linuxdeploy create_tool(const fs::path& appDirPath)
         {
             return std::move(linuxdeploy()
                                  .output(conf().path().install_appimage())
                                  .nostrip()
                                  .appdir(appDirPath)
+                                 .excludeLibraries("libqsqlmimer")
                                  .customAppRun(find_root() / "AppRun"));
         }
 
@@ -34,7 +43,7 @@ namespace mob::tasks {
 
     bool appimage::prebuilt()
     {
-        return true;
+        return false;
     }
 
     fs::path appimage::source_path()
@@ -60,22 +69,29 @@ namespace mob::tasks {
 
     void appimage::do_fetch()
     {
-        // fetch linuxdeploy-x86_64.AppImage
-        const auto file = run_tool(downloader(source_url()));
+        auto fetch = [&](const url& url) {
+            const auto file = run_tool(downloader(url));
 
-        // chmod u+x
-        struct stat st{};
-        if (stat(file.c_str(), &st) == -1) {
-            const int e = errno;
-            cx().bail_out(context::reason::cmd, "stat() failed: {}", strerror(e));
-        }
-        if (chmod(file.c_str(), st.st_mode | S_IXUSR) == -1) {
-            const int e = errno;
-            cx().bail_out(context::reason::cmd, "chmod() failed: {}", strerror(e));
-        }
+            // chmod u+x
+            struct stat st{};
+            if (stat(file.c_str(), &st) == -1) {
+                const int e = errno;
+                cx().bail_out(context::reason::cmd, "stat() failed: {}", strerror(e));
+            }
+            if (chmod(file.c_str(), st.st_mode | S_IXUSR) == -1) {
+                const int e = errno;
+                cx().bail_out(context::reason::cmd, "chmod() failed: {}", strerror(e));
+            }
 
-        // copy to mob prefix dir
-        op::copy_file_to_dir_if_better(cx(), file, conf().path().prefix());
+            // copy to mob prefix dir
+            op::copy_file_to_dir_if_better(cx(), file, conf().path().prefix());
+        };
+
+        // fetch linuxdeploy
+        fetch(source_url());
+
+        // fetch linuxdeploy-plugin-qt
+        fetch(plugin_qt_url());
     }
 
     void appimage::do_build_and_install()
@@ -87,8 +103,8 @@ namespace mob::tasks {
                                        appDir / "usr",
                                        op::flags::copy_files | op::flags::copy_dirs);
         // copy lib
-        op::copy_glob_to_dir_if_better(cx(), conf().path().install_libs(),
-                                       appDir / "usr",
+        op::copy_glob_to_dir_if_better(cx(), conf().path().install_libs() / "*.so",
+                                       appDir / "usr/lib",
                                        op::flags::copy_files | op::flags::copy_dirs);
 
         // copy libraries that are not inside the lib directory
@@ -99,13 +115,16 @@ namespace mob::tasks {
         op::copy_glob_to_dir_if_better(cx(), appDir / "usr/bin/lib/*.so",
                                        appDir / "usr/lib", op::flags::copy_files);
 
+        // copy translations
+        op::copy_glob_to_dir_if_better(cx(), appDir / "usr/bin/translations", appDir,
+                                       op::flags::copy_files);
+
         // remove unneeded files
-        op::delete_directory(cx(), appDir / "usr/lib/cmake");
         op::delete_file(cx(), appDir / "usr/bin/lib/libbsarchpp.so");
         op::delete_file(cx(), appDir / "usr/bin/loot/libloot.so.0");
-        op::delete_file_glob(cx(), appDir / "usr/lib/*.a");
         op::delete_file(cx(), appDir / "usr/bin/libuibase.so");
         op::delete_directory(cx(), appDir / "usr/bin/lib");
+        op::delete_directory(cx(), appDir / "usr/bin/translations");
 
         // copy metainfo
         // const fs::path metaInfoPath = conf().path().build() /
@@ -120,9 +139,6 @@ namespace mob::tasks {
             cx(),
             conf().path().build() / "modorganizer/src/resources/linux/ModOrganizer.svg",
             appDir / "usr/share/icons/hicolor/scalable/apps");
-
-        const fs::path desktopFilePath =
-            appDir / "usr/share/applications/ModOrganizer.desktop";
 
         // copy desktop file
         op::copy_file_to_dir_if_better(

@@ -1,6 +1,8 @@
 #include "../../core/process.h"
 #include "../tools.h"
 
+using namespace std;
+
 namespace mob {
 
     linuxdeploy::linuxdeploy() : basic_process_runner("linuxdeploy") {}
@@ -31,6 +33,19 @@ namespace mob {
     linuxdeploy& linuxdeploy::customAppRun(const fs::path& p)
     {
         customAppRun_ = p;
+        return *this;
+    }
+
+    linuxdeploy&
+    linuxdeploy::excludeLibraries(const std::vector<std::string>& excludeLibraries)
+    {
+        excludeLibraries_ = excludeLibraries;
+        return *this;
+    }
+
+    linuxdeploy& linuxdeploy::excludeLibraries(const std::string& excludeLibraries)
+    {
+        excludeLibraries_.emplace_back(excludeLibraries);
         return *this;
     }
 
@@ -71,10 +86,24 @@ namespace mob {
         if (nostrip_) {
             e.set("NO_STRIP", "1");
         }
-        std::string ldLibraryPath =
-            std::format("{}/usr/bin/:{}/usr/bin/lib/:{}/usr/lib:{}/usr/lib64", appdir_,
-                        appdir_, appdir_, appdir_);
+        string ldLibraryPath =
+            format("{}/usr/bin/:{}/usr/bin/lib/:{}/usr/lib:{}/usr/lib64", appdir_,
+                   appdir_, appdir_, appdir_);
         e.set("LD_LIBRARY_PATH", ldLibraryPath, env::append);
+
+        if (!excludeLibraries_.empty()) {
+            string excludeString;
+            for (int i = 0; i < excludeLibraries_.size() - 1; ++i) {
+                excludeString += excludeLibraries_[i] + ";";
+            }
+            excludeString += excludeLibraries_.back();
+
+            e.set("LINUXDEPLOY_EXCLUDED_LIBRARIES", excludeString, env::append);
+        }
+
+        // ensure wayland support
+        e.set("EXTRA_QT_PLUGINS", "waylandcompositor");
+        e.set("EXTRA_PLATFORM_PLUGINS", "libqwayland.so");
 
         process p;
         p.binary(binary())
@@ -83,6 +112,7 @@ namespace mob {
             // .arg("--verbosity", "0", process::log_debug)
             .arg("--verbosity", "3", process::log_quiet)
             .arg("--appdir", appdir_)
+            .arg("--plugin", "qt")
             .arg("--output", "appimage");
 
         if (!customAppRun_.empty()) {
