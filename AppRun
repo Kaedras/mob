@@ -43,9 +43,10 @@ get_target()
 
 target="$(get_target "${1:-}")"
 
-# If the first arg was a subcommand, shift it away
+# Remove subcommand from arguments
 if [ "${1:-}" = "$target" ]; then
-  shift
+  unset 'args[0]'
+  NUMBER_OF_ARGS=$((NUMBER_OF_ARGS-1))
 fi
 
 BIN="$APPDIR/usr/bin/$target"
