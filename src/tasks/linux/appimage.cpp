@@ -120,7 +120,6 @@ namespace mob::tasks {
                                        op::flags::copy_files);
 
         // remove unneeded files
-        op::delete_file(cx(), appDir / "usr/bin/lib/libbsarchpp.so");
         op::delete_file(cx(), appDir / "usr/bin/loot/libloot.so.0");
         op::delete_file(cx(), appDir / "usr/bin/libuibase.so");
         op::delete_directory(cx(), appDir / "usr/bin/lib");
