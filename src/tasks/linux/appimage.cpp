@@ -125,6 +125,10 @@ namespace mob::tasks {
         op::delete_directory(cx(), appDir / "usr/bin/lib");
         op::delete_directory(cx(), appDir / "usr/bin/translations");
 
+        // workaround
+        // tutorials can hide mod installation dialogues which blocks everything
+        op::delete_directory(cx(), appDir / "usr/bin/tutorials");
+
         // copy metainfo
         // const fs::path metaInfoPath = conf().path().build() /
         //                               "modorganizer/src/resources/linux/"
