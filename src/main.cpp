@@ -61,11 +61,7 @@ namespace mob {
 #endif
             .add_task<mo>("modorganizer-installer_wizard")
             .add_task<mo>("modorganizer-bsa_extractor")
-#ifdef _WIN32
-            // TODO: add linux support
-            .add_task<mo>("modorganizer-plugin_python")
-#endif
-            ;
+            .add_task<mo>("modorganizer-plugin_python");
 
         add_task<parallel_tasks>()
             .add_task<stylesheets>()
