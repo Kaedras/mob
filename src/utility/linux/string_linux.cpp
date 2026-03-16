@@ -13,27 +13,27 @@ namespace mob {
         return std::string(ws.begin(), ws.end());
     }
 
-    std::wstring cp_to_utf16(uint from, std::string_view s)
+    std::wstring cp_to_utf16(uint, std::string_view s)
     {
         return std::wstring(s.begin(), s.end());
     }
 
-    std::string utf16_to_cp(uint to, std::wstring_view ws)
+    std::string utf16_to_cp(uint, std::wstring_view ws)
     {
         return std::string(ws.begin(), ws.end());
     }
 
-    std::string bytes_to_utf8(encodings e, std::string_view s)
+    std::string bytes_to_utf8(encodings, std::string_view s)
     {
         return {s.begin(), s.end()};
     }
 
-    std::string utf16_to_bytes(encodings e, std::wstring_view ws)
+    std::string utf16_to_bytes(encodings, std::wstring_view ws)
     {
         return std::string(ws.begin(), ws.end());
     }
 
-    std::string utf8_to_bytes(encodings e, std::string_view utf8)
+    std::string utf8_to_bytes(encodings, std::string_view utf8)
     {
         return std::string(utf8);
     }
