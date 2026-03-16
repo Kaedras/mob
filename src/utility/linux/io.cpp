@@ -10,7 +10,10 @@ namespace mob {
     extern u8stream u8cout(false);
     extern u8stream u8cerr(true);
 
-    void set_std_streams() {}
+    void set_std_streams()
+    {
+        // no-op
+    }
 
     std::mutex& global_output_mutex()
     {
@@ -97,10 +100,15 @@ namespace mob {
         u8cout << "\033[39m\033[49m";
     }
 
-    font_restorer::font_restorer() : restore_(false) {}
+    // no-op
+    font_restorer::font_restorer() = default;
 
-    font_restorer::~font_restorer() {}
+    // no-op
+    font_restorer::~font_restorer() = default;
 
-    void font_restorer::restore() {}
+    void font_restorer::restore()
+    {
+        // no-op
+    }
 
 }  // namespace mob
