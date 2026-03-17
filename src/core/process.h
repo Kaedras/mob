@@ -9,9 +9,9 @@
 #ifdef __unix__
 #define DWORD int
 struct STARTUPINFOW {
-    int stdIn;
-    int stdOut;
-    int stdErr;
+    int stdIn  = STDIN_FILENO;
+    int stdOut = STDOUT_FILENO;
+    int stdErr = STDERR_FILENO;
 };
 #endif
 
