@@ -116,15 +116,26 @@ namespace mob {
 
     env& env::set(std::string_view k, std::string_view v, flags f)
     {
+        return set(k, v, f, "");
+    }
+
+    env& env::set(std::string_view k, std::string_view v, flags f,
+                  std::string_view separator)
+    {
         copy_for_write();
-        set_impl(utf8_to_utf16(k), utf8_to_utf16(v), f);
+        set_impl(utf8_to_utf16(k), utf8_to_utf16(v), f, utf8_to_utf16(separator));
         return *this;
     }
 
-    env& env::set(std::wstring k, std::wstring v, flags f)
+    env& env::set(nativeString k, nativeString v, flags f)
+    {
+        return set(std::move(k), std::move(v), f, L"");
+    }
+
+    env& env::set(nativeString k, nativeString v, flags f, nativeString separator)
     {
         copy_for_write();
-        set_impl(std::move(k), std::move(v), f);
+        set_impl(std::move(k), std::move(v), f, std::move(separator));
         return *this;
     }
 

@@ -1,3 +1,5 @@
+#include <utility>
+
 #include "../../nativeString.h"
 #include "../../tools/tools.h"
 #include "../../utility.h"
@@ -24,10 +26,15 @@ namespace mob {
         return this_env::get();
     }
 
-    env& env::set(std::string_view k, std::string_view v, flags f)
+    env& env::set(nativeString k, nativeString v, flags f)
+    {
+        return set(std::move(k), std::move(v), f, "");
+    }
+
+    env& env::set(nativeString k, nativeString v, flags f, nativeString separator)
     {
         copy_for_write();
-        set_impl(nativeString(k), nativeString(v), f);
+        set_impl(std::move(k), std::move(v), f, std::move(separator));
         return *this;
     }
 

@@ -130,7 +130,7 @@ namespace mob {
         return *this;
     }
 
-    void env::set_impl(nativeString k, nativeString v, flags f)
+    void env::set_impl(nativeString k, nativeString v, flags f, nativeString separator)
     {
         auto current = find(k);
 
@@ -145,11 +145,11 @@ namespace mob {
             break;
 
         case append:
-            *current += v;
+            *current += separator + v;
             break;
 
         case prepend:
-            *current = v + *current;
+            *current = v + separator + *current;
             break;
         }
     }
