@@ -61,7 +61,7 @@ namespace mob {
 
         // returns the variable' value, empty if not found
         //
-        nativeString get(nativeStringView k) const;
+        std::string get(std::string_view k) const;
 
         // map of variables
         //
