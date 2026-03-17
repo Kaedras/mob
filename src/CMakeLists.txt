@@ -18,6 +18,7 @@ target_precompile_headers(mob PRIVATE pch.h)
 
 target_include_directories(mob PUBLIC ${CMAKE_SOURCE_DIR}/third-party/include)
 if (UNIX)
+    target_compile_options(mob PRIVATE -Wall -Wextra -Wpedantic -Wno-unknown-pragmas)
     option(ENABLE_ASAN "Enable address sanitizer" ON)
     find_package(ZLIB REQUIRED)
     find_package(CURL REQUIRED)
