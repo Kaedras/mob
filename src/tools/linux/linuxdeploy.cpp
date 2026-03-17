@@ -93,7 +93,7 @@ namespace mob {
             e.set("NO_STRIP", "1");
         }
         string ldLibraryPath =
-            format("{}/usr/bin/:{}/usr/bin/lib/:{}/usr/lib:{}/usr/lib64", appdir_,
+            format("{}/usr/bin:{}/usr/bin/lib:{}/usr/lib:{}/usr/lib64", appdir_,
                    appdir_, appdir_, appdir_);
 
         for (const auto& path : additionalLibPaths_) {
