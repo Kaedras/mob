@@ -93,17 +93,8 @@ namespace mob {
             char** env = nullptr;
 
             // free malloc'd strings
-            void clearEnv()
-            {
-                if (env != nullptr) {
-                    for (int i = 0; env[i] != nullptr; i++) {
-                        free(env[i]);
-                    }
-                    free(env);
-                    env = nullptr;
-                }
-            }
-            ~data() { clearEnv(); }
+            void clearEnv();
+            ~data();
 #endif
         };
 

@@ -85,6 +85,22 @@ namespace mob {
         return data_->env;
     }
 
+    void env::data::clearEnv()
+    {
+        if (env != nullptr) {
+            for (int i = 0; env[i] != nullptr; i++) {
+                free(env[i]);
+            }
+            free(env);
+            env = nullptr;
+        }
+    }
+
+    env::data::~data()
+    {
+        clearEnv();
+    }
+
     void env::copy_for_write()
     {
         if (own_) {
