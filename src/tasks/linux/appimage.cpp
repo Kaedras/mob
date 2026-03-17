@@ -24,12 +24,18 @@ namespace mob::tasks {
 
         linuxdeploy create_tool(const fs::path& appDirPath)
         {
-            return std::move(linuxdeploy()
-                                 .output(conf().path().install_appimage())
-                                 .nostrip()
-                                 .appdir(appDirPath)
-                                 .excludeLibraries("libqsqlmimer")
-                                 .customAppRun(find_root() / "AppRun"));
+            linuxdeploy tool;
+            tool.output(conf().path().install_appimage())
+                .nostrip()
+                .appdir(appDirPath)
+                .excludeLibraries("libqsqlmimer")
+                .customAppRun(find_root() / "AppRun");
+
+            if (conf().task({"plugin_python"}).get<bool>("enabled")) {
+                tool.additionalLibraryPath(conf().path().install_plugins() /
+                                           "plugin_python/lib");
+            }
+            return tool;
         }
 
     }  // namespace
