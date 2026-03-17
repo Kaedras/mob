@@ -32,8 +32,8 @@ namespace mob::tasks {
                 .customAppRun(find_root() / "AppRun");
 
             if (conf().task({"plugin_python"}).get<bool>("enabled")) {
-                tool.additionalLibraryPath(conf().path().install_plugins() /
-                                           "plugin_python/lib");
+                tool.additionalLibraryPath(appDirPath /
+                                           "/usr/bin/plugins/plugin_python/lib");
             }
             return tool;
         }
