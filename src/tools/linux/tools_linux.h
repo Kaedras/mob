@@ -108,6 +108,10 @@ namespace mob {
         //
         linuxdeploy& excludeLibraries(const std::string& excludeLibraries);
 
+        // additional paths to look up libraries
+        //
+        linuxdeploy& additionalLibraryPath(std::string path);
+
         // path to executable
         //
         linuxdeploy& executable(const fs::path& p);
@@ -152,6 +156,8 @@ namespace mob {
         fs::path desktopFile_;
         // libraries to exclude
         std::vector<std::string> excludeLibraries_;
+        // additional library paths
+        std::vector<std::string> additionalLibPaths_;
         // nostrip
         bool nostrip_ = false;
         // create a desktop file

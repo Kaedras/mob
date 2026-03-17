@@ -49,6 +49,12 @@ namespace mob {
         return *this;
     }
 
+    linuxdeploy& linuxdeploy::additionalLibraryPath(std::string path)
+    {
+        additionalLibPaths_.emplace_back(std::move(path));
+        return *this;
+    }
+
     linuxdeploy& linuxdeploy::executable(const fs::path& p)
     {
         executable_ = p;
@@ -89,6 +95,11 @@ namespace mob {
         string ldLibraryPath =
             format("{}/usr/bin/:{}/usr/bin/lib/:{}/usr/lib:{}/usr/lib64", appdir_,
                    appdir_, appdir_, appdir_);
+
+        for (const auto& path : additionalLibPaths_) {
+            ldLibraryPath += ":" + path;
+        }
+
         e.set("LD_LIBRARY_PATH", ldLibraryPath, env::prepend, ":");
 
         if (!excludeLibraries_.empty()) {
