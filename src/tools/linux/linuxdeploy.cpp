@@ -89,7 +89,7 @@ namespace mob {
         string ldLibraryPath =
             format("{}/usr/bin/:{}/usr/bin/lib/:{}/usr/lib:{}/usr/lib64", appdir_,
                    appdir_, appdir_, appdir_);
-        e.set("LD_LIBRARY_PATH", ldLibraryPath, env::append);
+        e.set("LD_LIBRARY_PATH", ldLibraryPath, env::prepend, ":");
 
         if (!excludeLibraries_.empty()) {
             string excludeString;
