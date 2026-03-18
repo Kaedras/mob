@@ -35,6 +35,41 @@ namespace mob {
         }
     }
 
+    fs::path find_root(bool verbose)
+    {
+        gcx().trace(context::conf, "looking for root directory");
+
+        fs::path mob_exe_dir = mob_exe_path().parent_path();
+
+        auto third_party = mob_exe_dir / "third-party";
+
+        if (!fs::exists(third_party)) {
+            // doesn't exist, maybe this is the build directory
+
+            auto p = mob_exe_dir;
+
+            if (p.filename().string() == "src") {
+                if (verbose)
+                    u8cout << "mob may be in its build directory, looking up\n";
+
+                while (p.filename() != "build" && !p.filename().empty()) {
+                    p = p.parent_path();
+                }
+                if (!p.filename().empty()) {
+                    third_party = p.parent_path() / "third-party";
+                }
+            }
+        }
+
+        if (!fs::exists(third_party))
+            gcx().bail_out(context::conf, "root directory not found");
+
+        const auto p = fs::canonical(third_party.parent_path());
+        gcx().trace(context::conf, "found root directory at {}", p);
+
+        return p;
+    }
+
     // looks for `qmake` in the given path, tries a variety of subdirectories
     //
     bool find_qmake(fs::path& check)

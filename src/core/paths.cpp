@@ -4,12 +4,6 @@
 #include "../utility/string.h"
 #include "env.h"
 
-#ifdef __unix__
-static constexpr auto BUILD_DIR = u8"src";
-#else
-static constexpr auto BUILD_DIR = u8"x64";
-#endif
-
 namespace mob {
 
     // checks if a path exists that starts with `check` and ends with as many parts
@@ -45,44 +39,6 @@ namespace mob {
         }
 
         return false;
-    }
-
-    fs::path find_root(bool verbose)
-    {
-        gcx().trace(context::conf, "looking for root directory");
-
-        fs::path mob_exe_dir = mob_exe_path().parent_path();
-
-        auto third_party = mob_exe_dir / "third-party";
-
-        if (!fs::exists(third_party)) {
-            // doesn't exist, maybe this is the build directory
-
-            auto p = mob_exe_dir;
-
-            if (p.filename().u8string() == BUILD_DIR) {
-                p = p.parent_path();
-
-                if (p.filename().u8string() == u8"Debug" ||
-                    p.filename().u8string() == u8"Release" ||
-                    p.filename().u8string() == u8"debug" ||
-                    p.filename().u8string() == u8"release") {
-                    if (verbose)
-                        u8cout << "mob.exe is in its build directory, looking up\n";
-
-                    // mob_exe_dir is in the build directory
-                    third_party = mob_exe_dir / ".." / ".." / ".." / "third-party";
-                }
-            }
-        }
-
-        if (!fs::exists(third_party))
-            gcx().bail_out(context::conf, "root directory not found");
-
-        const auto p = fs::canonical(third_party.parent_path());
-        gcx().trace(context::conf, "found root directory at {}", p);
-
-        return p;
     }
 
     fs::path find_in_root(const fs::path& file)
