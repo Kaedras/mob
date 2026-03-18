@@ -263,10 +263,10 @@ namespace mob {
         const auto qm = qm_file();
 
         auto p = process().binary(binary()).arg("-silent").stderr_filter([](auto&& f) {
-            if (f.line.find("dropping duplicate") != -1)
+            if (f.line.contains("dropping duplicate") ||
+                f.line.contains("try -verbose")) {
                 f.lv = context::level::debug;
-            else if (f.line.find("try -verbose") != -1)
-                f.lv = context::level::debug;
+            }
         });
 
         // input .ts files
