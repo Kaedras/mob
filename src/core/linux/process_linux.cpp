@@ -61,7 +61,7 @@ namespace mob {
         }
 
         case inherit: {
-            si.stdOut = fileno(stdout);
+            si.stdOut = STDOUT_FILENO;
             break;
         }
         }
@@ -88,7 +88,7 @@ namespace mob {
         }
 
         case inherit: {
-            si.stdErr = fileno(stderr);
+            si.stdErr = STDERR_FILENO;
             break;
         }
         }
