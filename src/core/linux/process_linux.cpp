@@ -187,7 +187,8 @@ namespace mob {
 
     nativeString process::make_cmd_args(const std::string& what) const
     {
-        return {};
+        // no-op
+        return what;
     }
 
     void process::join()
