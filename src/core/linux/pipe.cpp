@@ -36,6 +36,19 @@ namespace mob {
             cx_.bail_out(context::cmd, "CreatePipe failed, {}", strerror(e));
         }
 
+        static constexpr int pipe_size = 512 * 1024;
+
+        if (fcntl(pipeFd[0], F_SETPIPE_SZ, pipe_size) == -1) {
+            const int e = errno;
+            cx_.warning(context::cmd, "failed to set pipe size (fd={}), {}", pipeFd[0],
+                        strerror(e));
+        }
+        if (fcntl(pipeFd[1], F_SETPIPE_SZ, pipe_size) == -1) {
+            const int e = errno;
+            cx_.warning(context::cmd, "failed to set pipe size (fd={}), {}", pipeFd[1],
+                        strerror(e));
+        }
+
         pipe_   = pipeFd[0];
         closed_ = false;
 
