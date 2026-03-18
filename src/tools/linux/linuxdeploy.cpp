@@ -113,8 +113,8 @@ namespace mob {
         }
 
         // ensure wayland support
-        e.set("EXTRA_QT_PLUGINS", "waylandcompositor");
-        e.set("EXTRA_PLATFORM_PLUGINS", "libqwayland.so");
+        // e.set("EXTRA_QT_PLUGINS", "waylandcompositor");
+        // e.set("EXTRA_PLATFORM_PLUGINS", "libqwayland.so");
 
         process p;
         p.binary(binary())
