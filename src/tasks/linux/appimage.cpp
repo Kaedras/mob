@@ -33,7 +33,7 @@ namespace mob::tasks {
 
             if (conf().task({"plugin_python"}).get<bool>("enabled")) {
                 tool.additionalLibraryPath(appDirPath /
-                                           "/usr/bin/plugins/plugin_python/lib");
+                                           "usr/bin/plugins/plugin_python/lib");
             }
             return tool;
         }
