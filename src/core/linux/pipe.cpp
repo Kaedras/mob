@@ -97,6 +97,11 @@ namespace mob {
 
     async_pipe_stdin::async_pipe_stdin(const context& cx) : cx_(cx), pipe_(-1) {}
 
+    async_pipe_stdin::~async_pipe_stdin()
+    {
+        close();
+    }
+
     int async_pipe_stdin::create()
     {
         int pipeFd[2];

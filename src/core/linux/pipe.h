@@ -52,6 +52,7 @@ namespace mob {
     class async_pipe_stdin {
     public:
         async_pipe_stdin(const context& cx);
+        ~async_pipe_stdin();
 
         int create();
 
