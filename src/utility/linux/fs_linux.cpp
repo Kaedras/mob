@@ -2,19 +2,21 @@
 #include "../../core/context.h"
 #include "../fs.h"
 
+using namespace std;
+
 namespace mob {
 
     fs::path make_temp_file()
     {
         static fs::path dir = conf().path().temp_dir();
 
-        std::string templ = dir / "tmpXXXXXX";
+        const string templateString = dir / "tmpXXXXXX";
 
         // mkstemp requires a modifiable char array
-        char filename[templ.length() + 1];
-        strcpy(filename, templ.c_str());
+        const auto path = make_unique<char[]>(templateString.length() + 1);
+        strcpy(path.get(), templateString.c_str());
 
-        int fd = mkstemp(filename);
+        const int fd = mkstemp(path.get());
 
         if (fd == -1) {
             const auto e = errno;
@@ -26,7 +28,7 @@ namespace mob {
         // Close the file descriptor since we only need the name
         close(fd);
 
-        return std::filesystem::path(filename);
+        return std::filesystem::path(path.get());
     }
 
 }  // namespace mob
