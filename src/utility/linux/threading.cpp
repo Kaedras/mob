@@ -28,7 +28,7 @@ namespace mob {
         const int frame_count = backtrace(frame_addresses, max_frames);
         strings               = backtrace_symbols(frame_addresses, frame_count);
 
-        for (std::size_t i = 0; i < frame_count; ++i) {
+        for (int i = 0; i < frame_count; ++i) {
             std::cerr << strings[i] << "\n";
         }
 

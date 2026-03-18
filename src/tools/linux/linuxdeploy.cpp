@@ -104,7 +104,7 @@ namespace mob {
 
         if (!excludeLibraries_.empty()) {
             string excludeString;
-            for (int i = 0; i < excludeLibraries_.size() - 1; ++i) {
+            for (size_t i = 0; i < excludeLibraries_.size() - 1; ++i) {
                 excludeString += excludeLibraries_[i] + ";";
             }
             excludeString += excludeLibraries_.back();
