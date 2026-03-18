@@ -13,19 +13,32 @@ namespace mob {
     fs::path make_temp_file();
 
 #ifdef __unix__
-    class fd {
+    class fd_closer {
     public:
-        fd() : m_fd(-1) {}
-        fd(int fd) : m_fd(fd) {}
-        int get() const { return m_fd; }
+        fd_closer() : m_fd(-1) {}
+        fd_closer(int fd) : m_fd(fd) {}
+
+        fd_closer(const fd_closer&)      = delete;
+        fd_closer& operator=(fd_closer&) = delete;
+
+        fd_closer(fd_closer&& other) noexcept : m_fd(other.m_fd) { other.m_fd = -1; }
+        fd_closer& operator=(fd_closer&& other) noexcept
+        {
+            m_fd       = other.m_fd;
+            other.m_fd = -1;
+            return *this;
+        }
+        [[nodiscard]] int get() const { return m_fd; }
         void reset(int fd) { m_fd = fd; }
         operator bool() const noexcept { return m_fd != -1; }
+
+        ~fd_closer() { close(m_fd); }
 
     private:
         int m_fd;
     };
 
-    using handle_ptr = fd;
+    using handle_ptr = fd_closer;
 #else
     struct handle_closer {
         using pointer = HANDLE;
