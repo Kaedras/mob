@@ -13,7 +13,7 @@ list(FILTER source_files EXCLUDE REGEX ${EXCLUDE_FILTER})
 list(FILTER header_files EXCLUDE REGEX ${EXCLUDE_FILTER})
 
 add_executable(mob ${source_files} ${header_files})
-set_target_properties(mob PROPERTIES CXX_STANDARD 20)
+set_target_properties(mob PROPERTIES CXX_STANDARD 23)
 target_precompile_headers(mob PRIVATE pch.h)
 
 target_include_directories(mob PUBLIC ${CMAKE_SOURCE_DIR}/third-party/include)
