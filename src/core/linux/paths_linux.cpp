@@ -1,6 +1,7 @@
 #include "../../tasks/task_manager.h"
 #include "../../tasks/tasks.h"
 #include "../../utility/string.h"
+#include "../env.h"
 #include "../paths.h"
 
 namespace mob {
@@ -121,4 +122,18 @@ namespace mob {
 
         gcx().bail_out(context::conf, "can't find qt install");
     }
+
+    fs::path find_vcpkg()
+    {
+        const auto env_path = this_env::get().get("VCPKG_ROOT");
+
+        if (!env_path.empty()) {
+            return fs::absolute(env_path);
+        }
+
+        gcx().bail_out(
+            context::conf,
+            "can't find vcpkg, please make sure that $VCPKG_ROOT is set correctly");
+    }
+
 }  // namespace mob
