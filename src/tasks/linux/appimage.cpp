@@ -26,7 +26,6 @@ namespace mob::tasks {
         {
             linuxdeploy tool;
             tool.output(conf().path().install_appimage())
-                .nostrip()
                 .appdir(appDirPath)
                 .excludeLibraries("libqsqlmimer")
                 .customAppRun(find_root() / "AppRun");
