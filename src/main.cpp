@@ -58,10 +58,10 @@ namespace mob {
             // TODO: add linux support
             .add_task<mo>("modorganizer-installer_fomod_csharp")
             .add_task<mo>("modorganizer-installer_omod")
-#endif
             .add_task<mo>("modorganizer-installer_wizard")
-            .add_task<mo>("modorganizer-bsa_extractor")
-            .add_task<mo>("modorganizer-plugin_python");
+            .add_task<mo>("modorganizer-plugin_python")
+#endif
+            .add_task<mo>("modorganizer-bsa_extractor");
 
         add_task<parallel_tasks>()
             .add_task<stylesheets>()
@@ -69,16 +69,16 @@ namespace mob {
 #ifdef _WIN32
             .add_task<explorerpp>()
 #endif
-            .add_task<mo>({"modorganizer-tool_configurator", "pycfg"})
-            .add_task<mo>("modorganizer-fnistool")
 #ifdef _WIN32
             // TODO: add linux support
+            .add_task<mo>({"modorganizer-tool_configurator", "pycfg"})
+            .add_task<mo>("modorganizer-fnistool")
             .add_task<mo>("modorganizer-basic_games")
-#endif
             .add_task<mo>({"modorganizer-script_extender_plugin_checker",
                            "scriptextenderpluginchecker"})
             .add_task<mo>({"modorganizer-form43_checker", "form43checker"})
             .add_task<mo>({"modorganizer-preview_dds", "ddspreview"})
+#endif
             .add_task<mo>({"modorganizer", "organizer"});
 
         // other tasks
