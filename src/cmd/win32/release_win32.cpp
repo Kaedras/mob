@@ -10,6 +10,24 @@
 
 namespace mob {
 
+    void release_command::make_bin()
+    {
+        const auto out = out_ / make_filename("");
+        u8cout << "making binary archive " << path_to_utf8(out) << "\n";
+
+        op::archive_from_glob(gcx(), conf().path().install_bin() / "*", out,
+                              {"__pycache__"});
+    }
+
+    void release_command::make_pdbs()
+    {
+        const auto out = out_ / make_filename("pdbs");
+        u8cout << "making pdbs archive " << path_to_utf8(out) << "\n";
+
+        op::archive_from_glob(gcx(), conf().path().install_pdbs() / "*", out,
+                              {"__pycache__"});
+    }
+
     std::string release_command::version_from_exe() const
     {
         const auto exe = conf().path().install_bin() / "ModOrganizer.exe";

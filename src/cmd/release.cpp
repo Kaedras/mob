@@ -29,24 +29,6 @@ namespace mob {
         return {"release", "creates a release"};
     }
 
-    void release_command::make_bin()
-    {
-        const auto out = out_ / make_filename("");
-        u8cout << "making binary archive " << path_to_utf8(out) << "\n";
-
-        op::archive_from_glob(gcx(), conf().path().install_bin() / "*", out,
-                              {"__pycache__"});
-    }
-
-    void release_command::make_pdbs()
-    {
-        const auto out = out_ / make_filename("pdbs");
-        u8cout << "making pdbs archive " << path_to_utf8(out) << "\n";
-
-        op::archive_from_glob(gcx(), conf().path().install_pdbs() / "*", out,
-                              {"__pycache__"});
-    }
-
     void release_command::make_src()
     {
         const auto out = out_ / make_filename("src");

@@ -1,11 +1,88 @@
 #include "../../core/conf.h"
 #include "../../core/context.h"
 #include "../../core/op.h"
+#include "../../core/process.h"
+#include "../../tools/tools.h"
 #include "../commands.h"
 
 using namespace std;
 
 namespace mob {
+
+    void createSymbolFile(const fs::path& path)
+    {
+        // create a symbol file for google breakpad
+        fs::path symbolFile =
+            conf().path().install_pdbs() / (path.filename().string() + ".sym");
+        {
+            auto p = process::raw(
+                gcx(), format("dump_syms {} > {}", path.string(), symbolFile));
+            if (p.run_and_join() != 0) {
+                gcx().bail_out(context::generic, "error creating symbol files");
+            }
+        }
+
+        ifstream ifs(symbolFile);
+        string module, os, arch, hash, name;
+        ifs >> module >> os >> arch >> hash >> name;
+        ifs.close();
+
+        fs::path symbolPath = conf().path().install_pdbs() / "symbols" / name / hash;
+
+        op::move_to_directory(gcx(), symbolFile, symbolPath);
+
+        // create a debug file
+        fs::path debugFile =
+            conf().path().install_pdbs() / (path.filename().string() + ".debug");
+        {
+            auto p = process::raw(gcx(), format("objcopy --only-keep-debug {} {}",
+                                                path.string(), debugFile));
+            if (p.run_and_join() != 0) {
+                gcx().bail_out(context::generic, "error creating debug files");
+            }
+        }
+        op::move_to_directory(gcx(), debugFile, conf().path().install_pdbs() / "debug");
+    }
+
+    void release_command::make_bin()
+    {
+        const auto out = out_ / make_filename("");
+        u8cout << "making binary archive " << path_to_utf8(out) << "\n";
+
+        // todo: strip files?
+
+        op::archive_from_glob(gcx(), conf().path().install_bin() / "*", out,
+                              {"__pycache__"});
+    }
+
+    void release_command::make_pdbs()
+    {
+        const auto out = out_ / make_filename("debug");
+        u8cout << "making debug archive " << path_to_utf8(out) << "\n";
+
+        const fs::path base = conf().path().install_bin();
+
+        op::delete_directory(gcx(), conf().path().install_pdbs(), op::optional);
+        op::create_directories(gcx(), conf().path().install_pdbs());
+
+        // process executables
+        const array files{base / "helper", base / "ModOrganizer", base / "nxmhandler",
+                          base / "loot/lootcli"};
+        for (const fs::path& file : files) {
+            createSymbolFile(file);
+        }
+
+        // process libraries
+        for (const auto& file : fs::recursive_directory_iterator(base)) {
+            if (file.is_directory() || file.path().extension().string() != ".so") {
+                continue;
+            }
+            createSymbolFile(file.path());
+        }
+
+        op::archive_from_glob(gcx(), conf().path().install_pdbs() / "*", out,
+                              {"__pycache__"});
+    }
 
     std::string release_command::version_from_exe() const
     {

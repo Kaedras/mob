@@ -51,6 +51,10 @@ ENV PATH="$VCPKG_ROOT:$PATH"
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 ENV PATH="/root/.cargo/bin:$PATH"
 
+# install google breakpad tools
+RUN vcpkg install breakpad[tools]
+env PATH="$VCPG_ROOT/installed/x64-linux/tools/breakpad:$PATH"
+
 # define volumes
 VOLUME /dev/fuse
 VOLUME /root/build
