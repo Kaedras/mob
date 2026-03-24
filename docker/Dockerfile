@@ -53,7 +53,7 @@ ENV PATH="/root/.cargo/bin:$PATH"
 
 # install google breakpad tools
 RUN vcpkg install breakpad[tools]
-env PATH="$VCPG_ROOT/installed/x64-linux/tools/breakpad:$PATH"
+env PATH="$VCPKG_ROOT/installed/x64-linux/tools/breakpad:$PATH"
 
 # define volumes
 VOLUME /dev/fuse
