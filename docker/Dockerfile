@@ -61,9 +61,6 @@ VOLUME /root/build
 VOLUME /root/ccache
 VOLUME /root/mob
 VOLUME /root/vcpkg/buildtrees
-VOLUME /root/vcpkg/downloads
-VOLUME /root/vcpkg/installed
-VOLUME /root/vcpkg/packages
 
 ENV CCACHE_DIR=/root/ccache
 

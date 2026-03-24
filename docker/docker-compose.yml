@@ -7,11 +7,7 @@ services:
       - ${OUTPUT_DIR:-./}build:/root/build
       - ${OUTPUT_DIR:-./}mob:/root/mob
       - ${OUTPUT_DIR:-./}ccache:/root/ccache
-      # cache vcpkg packages between runs
-      - ${OUTPUT_DIR:-./}vcpkg/buildtrees:/root/vcpkg/buildtrees
-      - ${OUTPUT_DIR:-./}vcpkg/downloads:/root/vcpkg/downloads
-      - ${OUTPUT_DIR:-./}vcpkg/installed:/root/vcpkg/installed
-      - ${OUTPUT_DIR:-./}vcpkg/packages:/root/vcpkg/packages
+      - ${OUTPUT_DIR:-./}vcpkg/buildtrees:/root/vcpkg/buildtrees # to debug vcpkg build failures
     environment:
       - EXTRA_QT_PLUGINS=${EXTRA_QT_PLUGINS}
       - EXTRA_PLATFORM_PLUGINS=${EXTRA_PLATFORM_PLUGINS}
