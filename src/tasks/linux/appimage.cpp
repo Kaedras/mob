@@ -133,9 +133,10 @@ namespace mob::tasks {
 
         // remove plugins from usr/lib
         const fs::path libDir = appDir / "usr/lib";
-        const array libs{libDir / "libbsa_*.so",     libDir / "libgame_*.so",
-                         libDir / "libpreview_*.so", libDir / "libdiagnose_basic.so",
-                         libDir / "libinibakery.so", libDir / "libinieditor.so"};
+        const array libs{libDir / "libbsa_*.so",       libDir / "libgame_*.so",
+                         libDir / "libpreview_*.so",   libDir / "libdiagnose_basic.so",
+                         libDir / "libinibakery.so",   libDir / "libinieditor.so",
+                         libDir / "libinstaller_*.so", libDir / "libcheck_fnis.so"};
 
         for (const auto& lib : libs) {
             op::delete_file_glob(cx(), lib);
@@ -151,14 +152,23 @@ namespace mob::tasks {
             }
         };
 
+        // strip executables
         const fs::path bin = appDir / "usr/bin";
-        const array binaries{bin / "ModOrganizer", bin / "helper", bin / "nxmhandler",
-                             bin / "loot/lootcli"};
-        for (const auto& binary : binaries) {
-            strip(binary.string());
+        const array executablesToStrip{bin / "ModOrganizer", bin / "helper",
+                                       bin / "nxmhandler", bin / "loot/lootcli"};
+        for (const auto& e : executablesToStrip) {
+            strip(e.string());
         }
 
+        // strip plugins
         strip(bin / "plugins/*");
+
+        // strip libraries
+        const array libsToStrip{libDir / "lib7zip.so", libDir / "libarchive.so",
+                                libDir / "libloot.so.0", libDir / "libusvfs-fuse.so"};
+        for (const auto& lib : libsToStrip) {
+            strip(lib.string());
+        }
 
         // copy metainfo
         // const fs::path metaInfoPath = conf().path().build() /
