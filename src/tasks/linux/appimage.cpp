@@ -121,7 +121,8 @@ namespace mob::tasks {
                                        appDir / "usr/lib", op::flags::copy_files);
 
         // copy translations
-        op::copy_glob_to_dir_if_better(cx(), appDir / "usr/bin/translations", appDir,
+        op::copy_glob_to_dir_if_better(cx(), appDir / "usr/bin/translations/*",
+                                       appDir / "usr/translations",
                                        op::flags::copy_files);
 
         // remove unneeded files
