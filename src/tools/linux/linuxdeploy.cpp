@@ -57,7 +57,13 @@ namespace mob {
 
     linuxdeploy& linuxdeploy::executable(const fs::path& p)
     {
-        executable_ = p;
+        executables_.emplace_back(p);
+        return *this;
+    }
+
+    linuxdeploy& linuxdeploy::library(const fs::path& p)
+    {
+        libraries_.push_back(p);
         return *this;
     }
 
@@ -129,8 +135,11 @@ namespace mob {
         if (!customAppRun_.empty()) {
             p.arg("--custom-apprun", customAppRun_.string());
         }
-        if (!executable_.empty()) {
-            p.arg("--executable", executable_);
+        for (const auto& path : executables_) {
+            p.arg("--executable", path);
+        }
+        for (const auto& path : libraries_) {
+            p.arg("--library", path);
         }
         if (!icon_.empty()) {
             p.arg("--icon-file", icon_);

@@ -112,9 +112,13 @@ namespace mob {
         //
         linuxdeploy& additionalLibraryPath(std::string path);
 
-        // path to executable
+        // add an executable to deploy
         //
         linuxdeploy& executable(const fs::path& p);
+
+        // add a shared library to deploy
+        //
+        linuxdeploy& library(const fs::path& p);
 
         // path to icon
         //
@@ -142,8 +146,10 @@ namespace mob {
     private:
         // path to the output file
         fs::path output_;
-        // path to the executable file
-        fs::path executable_;
+        // executables to deploy
+        std::vector<fs::path> executables_;
+        // libraries to deploy
+        std::vector<fs::path> libraries_;
         // path to the AppRun file
         fs::path customAppRun_;
         // path to the icon

@@ -30,6 +30,13 @@ namespace mob::tasks {
                 .excludeLibraries("libqsqlmimer")
                 .customAppRun(find_root() / "AppRun");
 
+            for (const auto& entry :
+                 fs::directory_iterator(appDirPath / "usr/bin/plugins")) {
+                if (entry.is_regular_file() && entry.path().extension() == ".so") {
+                    tool.library(entry.path());
+                }
+            }
+
             if (conf().task({"plugin_python"}).get<bool>("enabled")) {
                 tool.additionalLibraryPath(appDirPath /
                                            "usr/bin/plugins/plugin_python/lib");
