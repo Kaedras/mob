@@ -83,8 +83,9 @@ namespace mob {
 
         // other tasks
         add_task<translations>();
+#ifdef _WIN32
         add_task<installer>();
-#ifdef __unix__
+#else
         add_task<appimage>();
 #endif
     }

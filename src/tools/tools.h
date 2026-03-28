@@ -511,14 +511,206 @@ namespace mob {
     //
     void build_loop(const context& cx, std::function<bool(bool)> f);
 
+#ifdef _WIN32
+
+    // bundled with mob in third-party/bin
+    //
+    struct vswhere {
+        // runs the vswhere binary and returns the output, empty on error
+        //
+        // note that vswhere may return more than one line if there are multiple
+        // installations of vs found; this is handled in find_vs() in paths.cpp
+        //
+        static std::string find_vs();
+    };
+    // tool that runs devenv.exe, only invoked to upgrade projects for now
+    //
+    class vs : public basic_process_runner {
+    public:
+        // path to devenv.exe
+        //
+        static fs::path devenv_binary();
+
+        // path to visual studio's root directory, the one that contains Common7,
+        // VC, etc.
+        //
+        static fs::path installation_path();
+
+        // path to vswhere.exe, typically from mob's third-party/bin
+        //
+        static fs::path vswhere();
+
+        // path to vcvars batch file
+        //
+        static fs::path vcvars();
+
+        // vs version from ini
+        //
+        static std::string version();
+
+        // vs year from ini
+        //
+        static std::string year();
+
+        // vs toolset from ini
+        //
+        static std::string toolset();
+
+        // vs sdk version from ini
+        //
+        static std::string sdk();
+
+        // what run() should do
+        //
+        enum ops { upgrade = 1 };
+
+        vs(ops o);
+
+        // path to the solution file to be upgraded
+        //
+        vs& solution(const fs::path& sln);
+
+    protected:
+        // calls do_upgrade()
+        //
+        void do_run() override;
+
+    private:
+        ops op_;
+        fs::path sln_;
+
+        // upgrades the solution file
+        //
+        void do_upgrade();
+    };
+
+    // tool that runs Inno Setup's iscc.exe to create the installer
+    //
+    class iscc : public basic_process_runner {
+    public:
+        // path to the iscc.exe binary
+        //
+        static fs::path binary();
+
+        // iscc tool with an optional path to the .iss file
+        //
+        iscc(fs::path iss = {});
+
+        // .iss file
+        //
+        iscc& iss(const fs::path& p);
+
+    protected:
+        // runs iscc
+        //
+        void do_run() override;
+
+    private:
+        // path to the .iss file
+        fs::path iss_;
+    };
+#else
+
+    // tool that runs linuxdeploy to create the appimage
+    //
+    class linuxdeploy : public basic_process_runner {
+    public:
+        // path to linuxdeploy-x86_64.AppImage
+        //
+        static fs::path binary();
+
+        // output path
+        //
+        linuxdeploy& output(const fs::path& p);
+
+        // appdir path
+        //
+        linuxdeploy& appdir(const fs::path& p);
+
+        // icon file name
+        //
+        linuxdeploy& iconFileName(const std::string& p);
+
+        // custom AppRun file
+        //
+        linuxdeploy& customAppRun(const fs::path& p);
+
+        // libraries to exclude
+        //
+        linuxdeploy& excludeLibraries(const std::vector<std::string>& excludeLibraries);
+
+        // libraries to exclude
+        //
+        linuxdeploy& excludeLibraries(const std::string& excludeLibraries);
+
+        // additional paths to look up libraries
+        //
+        linuxdeploy& additionalLibraryPath(std::string path);
+
+        // add an executable to deploy
+        //
+        linuxdeploy& executable(const fs::path& p);
+
+        // add a shared library to deploy
+        //
+        linuxdeploy& library(const fs::path& p);
+
+        // path to icon
+        //
+        linuxdeploy& icon(const fs::path& p);
+
+        // path to desktop file
+        //
+        linuxdeploy& desktopFile(const fs::path& p);
+
+        // pass --create-desktop-file
+        linuxdeploy& createDesktopFile();
+
+        // set NO_STRIP environment variable to 1
+        linuxdeploy& nostrip();
+
+        // linuxdeploy tool
+        //
+        linuxdeploy();
+
+    protected:
+        // runs linuxdeploy
+        //
+        void do_run() override;
+
+    private:
+        // path to the output file
+        fs::path output_;
+        // executables to deploy
+        std::vector<fs::path> executables_;
+        // libraries to deploy
+        std::vector<fs::path> libraries_;
+        // path to the AppRun file
+        fs::path customAppRun_;
+        // path to the icon
+        fs::path icon_;
+        // appdir path
+        fs::path appdir_;
+        // icon file name
+        std::string iconFileName_;
+        // desktop file
+        fs::path desktopFile_;
+        // libraries to exclude
+        std::vector<std::string> excludeLibraries_;
+        // additional library paths
+        std::vector<std::string> additionalLibPaths_;
+        // nostrip
+        bool nostrip_ = false;
+        // create a desktop file
+        bool createDesktopFile_ = false;
+    };
+#endif
+
 }  // namespace mob
 
 // more tools
 #include "cmake.h"
 #include "git.h"
-#ifdef __unix__
-#include "linux/tools_linux.h"
-#else
+#ifdef _WIN32
 #include "win32/msbuild.h"
-#include "win32/tools_win32.h"
 #endif
