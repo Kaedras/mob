@@ -41,38 +41,6 @@ namespace mob::tasks {
         void do_build_and_install() override;
     };
 
-    class libbsarchpp : public basic_task<libbsarchpp> {
-    public:
-        libbsarchpp();
-
-        static std::string version();
-        static config build_type();
-        static bool prebuilt();
-        static fs::path source_path();
-
-    protected:
-        void do_clean(clean c) override;
-        void do_fetch() override;
-        void do_build_and_install() override;
-    };
-
-    class libloot : public basic_task<libloot> {
-    public:
-        libloot();
-
-        static std::string version();
-        static std::string hash();
-        static std::string branch();
-
-        static bool prebuilt();
-        static fs::path source_path();
-
-    protected:
-        void do_clean(clean c) override;
-        void do_fetch() override;
-        void do_build_and_install() override;
-    };
-
     class licenses : public task {
     public:
         licenses();
