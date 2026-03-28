@@ -26,6 +26,7 @@ namespace mob::tasks {
         void do_fetch() override;
     };
 
+#endif
     class installer : public basic_task<installer> {
     public:
         installer();
@@ -39,7 +40,6 @@ namespace mob::tasks {
         void do_fetch() override;
         void do_build_and_install() override;
     };
-#endif
 
     class licenses : public task {
     public:
