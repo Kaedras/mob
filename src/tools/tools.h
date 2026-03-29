@@ -655,6 +655,13 @@ namespace mob {
         //
         linuxdeploy& library(const fs::path& p);
 
+        /*
+         Path to ELF file or directory containing such files (libraries or executables)
+        already present in the AppDir whose dependencies shall be deployed by
+        linuxdeploy without copying them again into the AppDir.
+        */
+        linuxdeploy& deployDepsOnly(const fs::path& p);
+
         // path to icon
         //
         linuxdeploy& icon(const fs::path& p);
@@ -685,6 +692,8 @@ namespace mob {
         std::vector<fs::path> executables_;
         // libraries to deploy
         std::vector<fs::path> libraries_;
+        // ELF files to deploy dependencies of
+        std::vector<fs::path> deployDepsOnly_;
         // path to the AppRun file
         fs::path customAppRun_;
         // path to the icon

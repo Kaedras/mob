@@ -67,6 +67,12 @@ namespace mob {
         return *this;
     }
 
+    linuxdeploy& linuxdeploy::deployDepsOnly(const fs::path& p)
+    {
+        deployDepsOnly_.push_back(p);
+        return *this;
+    }
+
     linuxdeploy& linuxdeploy::icon(const fs::path& p)
     {
         icon_ = p;
@@ -149,6 +155,9 @@ namespace mob {
         }
         else if (!iconFileName_.empty()) {
             p.arg("--desktop-file", desktopFile_);
+        }
+        for (const auto& path : deployDepsOnly_) {
+            p.arg("--deploy-deps-only", path);
         }
 
         execute_and_join(p);
