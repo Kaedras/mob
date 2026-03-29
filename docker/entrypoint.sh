@@ -6,6 +6,12 @@ set -e
 rm -rf /root/build/build/AppImage
 rm -rf /root/build/install
 
+# enable ccache if $USE_CCACHE equals 1
+if [ "${USE_CCACHE:-0}" -eq 1 ]; then
+  export CMAKE_C_COMPILER_LAUNCHER=ccache
+  export CMAKE_CXX_COMPILER_LAUNCHER=ccache
+fi
+
 # install vcpkg
 if [ ! -d "vcpkg/.git" ]; then
   git clone -q --depth 1 https://github.com/microsoft/vcpkg.git
