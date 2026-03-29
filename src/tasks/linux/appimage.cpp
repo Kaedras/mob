@@ -22,7 +22,8 @@ namespace mob::tasks {
                    "/linuxdeploy-plugin-qt-x86_64.AppImage";
         }
 
-        linuxdeploy create_tool(const fs::path& appDirPath)
+        linuxdeploy create_tool(const fs::path& appDirPath,
+                                const vector<fs::path>& deployDepsOnly)
         {
             linuxdeploy tool;
             tool.output(conf().path().install_appimage())
@@ -30,11 +31,8 @@ namespace mob::tasks {
                 .excludeLibraries("libqsqlmimer")
                 .customAppRun(find_root() / "AppRun");
 
-            for (const auto& entry :
-                 fs::directory_iterator(appDirPath / "usr/bin/plugins")) {
-                if (entry.is_regular_file() && entry.path().extension() == ".so") {
-                    tool.library(entry.path());
-                }
+            for (const auto& dep : deployDepsOnly) {
+                tool.deployDepsOnly(dep);
             }
 
             if (conf().task({"plugin_python"}).get<bool>("enabled")) {
@@ -198,7 +196,18 @@ namespace mob::tasks {
                 "modorganizer/src/resources/linux/ModOrganizer.desktop",
             appDir / "usr/share/applications");
 
-        run_tool(create_tool(appDir));
+        const vector deployDepsOnly{
+            bin,
+            bin / "loot",
+            bin / "plugins",
+            libDir / "lib7zip.so",
+            libDir / "libarchive.so",
+            libDir / "libloot.so.0",
+            libDir / "libuibase.so",
+            libDir / "libusvfs-fuse.so",
+        };
+
+        run_tool(create_tool(appDir, deployDepsOnly));
     }
 
 }  // namespace mob::tasks
