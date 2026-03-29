@@ -41,26 +41,16 @@ ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH:+${LD_LIBRARY_PATH}:}${QT_ROOT_DIR}/lib"
 ENV PKG_CONFIG_PATH="${PKG_CONFIG_PATH:+${PKG_CONFIG_PATH}:}${QT_ROOT_DIR}/lib/pkgconfig"
 ENV PATH="${QT_ROOT_DIR}/bin:$PATH"
 
-# install vcpkg
-RUN git clone https://github.com/microsoft/vcpkg.git \
-    && cd vcpkg && ./bootstrap-vcpkg.sh -disableMetrics
-ENV VCPKG_ROOT=/root/vcpkg
-ENV PATH="$VCPKG_ROOT:$PATH"
-
 # install rust (required for loot)
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 ENV PATH="/root/.cargo/bin:$PATH"
-
-# install google breakpad tools
-RUN vcpkg install breakpad[tools]
-env PATH="$VCPKG_ROOT/installed/x64-linux/tools/breakpad:$PATH"
 
 # define volumes
 VOLUME /dev/fuse
 VOLUME /root/build
 VOLUME /root/ccache
 VOLUME /root/mob
-VOLUME /root/vcpkg/buildtrees
+VOLUME /root/vcpkg
 
 ENV CCACHE_DIR=/root/ccache
 

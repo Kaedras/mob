@@ -6,11 +6,28 @@ set -e
 rm -rf /root/build/build/AppImage
 rm -rf /root/build/install
 
-if [ ! -d "mob/.git" ]; then
-    echo cloning mob...
-    git clone -q --depth 1 https://github.com/Kaedras/mob.git
+# install vcpkg
+if [ ! -d "vcpkg/.git" ]; then
+  git clone -q --depth 1 https://github.com/microsoft/vcpkg.git
+  cd vcpkg
+else
+  cd vcpkg
+  git pull -q
 fi
+./bootstrap-vcpkg.sh -disableMetrics
+cd ..
+export VCPKG_ROOT=/root/vcpkg
+export PATH="$VCPKG_ROOT:$PATH"
 
+# install google breakpad tools
+vcpkg install breakpad[tools]
+export PATH="$VCPKG_ROOT/installed/x64-linux/tools/breakpad:$PATH"
+
+# install mob
+if [ ! -d "mob/.git" ]; then
+  echo cloning mob...
+  git clone -q --depth 1 https://github.com/Kaedras/mob.git
+fi
 cd mob
 echo building mob...
 ./bootstrap.sh
