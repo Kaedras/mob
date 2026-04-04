@@ -138,11 +138,10 @@ namespace mob::tasks {
 
         // remove plugins from usr/lib
         const fs::path libDir = appDir / "usr/lib";
-        const array libs{libDir / "libbsa_*.so",       libDir / "libgame_*.so",
-                         libDir / "libpreview_*.so",   libDir / "libdiagnose_basic.so",
-                         libDir / "libinibakery.so",   libDir / "libinieditor.so",
-                         libDir / "libinstaller_*.so", libDir / "libcheck_fnis.so"};
-
+        const array libs{libDir / "libbsa_*.so",          libDir / "libcheck_fnis.so",
+                         libDir / "libdiagnose_basic.so", libDir / "libgame_*.so",
+                         libDir / "libinibakery.so",      libDir / "libinieditor.so",
+                         libDir / "libinstaller_*.so",    libDir / "libpreview_*.so"};
         for (const auto& lib : libs) {
             op::delete_file_glob(cx(), lib);
         }
