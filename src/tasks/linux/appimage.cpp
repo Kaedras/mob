@@ -170,7 +170,8 @@ namespace mob::tasks {
 
         // strip libraries
         const array libsToStrip{libDir / "lib7zip.so", libDir / "libarchive.so",
-                                libDir / "libloot.so.0", libDir / "libusvfs-fuse.so"};
+                                libDir / "libloot.so.0", libDir / "libuibase.so",
+                                libDir / "libusvfs-fuse.so"};
         for (const auto& lib : libsToStrip) {
             strip(lib.string());
         }
