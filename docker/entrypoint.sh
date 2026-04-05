@@ -30,6 +30,12 @@ cd ..
 export VCPKG_ROOT=/root/vcpkg
 export PATH="$VCPKG_ROOT:$PATH"
 
+if [ "$DO_RELEASE" -eq 1 ]; then
+  # install google breakpad tools
+  vcpkg install breakpad[tools]
+  export PATH="$VCPKG_ROOT/installed/x64-linux/tools/breakpad:$PATH"
+fi
+
 # install mob
 if [ ! -d "mob/.git" ]; then
   echo cloning mob...
@@ -47,10 +53,6 @@ else
 fi
 
 if [ "$DO_BUILD" -eq 1 ]; then
-  # install google breakpad tools
-  vcpkg install breakpad[tools]
-  export PATH="$VCPKG_ROOT/installed/x64-linux/tools/breakpad:$PATH"
-
   echo building modorganizer...
   ./mob -d /root/build --log-file mob.build.log build
 fi
