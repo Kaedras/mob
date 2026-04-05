@@ -60,4 +60,4 @@ if [ $EXIT_CODE -ne 0 ]; then
 fi
 
 cp "$ROOT/build/src/mob" "$ROOT/mob"
-echo "run ``./mob -d prefix/path build`` to start building"
+echo "run \`./mob -d prefix/path build\` to start building"
