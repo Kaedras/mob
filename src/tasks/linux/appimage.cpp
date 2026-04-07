@@ -35,10 +35,6 @@ namespace mob::tasks {
                 tool.deployDepsOnly(dep);
             }
 
-            if (conf().task({"plugin_python"}).get<bool>("enabled")) {
-                tool.additionalLibraryPath(appDirPath /
-                                           "usr/bin/plugins/plugin_python/lib");
-            }
             return tool;
         }
 
@@ -196,7 +192,7 @@ namespace mob::tasks {
                 "modorganizer/src/resources/linux/ModOrganizer.desktop",
             appDir / "usr/share/applications");
 
-        const vector deployDepsOnly{
+        vector deployDepsOnly{
             bin,
             bin / "loot",
             bin / "plugins",
@@ -206,6 +202,15 @@ namespace mob::tasks {
             libDir / "libuibase.so",
             libDir / "libusvfs-fuse.so",
         };
+
+        // todo: refactor this once plugin_python is stable
+        if (conf().task({"plugin_python"}).get<bool>("enabled")) {
+            auto pluginPythonPath = bin / "plugins/plugin_python/libplugin_python.so";
+            deployDepsOnly.push_back(pluginPythonPath);
+
+            strip(pluginPythonPath.string());
+            strip("plugins/plugin_python/lib/*.so");
+        }
 
         run_tool(create_tool(appDir, deployDepsOnly));
     }
