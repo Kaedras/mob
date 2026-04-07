@@ -104,9 +104,9 @@ namespace mob {
         if (nostrip_) {
             e.set("NO_STRIP", "1");
         }
-        string ldLibraryPath =
-            format("{}/usr/bin:{}/usr/bin/lib:{}/usr/lib:{}/usr/lib64", appdir_,
-                   appdir_, appdir_, appdir_);
+        string ldLibraryPath = format("{}/usr/bin:{}/usr/bin/lib:{}/usr/bin/plugins/"
+                                      "plugin_python/lib:{}/usr/lib:{}/usr/lib64",
+                                      appdir_, appdir_, appdir_, appdir_, appdir_);
 
         for (const auto& path : additionalLibPaths_) {
             ldLibraryPath += ":" + path;
