@@ -209,7 +209,7 @@ namespace mob::tasks {
             deployDepsOnly.push_back(pluginPythonPath);
 
             strip(pluginPythonPath.string());
-            strip("plugins/plugin_python/lib/*.so");
+            strip(bin / "plugins/plugin_python/lib/*.so");
         }
 
         run_tool(create_tool(appDir, deployDepsOnly));
