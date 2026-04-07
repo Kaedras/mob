@@ -165,7 +165,7 @@ namespace mob::tasks {
         }
 
         // strip plugins
-        strip(bin / "plugins/*");
+        strip(bin / "plugins/*.so");
 
         // strip libraries
         const array libsToStrip{libDir / "lib7zip.so", libDir / "libarchive.so",
