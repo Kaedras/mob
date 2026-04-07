@@ -137,7 +137,8 @@ namespace mob::tasks {
         const array libs{libDir / "libbsa_*.so",          libDir / "libcheck_fnis.so",
                          libDir / "libdiagnose_basic.so", libDir / "libgame_*.so",
                          libDir / "libinibakery.so",      libDir / "libinieditor.so",
-                         libDir / "libinstaller_*.so",    libDir / "libpreview_*.so"};
+                         libDir / "libinstaller_*.so",    libDir / "libplugin_*.so",
+                         libDir / "libpreview_*.so"};
         for (const auto& lib : libs) {
             op::delete_file_glob(cx(), lib);
         }
