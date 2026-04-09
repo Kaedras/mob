@@ -153,23 +153,15 @@ namespace mob::tasks {
             }
         };
 
-        // strip executables
+        // strip files
         const fs::path bin = appDir / "usr/bin";
-        const array executablesToStrip{bin / "ModOrganizer", bin / "helper",
-                                       bin / "nxmhandler", bin / "loot/lootcli"};
-        for (const auto& e : executablesToStrip) {
-            strip(e.string());
-        }
-
-        // strip plugins
-        strip(bin / "plugins/*.so");
-
-        // strip libraries
-        const array libsToStrip{libDir / "lib7zip.so", libDir / "libarchive.so",
-                                libDir / "libloot.so.0", libDir / "libuibase.so",
-                                libDir / "libusvfs-fuse.so"};
-        for (const auto& lib : libsToStrip) {
-            strip(lib.string());
+        const array filesToStrip{bin / "ModOrganizer",     bin / "helper",
+                                 bin / "nxmhandler",       bin / "loot/lootcli",
+                                 bin / "plugins/*.so",     libDir / "lib7zip.so",
+                                 libDir / "libarchive.so", libDir / "libloot.so.0",
+                                 libDir / "libuibase.so",  libDir / "libusvfs-fuse.so"};
+        for (const auto& file : filesToStrip) {
+            strip(file.string());
         }
 
         // copy metainfo
