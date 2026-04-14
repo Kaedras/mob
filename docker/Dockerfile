@@ -23,6 +23,7 @@ RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-15 100 && \
 RUN export DEBIAN_FRONTEND=noninteractive \
     && apt-get install -y --no-install-recommends \
     7zip \
+    appstream \
     autoconf \
     autoconf-archive \
     automake \
