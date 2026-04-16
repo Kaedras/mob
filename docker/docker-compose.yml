@@ -9,7 +9,7 @@ services:
       - ${OUTPUT_DIR:-./}ccache:/root/ccache
       - ${OUTPUT_DIR:-./}vcpkg:/root/vcpkg
     environment:
-      - EXTRA_QT_PLUGINS=${EXTRA_QT_PLUGINS}
+      - EXTRA_QT_MODULES=${EXTRA_QT_MODULES}
       - EXTRA_PLATFORM_PLUGINS=${EXTRA_PLATFORM_PLUGINS}
       - LINUXDEPLOY_EXCLUDED_LIBRARIES=${LINUXDEPLOY_EXCLUDED_LIBRARIES}
       - USE_CCACHE=${USE_CCACHE}
