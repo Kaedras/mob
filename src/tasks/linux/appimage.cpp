@@ -28,7 +28,7 @@ namespace mob::tasks {
         {
             const vector<fs::path> libs{"/usr/lib/x86_64-linux-gnu/libnss3.so",
                                         "/usr/lib/x86_64-linux-gnu/libnssckbi.so",
-                                        "/usr/lib/x86_64-linux-gnu/libnssmime3.so",
+                                        "/usr/lib/x86_64-linux-gnu/libsmime3.so",
                                         "/usr/lib/x86_64-linux-gnu/libnssutil3.so",
                                         "/usr/lib/x86_64-linux-gnu/libsoftokn3.so",
                                         "/usr/lib/x86_64-linux-gnu/libfreeblpriv3.so",
