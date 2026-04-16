@@ -26,11 +26,22 @@ namespace mob::tasks {
                                 const vector<fs::path>& deployDepsOnly,
                                 const vector<fs::path>& ldLibraryPath)
         {
+            const vector<fs::path> libs{"/usr/lib/x86_64-linux-gnu/libnss3.so"
+                                        "/usr/lib/x86_64-linux-gnu/libnssckbi.so"
+                                        "/usr/lib/x86_64-linux-gnu/libnssmime3.so"
+                                        "/usr/lib/x86_64-linux-gnu/libnssutil3.so"
+                                        "/usr/lib/x86_64-linux-gnu/libsoftokn3.so"
+                                        "/usr/lib/x86_64-linux-gnu/libfreeblpriv3.so"
+                                        "/usr/lib/x86_64-linux-gnu/libssl3.so"};
+
             linuxdeploy tool;
             tool.output(conf().path().install_appimage())
                 .appdir(appDirPath)
                 .excludeLibraries("libqsqlmimer")
                 .ldLibraryPath(ldLibraryPath)
+                // bundle nss3, this prevents crashes due to version mismatches between
+                // host and appimage
+                .library(libs)
                 .customAppRun(find_root() / "AppRun");
 
             for (const auto& dep : deployDepsOnly) {
