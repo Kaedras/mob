@@ -49,9 +49,15 @@ namespace mob {
         return *this;
     }
 
-    linuxdeploy& linuxdeploy::additionalLibraryPath(std::string path)
+    linuxdeploy& linuxdeploy::ldLibraryPath(fs::path path)
     {
-        additionalLibPaths_.emplace_back(std::move(path));
+        ldLibraryPath_.emplace_back(std::move(path));
+        return *this;
+    }
+
+    linuxdeploy& linuxdeploy::ldLibraryPath(const std::vector<fs::path>& paths)
+    {
+        ldLibraryPath_.append_range(paths);
         return *this;
     }
 
@@ -110,12 +116,12 @@ namespace mob {
         if (nostrip_) {
             e.set("NO_STRIP", "1");
         }
-        string ldLibraryPath = format("{}/usr/bin:{}/usr/bin/lib:{}/usr/bin/plugins/"
-                                      "plugin_python/lib:{}/usr/lib:{}/usr/lib64",
-                                      appdir_, appdir_, appdir_, appdir_, appdir_);
+        string ldLibraryPath =
+            format("{}/usr/bin:{}/usr/bin/lib:{}/usr/lib:{}/usr/lib64", appdir_,
+                   appdir_, appdir_, appdir_);
 
-        for (const auto& path : additionalLibPaths_) {
-            ldLibraryPath += ":" + path;
+        for (const auto& path : ldLibraryPath_) {
+            ldLibraryPath += ":" + path.string();
         }
 
         e.set("LD_LIBRARY_PATH", ldLibraryPath, env::prepend, ":");

@@ -23,12 +23,14 @@ namespace mob::tasks {
         }
 
         linuxdeploy create_tool(const fs::path& appDirPath,
-                                const vector<fs::path>& deployDepsOnly)
+                                const vector<fs::path>& deployDepsOnly,
+                                const vector<fs::path>& ldLibraryPath)
         {
             linuxdeploy tool;
             tool.output(conf().path().install_appimage())
                 .appdir(appDirPath)
                 .excludeLibraries("libqsqlmimer")
+                .ldLibraryPath(ldLibraryPath)
                 .customAppRun(find_root() / "AppRun");
 
             for (const auto& dep : deployDepsOnly) {
@@ -182,6 +184,11 @@ namespace mob::tasks {
                 "modorganizer/src/resources/linux/ModOrganizer.desktop",
             appDir / "usr/share/applications");
 
+        vector<fs::path> ldLibraryPath;
+        if (conf().task({"modorganizer-lootcli"}).get<bool>("enabled")) {
+            ldLibraryPath.push_back(bin / "loot");
+        }
+
         vector deployDepsOnly{
             bin,
             bin / "loot",
@@ -196,12 +203,13 @@ namespace mob::tasks {
         if (conf().task({"plugin_python"}).get<bool>("enabled")) {
             auto pluginPythonPath = bin / "plugins/plugin_python/libplugin_python.so";
             deployDepsOnly.push_back(pluginPythonPath);
+            ldLibraryPath.push_back(bin / "plugins_plugin_python/lib");
 
             strip(pluginPythonPath.string());
             strip(bin / "plugins/plugin_python/lib/*.so");
         }
 
-        run_tool(create_tool(appDir, deployDepsOnly));
+        run_tool(create_tool(appDir, deployDepsOnly, ldLibraryPath));
     }
 
 }  // namespace mob::tasks
