@@ -656,6 +656,10 @@ namespace mob {
         //
         linuxdeploy& library(const fs::path& p);
 
+        // add shared libraries to deploy
+        //
+        linuxdeploy& library(const std::vector<fs::path>& p);
+
         /*
          Path to ELF file or directory containing such files (libraries or executables)
         already present in the AppDir whose dependencies shall be deployed by

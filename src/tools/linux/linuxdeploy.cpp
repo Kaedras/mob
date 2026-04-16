@@ -73,6 +73,12 @@ namespace mob {
         return *this;
     }
 
+    linuxdeploy& linuxdeploy::library(const std::vector<fs::path>& p)
+    {
+        libraries_.append_range(p);
+        return *this;
+    }
+
     linuxdeploy& linuxdeploy::deployDepsOnly(const fs::path& p)
     {
         deployDepsOnly_.push_back(p);
