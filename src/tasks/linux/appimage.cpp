@@ -42,11 +42,8 @@ namespace mob::tasks {
                 // bundle nss3, this prevents crashes due to version mismatches between
                 // host and appimage
                 .library(libs)
+                .deployDepsOnly(deployDepsOnly)
                 .customAppRun(find_root() / "AppRun");
-
-            for (const auto& dep : deployDepsOnly) {
-                tool.deployDepsOnly(dep);
-            }
 
             return tool;
         }
