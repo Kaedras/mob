@@ -661,6 +661,7 @@ namespace mob {
         linuxdeploy without copying them again into the AppDir.
         */
         linuxdeploy& deployDepsOnly(const fs::path& p);
+        linuxdeploy& deployDepsOnly(const std::vector<fs::path>& p);
 
         // path to icon
         //

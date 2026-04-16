@@ -73,6 +73,12 @@ namespace mob {
         return *this;
     }
 
+    linuxdeploy& linuxdeploy::deployDepsOnly(const std::vector<fs::path>& p)
+    {
+        deployDepsOnly_.append_range(p);
+        return *this;
+    }
+
     linuxdeploy& linuxdeploy::icon(const fs::path& p)
     {
         icon_ = p;
