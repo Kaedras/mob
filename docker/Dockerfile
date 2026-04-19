@@ -11,6 +11,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 RUN export DEBIAN_FRONTEND=noninteractive \
     && apt-get install -y --no-install-recommends software-properties-common gpg-agent \
     && add-apt-repository -y ppa:ubuntu-toolchain-r/test \
+    && apt-get update \
     && apt-get install -y --no-install-recommends gcc-15 g++-15
 
 # set gcc 15 as default
