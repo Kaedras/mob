@@ -72,7 +72,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
     zstd
 
 # install qt
-ARG QT_VERSION="6.7.3"
+ARG QT_VERSION="6.10.2"
 ARG QT_MODULES="qtpositioning qtserialport qtwebchannel qtwebengine qtwebsockets qtnetworkauth qtwaylandcompositor"
 RUN python -m venv venv \
     && . venv/bin/activate \
