@@ -208,12 +208,17 @@ namespace mob::tasks {
 
         // todo: refactor this once plugin_python is stable
         if (conf().task({"plugin_python"}).get<bool>("enabled")) {
-            auto pluginPythonPath = bin / "plugins/plugin_python/libplugin_python.so";
-            deployDepsOnly.push_back(pluginPythonPath);
-            ldLibraryPath.push_back(bin / "plugins/plugin_python/lib");
+            const fs::path pluginPython = bin / "plugins/plugin_python";
 
-            strip(pluginPythonPath.string());
-            strip(bin / "plugins/plugin_python/lib/*.so");
+            ldLibraryPath.push_back(pluginPython / "lib");
+
+            deployDepsOnly.push_back(pluginPython / "libplugin_python.so");
+            deployDepsOnly.push_back(pluginPython / "libs/PyQt6");
+
+            strip(pluginPython / "*.so");
+            strip(pluginPython / "lib/*.so");
+            strip(pluginPython / "libs/*.so");
+            strip(pluginPython / "libs/PyQt6/*.so");
         }
 
         run_tool(create_tool(appDir, deployDepsOnly, ldLibraryPath));
