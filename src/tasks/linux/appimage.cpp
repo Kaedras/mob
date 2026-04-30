@@ -37,7 +37,8 @@ namespace mob::tasks {
             linuxdeploy tool;
             tool.output(conf().path().install_appimage())
                 .appdir(appDirPath)
-                .excludeLibraries("libqsqlmimer")
+                .excludeLibraries("libmysqlclient.so*;libqsqlmimer.so;libqsqlmysql.so;"
+                                  "libqsqlodbc.so;libqsqlpsql.so;libqsqloci.so")
                 .ldLibraryPath(ldLibraryPath)
                 // bundle nss3, this prevents crashes due to version mismatches between
                 // host and appimage
