@@ -211,7 +211,7 @@ namespace mob::tasks {
         if (conf().task({"plugin_python"}).get<bool>("enabled")) {
             auto pluginPythonPath = bin / "plugins/plugin_python/libplugin_python.so";
             deployDepsOnly.push_back(pluginPythonPath);
-            ldLibraryPath.push_back(bin / "plugins_plugin_python/lib");
+            ldLibraryPath.push_back(bin / "plugins/plugin_python/lib");
 
             strip(pluginPythonPath.string());
             strip(bin / "plugins/plugin_python/lib/*.so");
