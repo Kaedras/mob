@@ -18,11 +18,13 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-15 100 && \
     update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-15 100 && \
     update-alternatives --install /usr/bin/cc cc /usr/bin/gcc-15 100 && \
-    update-alternatives --install /usr/bin/c++ c++ /usr/bin/g++-15 100
+    update-alternatives --install /usr/bin/c++ c++ /usr/bin/g++-15 100 && \
+    update-alternatives --install /usr/bin/x86_64-linux-gnu-gcc x86_64-linux-gnu-gcc /usr/bin/gcc-15 100 && \
+    update-alternatives --install /usr/bin/x86_64-linux-gnu-g++ x86_64-linux-gnu-g++ /usr/bin/g++-15 100
 
 # install dependencies
 RUN export DEBIAN_FRONTEND=noninteractive \
-    && apt-get install -y --no-install-recommends \
+    && apt-get update && apt-get install -y --no-install-recommends \
     7zip \
     appstream \
     autoconf \
