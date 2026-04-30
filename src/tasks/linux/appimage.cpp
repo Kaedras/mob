@@ -26,13 +26,11 @@ namespace mob::tasks {
                                 const vector<fs::path>& deployDepsOnly,
                                 const vector<fs::path>& ldLibraryPath)
         {
-            const vector<fs::path> libs{"/usr/lib/x86_64-linux-gnu/libnss3.so",
-                                        "/usr/lib/x86_64-linux-gnu/libnssckbi.so",
-                                        "/usr/lib/x86_64-linux-gnu/libsmime3.so",
-                                        "/usr/lib/x86_64-linux-gnu/libnssutil3.so",
-                                        "/usr/lib/x86_64-linux-gnu/libsoftokn3.so",
-                                        "/usr/lib/x86_64-linux-gnu/libfreeblpriv3.so",
-                                        "/usr/lib/x86_64-linux-gnu/libssl3.so"};
+            const fs::path libDir = "/usr/lib/x86_64-linux-gnu";
+            const vector libs{libDir / "libnss3.so",     libDir / "libnssckbi.so",
+                              libDir / "libsmime3.so",   libDir / "libnssutil3.so",
+                              libDir / "libsoftokn3.so", libDir / "libfreeblpriv3.so",
+                              libDir / "libssl3.so"};
 
             linuxdeploy tool;
             tool.output(conf().path().install_appimage())
