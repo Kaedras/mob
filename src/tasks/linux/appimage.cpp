@@ -161,10 +161,10 @@ namespace mob::tasks {
 
         // strip files
         const fs::path bin = appDir / "usr/bin";
-        const array filesToStrip{bin / "ModOrganizer",       bin / "helper",
-                                 bin / "nxmhandler",         bin / "loot/*",
-                                 bin / "plugins/*.so",       libDir / "lib7zip.so",
-                                 libDir / "libarchive.so",   libDir / "libuibase.so",
+        const array filesToStrip{bin / "ModOrganizer",         bin / "helper",
+                                 bin / "nxmhandler",           bin / "loot/*",
+                                 bin / "plugins/*.so",         libDir / "lib7zip.so",
+                                 libDir / "libmo2-archive.so", libDir / "libuibase.so",
                                  libDir / "libusvfs-fuse.so"};
         for (const auto& file : filesToStrip) {
             strip(file.string());
@@ -201,7 +201,7 @@ namespace mob::tasks {
             bin / "loot",
             bin / "plugins",
             libDir / "lib7zip.so",
-            libDir / "libarchive.so",
+            libDir / "libmo2-archive.so",
             libDir / "libuibase.so",
             libDir / "libusvfs-fuse.so",
         };
