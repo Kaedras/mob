@@ -181,14 +181,13 @@ namespace mob::tasks {
         // copy icon
         op::copy_file_to_dir_if_better(
             cx(),
-            conf().path().build() / "modorganizer/src/resources/linux/ModOrganizer.svg",
+            conf().path().install() /
+                "share/icons/hicolor/scalable/apps/ModOrganizer.svg",
             appDir / "usr/share/icons/hicolor/scalable/apps");
 
         // copy desktop file
         op::copy_file_to_dir_if_better(
-            cx(),
-            conf().path().build() /
-                "modorganizer/src/resources/linux/ModOrganizer.desktop",
+            cx(), conf().path().install() / "share/applications/ModOrganizer.desktop",
             appDir / "usr/share/applications");
 
         vector<fs::path> ldLibraryPath;
