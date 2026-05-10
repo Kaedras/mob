@@ -125,6 +125,8 @@ namespace mob::tasks {
         // copy libraries that are not inside the lib directory
         op::copy_file_to_dir_if_better(cx(), appDir / "usr/bin/libuibase.so",
                                        appDir / "usr/lib");
+        op::copy_file_to_dir_if_better(cx(), appDir / "usr/bin/loot/libloot.so.0",
+                                       appDir / "usr/lib");
         op::copy_glob_to_dir_if_better(cx(), appDir / "usr/bin/lib/*.so",
                                        appDir / "usr/lib", op::flags::copy_files);
 
@@ -135,6 +137,8 @@ namespace mob::tasks {
 
         // remove unneeded files
         op::delete_file(cx(), appDir / "usr/bin/libuibase.so");
+        op::delete_file(cx(), appDir / "usr/bin/libusvfs-fuse.so");
+        op::delete_file(cx(), appDir / "usr/bin/loot/libloot.so.0");
         op::delete_directory(cx(), appDir / "usr/bin/lib");
         op::delete_directory(cx(), appDir / "usr/bin/translations");
 
@@ -161,11 +165,13 @@ namespace mob::tasks {
 
         // strip files
         const fs::path bin = appDir / "usr/bin";
-        const array filesToStrip{bin / "ModOrganizer",         bin / "helper",
-                                 bin / "nxmhandler",           bin / "loot/*",
-                                 bin / "plugins/*.so",         libDir / "lib7zip.so",
-                                 libDir / "libmo2-archive.so", libDir / "libuibase.so",
-                                 libDir / "libusvfs-fuse.so"};
+        const array filesToStrip{
+            bin / "ModOrganizer",    bin / "helper",
+            bin / "loot/*",          bin / "nxmhandler",
+            bin / "plugins/*.so",    libDir / "lib7zip.so",
+            libDir / "libloot.so.0", libDir / "libmo2-archive.so",
+            libDir / "libuibase.so", libDir / "libusvfs-fuse.so",
+        };
         for (const auto& file : filesToStrip) {
             strip(file.string());
         }
@@ -191,9 +197,6 @@ namespace mob::tasks {
             appDir / "usr/share/applications");
 
         vector<fs::path> ldLibraryPath;
-        if (conf().task({"modorganizer-lootcli"}).get<bool>("enabled")) {
-            ldLibraryPath.push_back(bin / "loot");
-        }
 
         vector deployDepsOnly{
             bin,
@@ -203,6 +206,7 @@ namespace mob::tasks {
             libDir / "libmo2-archive.so",
             libDir / "libuibase.so",
             libDir / "libusvfs-fuse.so",
+            libDir / "libloot.so.0",
         };
 
         // todo: refactor this once plugin_python is stable
