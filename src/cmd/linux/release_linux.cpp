@@ -213,13 +213,14 @@ namespace mob {
 
     void release_command::make_appimage()
     {
-        const auto file = "ModOrganizer-" + version_ + "-x86_64.AppImage";
-        const auto src  = conf().path().install_appimage() / file;
-        const auto dest = out_;
+        static constexpr auto srcFile = "ModOrganizer-x86_64.AppImage";
+        const auto dstFile            = "ModOrganizer-" + version_ + "-x86_64.AppImage";
+        const auto src                = conf().path().install_appimage() / srcFile;
+        const auto dst                = out_ / dstFile;
 
-        u8cout << "copying appimage " << file << "\n";
+        u8cout << "copying appimage " << dst << "\n";
 
-        op::copy_file_to_dir_if_better(gcx(), src, dest);
+        op::copy_file_to_file_if_better(gcx(), src, dst);
     }
 
 }  // namespace mob
