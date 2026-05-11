@@ -54,13 +54,13 @@ namespace mob {
         // debug symbols
 
         // copy files to tmp dir
-        char tmpName[] = "mo2-XXXXXX";
+        char tmpName[] = "/tmp/mo2-XXXXXX";
         if (mkdtemp(tmpName) == nullptr) {
             const int e = errno;
             gcx().bail_out(context::generic, "error creating temporary directory: {}",
                            strerror(e));
         }
-        const fs::path tmpDir = fs::temp_directory_path() / tmpName;
+        const fs::path tmpDir = tmpName;
         op::copy_glob_to_dir_if_better(gcx(), conf().path().install_bin() / "*", tmpDir,
                                        op::copy_dirs | op::copy_files | op::unsafe);
         op::copy_file_to_dir_if_better(
