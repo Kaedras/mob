@@ -213,7 +213,7 @@ namespace mob {
 
     void release_command::make_appimage()
     {
-        const auto file = "ModOrganizer-x86_64.AppImage";
+        const auto file = "ModOrganizer-" + version_ + "-x86_64.AppImage";
         const auto src  = conf().path().install_appimage() / file;
         const auto dest = out_;
 
