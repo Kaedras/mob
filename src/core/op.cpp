@@ -392,7 +392,7 @@ namespace mob::op {
 
             if (e.is_regular_file()) {
                 if (f & copy_files) {
-                    copy_file_to_dir_if_better(cx, e.path(), dest_dir);
+                    copy_file_to_dir_if_better(cx, e.path(), dest_dir, f);
                 }
                 else {
                     cx.trace(context::fs, "file {} matched {} but files are not copied",
