@@ -148,6 +148,10 @@ namespace mob {
             e.set("LINUXDEPLOY_EXCLUDED_LIBRARIES", excludeString, env::append);
         }
 
+        if (!updateInformationString_.empty()) {
+            e.set("LDAI_UPDATE_INFORMATION", updateInformationString_);
+        }
+
         // ensure wayland support
         // e.set("EXTRA_QT_PLUGINS", "waylandcompositor");
         // e.set("EXTRA_PLATFORM_PLUGINS", "libqwayland.so");
