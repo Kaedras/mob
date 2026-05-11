@@ -42,9 +42,7 @@ namespace mob::tasks {
                 // host and appimage
                 .library(libs)
                 .deployDepsOnly(deployDepsOnly)
-                .customAppRun(find_root() / "AppRun")
-                .updateInformationString("gh-releases-zsync|Kaedras|ModOrganizer|"
-                                         "latest|ModOrganizer-*x86_64.AppImage.zsync");
+                .customAppRun(find_root() / "AppRun");
 
             return tool;
         }

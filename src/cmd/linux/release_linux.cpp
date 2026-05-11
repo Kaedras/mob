@@ -213,14 +213,31 @@ namespace mob {
 
     void release_command::make_appimage()
     {
-        static constexpr auto srcFile = "ModOrganizer-x86_64.AppImage";
-        const auto dstFile            = "ModOrganizer-" + version_ + "-x86_64.AppImage";
-        const auto src                = conf().path().install_appimage() / srcFile;
-        const auto dst                = out_ / dstFile;
+        const auto fileName = "ModOrganizer-" + version_ + "-x86_64.AppImage";
+        const auto src      = conf().path().build() / "AppImage/ModOrganizer";
+        const auto out      = out_ / fileName;
 
-        u8cout << "copying appimage " << dst << "\n";
+        static constexpr auto updateInfo = "gh-releases-zsync|Kaedras|ModOrganizer|"
+                                           "latest|ModOrganizer-*x86_64.AppImage.zsync";
 
-        op::copy_file_to_file_if_better(gcx(), src, dst);
+        u8cout << "making appimage " << out.string() << "\n";
+
+        const string command = format("{} --appdir {} --output appimage",
+                                      linuxdeploy::binary().string(), src.string());
+        auto env             = this_env::get()
+                       .set("UPDATE_INFORMATION", updateInfo)
+                       .set("LINUXDEPLOY_OUTPUT_VERSION", version_)
+                       .set("LINUXDEPLOY_EXCLUDED_LIBRARIES",
+                            "libmysqlclient.so*;libqsqlmimer.so;libqsqlmysql.so;"
+                            "libqsqlodbc.so;libqsqlpsql.so;libqsqloci.so");
+
+        process p = process::raw(gcx(), command);
+        p.cwd(out_);
+        p.env(env);
+
+        if (p.run_and_join() != 0) {
+            gcx().bail_out(context::generic, "error creating appimage");
+        }
     }
 
 }  // namespace mob
