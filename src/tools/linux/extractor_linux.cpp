@@ -1,6 +1,10 @@
 #include "../../core/process.h"
 #include "../tools.h"
 
+namespace {
+    inline constexpr int zstdCompressionLevel = 19;
+}
+
 namespace mob {
 
     void archiver::create_from_glob(const context& cx, const fs::path& out,
@@ -27,7 +31,8 @@ namespace mob {
 
         auto p = process().binary("tar").arg("-c");  // create archive
         if (out.extension() == ".zst") {
-            p.arg("-I 'zstd -19 -T0 --auto-threads=logical -q'");
+            p.arg(std::format("-I 'zstd -{} -T0 --auto-threads=logical -q'",
+                              zstdCompressionLevel));
         }
         else {
             p.arg("-a");  // auto-compress
@@ -75,7 +80,8 @@ namespace mob {
 
         auto p = process().binary("tar").arg("-c");  // create
         if (out.extension() == ".zst") {
-            p.arg("-I 'zstd -19 -T0 --auto-threads=logical -q'");
+            p.arg(std::format("-I 'zstd -{} -T0 --auto-threads=logical -q'",
+                              zstdCompressionLevel));
         }
         else {
             p.arg("-a");  // auto-compress
