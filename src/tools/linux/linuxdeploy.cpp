@@ -115,6 +115,12 @@ namespace mob {
         return *this;
     }
 
+    linuxdeploy& linuxdeploy::updateInformationString(const std::string& s)
+    {
+        updateInformationString_ = s;
+        return *this;
+    }
+
     void linuxdeploy::do_run()
     {
         env e = this_env::get();

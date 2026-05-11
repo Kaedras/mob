@@ -682,6 +682,9 @@ namespace mob {
         // set NO_STRIP environment variable to 1
         linuxdeploy& nostrip();
 
+        // update information string
+        linuxdeploy& updateInformationString(const std::string& s);
+
         // linuxdeploy tool
         //
         linuxdeploy();
@@ -718,6 +721,8 @@ namespace mob {
         bool nostrip_ = false;
         // create a desktop file
         bool createDesktopFile_ = false;
+        // update information string
+        std::string updateInformationString_;
     };
 #endif
 
