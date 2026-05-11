@@ -7,9 +7,11 @@ if [ "$DO_BUILD" -eq 0 ] && [ "$DO_RELEASE" -eq 0 ]; then
   return 0
 fi
 
-# clean up directories that should be recreated
-rm -rf /root/build/build/AppImage
-rm -rf /root/build/install
+if [ "$DO_BUILD" -eq 1 ]; then
+  # clean up directories that should be recreated
+  rm -rf /root/build/build/AppImage
+  rm -rf /root/build/install
+fi
 
 # enable ccache if $USE_CCACHE equals 1
 if [ "${USE_CCACHE:-0}" -eq 1 ]; then
