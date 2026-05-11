@@ -403,7 +403,7 @@ namespace mob::op {
                 if (f & copy_dirs) {
                     const fs::path sub = dest_dir / e.path().filename();
 
-                    create_directories(cx, sub);
+                    create_directories(cx, sub, f);
                     copy_glob_to_dir_if_better(cx, e.path() / "*", sub, f);
                 }
                 else {
