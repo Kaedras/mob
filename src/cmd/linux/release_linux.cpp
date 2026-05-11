@@ -49,10 +49,60 @@ namespace mob {
         const auto out = out_ / make_filename("");
         u8cout << "making binary archive " << path_to_utf8(out) << "\n";
 
-        // todo: strip files?
+        // the files are first copied into a temporary directory, then stripped and
+        // packaged. otherwise `make_pdbs()` will not be able to create any
+        // debug symbols
 
-        op::archive_from_glob(gcx(), conf().path().install_bin() / "*", out,
-                              {"__pycache__"});
+        // copy files to tmp dir
+        char tmpName[] = "mo2-XXXXXX";
+        if (mkdtemp(tmpName) == nullptr) {
+            const int e = errno;
+            gcx().bail_out(context::generic, "error creating temporary directory: {}",
+                           strerror(e));
+        }
+        const fs::path tmpDir = fs::temp_directory_path() / tmpName;
+        op::copy_glob_to_dir_if_better(gcx(), conf().path().install_bin() / "*", tmpDir,
+                                       op::copy_dirs | op::copy_files | op::unsafe);
+        op::copy_file_to_dir_if_better(
+            gcx(), conf().path().install_libs() / "libmo2-archive.so", tmpDir / "lib",
+            op::unsafe);
+
+        // clean up files
+        op::move_to_directory(gcx(), tmpDir / "libuibase.so", tmpDir / "lib",
+                              op::unsafe);
+        op::move_to_directory(gcx(), tmpDir / "libusvfs-fuse.so", tmpDir / "lib",
+                              op::unsafe);
+        op::delete_file_glob(gcx(), tmpDir / "lib/*.a", op::unsafe | op::optional);
+
+        // strip files
+        auto strip = [&](const fs::path& path) {
+            const string command = "strip -d " + path.string();
+            auto p               = process::raw(gcx(), command);
+            if (p.run_and_join() != 0) {
+                gcx().bail_out(context::reason::cmd, "error stripping debug symbols");
+            }
+        };
+        const array filesToStrip{
+            tmpDir / "helper",
+            tmpDir / "ModOrganizer",
+            tmpDir / "nxmhandler",
+            tmpDir / "lib/*.so",
+            tmpDir / "loot/*",
+            tmpDir / "plugins/*.so",
+            tmpDir / "plugins/plugin_python/*.so",
+            tmpDir / "plugins/plugin_python/lib/*.so",
+            tmpDir / "plugins/plugin_python/libs/*.so",
+            tmpDir / "plugins/plugin_python/libs/PyQt6/*.so",
+        };
+        for (const auto& file : filesToStrip) {
+            strip(file);
+        }
+
+        // create archive
+        op::archive_from_glob(gcx(), tmpDir / "*", out, {"__pycache__"});
+
+        // delete tmp dir
+        op::delete_directory(gcx(), tmpDir, op::unsafe);
     }
 
     void release_command::make_pdbs()
