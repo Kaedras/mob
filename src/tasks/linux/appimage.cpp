@@ -26,11 +26,19 @@ namespace mob::tasks {
                                 const vector<fs::path>& deployDepsOnly,
                                 const vector<fs::path>& ldLibraryPath)
         {
-            const fs::path libDir = "/usr/lib/x86_64-linux-gnu";
+            fs::path libDir = "/usr/lib/x86_64-linux-gnu";
+            if (!fs::exists(libDir)) {
+                libDir = "/usr/lib64";
+            }
             const vector libs{libDir / "libnss3.so",     libDir / "libnssckbi.so",
                               libDir / "libsmime3.so",   libDir / "libnssutil3.so",
                               libDir / "libsoftokn3.so", libDir / "libfreeblpriv3.so",
                               libDir / "libssl3.so"};
+
+            fs::path sevenZip = "/usr/lib/7zip/7z.so";
+            if (!fs::exists(sevenZip)) {
+                sevenZip = "/usr/lib64/7zip/7z.so";
+            }
 
             linuxdeploy tool;
             tool.output(conf().path().install_appimage())
@@ -41,6 +49,7 @@ namespace mob::tasks {
                 // bundle nss3, this prevents crashes due to version mismatches between
                 // host and appimage
                 .library(libs)
+                .library(sevenZip)
                 .deployDepsOnly(deployDepsOnly)
                 .customAppRun(find_root() / "AppRun");
 
@@ -123,8 +132,6 @@ namespace mob::tasks {
                                        op::flags::copy_files | op::flags::copy_dirs);
 
         // copy libraries that are not inside the lib directory
-        op::copy_file_to_dir_if_better(cx(), appDir / "usr/bin/libuibase.so",
-                                       appDir / "usr/lib");
         op::copy_file_to_dir_if_better(cx(), appDir / "usr/bin/loot/libloot.so.0",
                                        appDir / "usr/lib");
         op::copy_glob_to_dir_if_better(cx(), appDir / "usr/bin/lib/*.so",
@@ -136,8 +143,6 @@ namespace mob::tasks {
                                        op::flags::copy_files);
 
         // remove unneeded files
-        op::delete_file(cx(), appDir / "usr/bin/libuibase.so");
-        op::delete_file(cx(), appDir / "usr/bin/libusvfs-fuse.so");
         op::delete_file(cx(), appDir / "usr/bin/loot/libloot.so.0");
         op::delete_directory(cx(), appDir / "usr/bin/lib");
         op::delete_directory(cx(), appDir / "usr/bin/translations");
@@ -166,11 +171,15 @@ namespace mob::tasks {
         // strip files
         const fs::path bin = appDir / "usr/bin";
         const array filesToStrip{
-            bin / "ModOrganizer",    bin / "helper",
-            bin / "loot/*",          bin / "nxmhandler",
-            bin / "plugins/*.so",    libDir / "lib7zip.so",
-            libDir / "libloot.so.0", libDir / "libmo2-archive.so",
-            libDir / "libuibase.so", libDir / "libusvfs-fuse.so",
+            bin / "ModOrganizer",
+            bin / "helper",
+            bin / "loot/*",
+            bin / "nxmhandler",
+            bin / "plugins/*.so",
+            libDir / "libloot.so.0",
+            libDir / "libmo2-archive.so",
+            libDir / "libuibase.so",
+            libDir / "libusvfs-fuse.so",
         };
         for (const auto& file : filesToStrip) {
             strip(file.string());
@@ -202,7 +211,6 @@ namespace mob::tasks {
             bin,
             bin / "loot",
             bin / "plugins",
-            libDir / "lib7zip.so",
             libDir / "libmo2-archive.so",
             libDir / "libuibase.so",
             libDir / "libusvfs-fuse.so",
