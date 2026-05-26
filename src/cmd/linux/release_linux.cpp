@@ -63,16 +63,6 @@ namespace mob {
         const fs::path tmpDir = tmpName;
         op::copy_glob_to_dir_if_better(gcx(), conf().path().install_bin() / "*", tmpDir,
                                        op::copy_dirs | op::copy_files | op::unsafe);
-        op::copy_file_to_dir_if_better(
-            gcx(), conf().path().install_libs() / "libmo2-archive.so", tmpDir / "lib",
-            op::unsafe);
-
-        // clean up files
-        op::move_to_directory(gcx(), tmpDir / "libuibase.so", tmpDir / "lib",
-                              op::unsafe);
-        op::move_to_directory(gcx(), tmpDir / "libusvfs-fuse.so", tmpDir / "lib",
-                              op::unsafe);
-        op::delete_file_glob(gcx(), tmpDir / "lib/*.a", op::unsafe | op::optional);
 
         // strip files
         auto strip = [&](const fs::path& path) {
