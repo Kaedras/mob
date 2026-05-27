@@ -14,7 +14,7 @@ add_executable(mob ${source_files} ${header_files})
 target_precompile_headers(mob PRIVATE pch.h)
 
 if(WIN32)
-    target_compile_features(mob PRIVATE cxx_std_20)
+    target_compile_features(mob PRIVATE cxx_std_23)
     target_compile_definitions(
       mob PRIVATE _WIN32_WINNT=0x0A00 NTDDI_VERSION=0x0A000007 WIN32_LEAN_AND_MEAN
                   NOMINMAX NOCOMM)
