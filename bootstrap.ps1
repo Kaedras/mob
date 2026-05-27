@@ -13,12 +13,12 @@ if (!$root) {
 
 $logLevel = if ($Verbose) { "STATUS" } else { "ERROR" }
 
-cmake --preset vcpkg --log-level=$logLevel
+cmake --preset vcpkg-windows --log-level=$logLevel
 
 if ($Verbose) {
-    cmake --build --preset $Config --verbose
+    cmake --build --preset ${Config}-windows --verbose
 } else {
-    cmake --build --preset $Config
+    cmake --build --preset ${Config}-windows
 }
 
 if (! $?) {
