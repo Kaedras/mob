@@ -47,7 +47,7 @@ namespace mob {
         if (!fs::exists(third_party)) {
             // doesn't exist, maybe this is the build directory
 
-            auto p = mob_exe_dir;
+            auto p = mob_exe_dir.parent_path();
 
             if (p.filename().string() == "src") {
                 if (verbose)

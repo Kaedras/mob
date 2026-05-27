@@ -1,8 +1,8 @@
 #include "assert.h"
 #include "../core/context.h"
 
-#ifdef __unix__
-#include "../linux_compatibility.h"
+#ifdef __cpp_lib_debugging
+#include <debugging>
 #endif
 
 namespace mob {
@@ -19,8 +19,13 @@ namespace mob {
                         std::wstring(file), line, func, exp);
         }
 
+#ifdef __cpp_lib_debugging
+        if (std::is_debugger_present())
+            std::breakpoint();
+#else
         if (IsDebuggerPresent())
             DebugBreak();
+#endif
         else
             std::exit(1);
     }

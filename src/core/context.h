@@ -4,8 +4,8 @@
 #include "./formatters.h"
 #include <iostream>
 
-#ifdef __unix__
-#include "../linux_compatibility.h"
+#ifdef __cpp_lib_debugging
+#include <debugging>
 #endif
 
 namespace mob {
@@ -231,9 +231,12 @@ namespace mob {
                 }
 
                 std::wcerr << "bad format string '" << s << "'\n";
-
+#ifdef __cpp_lib_debugging
+                std::breakpoint_if_debugging();
+#else
                 if (IsDebuggerPresent())
                     DebugBreak();
+#endif
             }
         }
 

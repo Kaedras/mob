@@ -4,6 +4,10 @@
 #include "conf.h"
 #include "context.h"
 
+#ifdef __unix__
+#include "../linux_compatibility.h"
+#endif
+
 namespace mob::op {
 
     // most of the functions from the header will check the paths, return early

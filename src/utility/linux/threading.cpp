@@ -1,6 +1,6 @@
 #include "../threading.h"
-#include "../../linux_compatibility.h"
 #include "../../utility.h"
+#include <debugging>
 
 namespace mob {
 
@@ -34,8 +34,8 @@ namespace mob {
 
         free(strings);
 
-        if (IsDebuggerPresent())
-            DebugBreak();
+        if (std::is_debugger_present())
+            std::breakpoint();
         else
             exit(1);
     }

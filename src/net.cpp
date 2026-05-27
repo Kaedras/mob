@@ -5,6 +5,10 @@
 #include "utility.h"
 #include "utility/threading.h"
 
+#ifdef __unix__
+#include "linux_compatibility.h"
+#endif
+
 namespace mob {
 
     curl_init::curl_init()

@@ -5,6 +5,12 @@ set -e
 VERBOSE=0
 CONFIG="Release"
 
+if [ -z $VCPKG_ROOT ]; then
+  printf "\033[0;31m\$VCPKG_ROOT is not set\n"
+  printf "Please install vcpkg and set \$VCPKG_ROOT to its installation directory\033[m\n"
+  exit 1
+fi
+
 usage() {
   echo ""
   echo "Usage: $(basename $0) [-Verbose] [-Config <config>]"
@@ -46,12 +52,15 @@ if [ -z "$ROOT" ]; then
 fi
 
 if [ "$VERBOSE" -eq 1 ]; then
-  cmake -B "$ROOT/build" "$ROOT" -DCMAKE_BUILD_TYPE="$CONFIG"
-  cmake --build "$ROOT/build" -j "$(nproc)"
+  LOG_LEVEL="STATUS"
+  VERBOSE_ARG="--verbose"
 else
-  cmake -B "$ROOT/build" "$ROOT" --log-level=ERROR -DCMAKE_CXX_FLAGS="-w" -DCMAKE_BUILD_TYPE="$CONFIG" -DCMAKE_RULE_MESSAGES=OFF 1> /dev/null
-  cmake --build "$ROOT/build" -j "$(nproc)" -- --quiet
+  LOG_LEVEL="ERROR"
+  VERBOSE_ARG=""
 fi
+
+cmake --preset vcpkg-linux --log-level=$LOG_LEVEL
+cmake --build --preset "${CONFIG}-linux" -j "$(nproc)" $VERBOSE_ARG
 
 EXIT_CODE=$?
 if [ $EXIT_CODE -ne 0 ]; then
@@ -59,5 +68,5 @@ if [ $EXIT_CODE -ne 0 ]; then
   exit $EXIT_CODE
 fi
 
-cp "$ROOT/build/src/mob" "$ROOT/mob"
+cp "$ROOT/build/src/$CONFIG/mob" "$ROOT/mob"
 echo "run \`./mob -d prefix/path build\` to start building"

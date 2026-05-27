@@ -5,29 +5,6 @@
 using HANDLE                              = int;
 static constexpr int INVALID_HANDLE_VALUE = -1;
 
-// Detect if the application is running inside a debugger.
-// Source: https://stackoverflow.com/a/69842462
-inline bool IsDebuggerPresent()
-{
-    std::ifstream sf("/proc/self/status");
-    std::string s;
-    while (sf >> s) {
-        if (s == "TracerPid:") {
-            int pid;
-            sf >> pid;
-            return pid != 0;
-        }
-        std::getline(sf, s);
-    }
-
-    return false;
-}
-
-inline void DebugBreak()
-{
-    raise(SIGTRAP);
-}
-
 inline void CloseHandle(int h)
 {
     close(h);

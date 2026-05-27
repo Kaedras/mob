@@ -2,20 +2,45 @@
   "version": 6,
   "configurePresets": [
     {
-      "name": "vcpkg",
-      "generator": "Visual Studio 17 2022",
-      "architecture": "x64",
+      "name": "vcpkg-base",
       "binaryDir": "${sourceDir}/build/",
       "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
       "cacheVariables": {
-        "VCPKG_TARGET_TRIPLET": "x64-windows-static-md",
         "CMAKE_CONFIGURATION_TYPES": "Debug;Release;RelWithDebInfo"
+      },
+      "hidden": true
+    },
+    {
+      "name": "vcpkg-windows",
+      "inherits": "vcpkg-base",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      },
+      "generator": "Visual Studio 17 2022",
+      "architecture": "x64",
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "x64-windows-static-md"
+      }
+    },
+    {
+      "name": "vcpkg-linux",
+      "inherits": "vcpkg-base",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      },
+      "generator": "Ninja Multi-Config",
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "x64-linux"
       }
     }
   ],
   "buildPresets": [
     {
-      "name": "Base",
+      "name": "Base-windows",
       "hidden": true,
       "nativeToolOptions": [
         "-m",
@@ -25,21 +50,45 @@
       ]
     },
     {
-      "name": "Debug",
-      "configurePreset": "vcpkg",
-      "inherits": "Base",
+      "name": "Debug-windows",
+      "configurePreset": "vcpkg-windows",
+      "inherits": "Base-windows",
       "configuration": "Debug"
     },
     {
-      "name": "Release",
-      "configurePreset": "vcpkg",
-      "inherits": "Base",
+      "name": "Release-windows",
+      "configurePreset": "vcpkg-windows",
+      "inherits": "Base-windows",
       "configuration": "Release"
     },
     {
-      "name": "RelWithDebInfo",
-      "configurePreset": "vcpkg",
-      "inherits": "Base",
+      "name": "RelWithDebInfo-windows",
+      "configurePreset": "vcpkg-windows",
+      "inherits": "Base-windows",
+      "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "Base-linux",
+      "hidden": true,
+      "nativeToolOptions": [
+      ]
+    },
+    {
+      "name": "Debug-linux",
+      "configurePreset": "vcpkg-linux",
+      "inherits": "Base-linux",
+      "configuration": "Debug"
+    },
+    {
+      "name": "Release-linux",
+      "configurePreset": "vcpkg-linux",
+      "inherits": "Base-linux",
+      "configuration": "Release"
+    },
+    {
+      "name": "RelWithDebInfo-linux",
+      "configurePreset": "vcpkg-linux",
+      "inherits": "Base-linux",
       "configuration": "RelWithDebInfo"
     }
   ]
