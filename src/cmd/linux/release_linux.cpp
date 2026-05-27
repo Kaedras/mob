@@ -214,7 +214,7 @@ namespace mob {
 
         const string command = format("{} --appdir {} --output appimage",
                                       linuxdeploy::binary().string(), src.string());
-        auto env             = this_env::get()
+        auto env = this_env::get()
                        .set("UPDATE_INFORMATION", updateInfo)
                        .set("LINUXDEPLOY_OUTPUT_VERSION", version_)
                        .set("LINUXDEPLOY_EXCLUDED_LIBRARIES",
