@@ -11,7 +11,7 @@ list(FILTER source_files EXCLUDE REGEX ${EXCLUDE_FILTER})
 list(FILTER header_files EXCLUDE REGEX ${EXCLUDE_FILTER})
 
 add_executable(mob ${source_files} ${header_files})
-target_compile_features(mob PRIVATE cxx_std_20)
+target_precompile_headers(mob PRIVATE pch.h)
 
 if(WIN32)
     target_compile_definitions(
