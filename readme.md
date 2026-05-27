@@ -33,6 +33,7 @@ check the [ModOrganizer2 Wiki](https://github.com/ModOrganizer2/modorganizer/wik
 ```powershell
 git clone https://github.com/ModOrganizer2/mob
 cd mob
+$env:VCPKG_ROOT = "C:\path\to\vcpkg"
 ./bootstrap
 mob -d c:\somewhere build
 ```
@@ -52,7 +53,7 @@ Check the [documentation](https://aqtinstall.readthedocs.io/en/latest/installati
 to install **aqt** itself.
 
 > [!IMPORTANT]
-> As of version 3.3.0, **aqt** is unable to install Qt version 6.7.3 on the
+> As of version 3.3.0, **aqt** is unable to install Qt version 6.11.0 on the
 > `win64_msvc2022_64` target architecture due to a non-standard download URL (see:
 > miurahr/aqtinstall#919). The [Holt59/aqtinstall fork](https://github.com/Holt59/aqtinstall)
 > provides a workaround for this issue and can be installed using the following command
@@ -77,7 +78,7 @@ aqt install-qt --outputdir "C:\Qt" windows desktop ${QT_VERSION} win64_msvc2022_
 
 #### Manual installation
 
-- Install Qt  ([Installer](https://download.qt.io/official_releases/online_installers/qt-unified-windows-x64-online.exe)) and select these components:
+- Install Qt  ([Installer](https://download.qt.io/official_releases/online_installers/qt-online-installer-windows-x64-online.exe)) and select these components:
   - MSVC 2022 64-bit
   - Additional Libraries:
     - Qt WebEngine (display nexus pages)
@@ -86,6 +87,7 @@ aqt install-qt --outputdir "C:\Qt" windows desktop ${QT_VERSION} win64_msvc2022_
     - Qt Serial Port (required by Qt Core)
     - Qt WebChannel (required by QtWebEngine)
     - Qt WebSockets (Nexus api/download)
+    - Qt TaskTree (required by Qt Core)
   - Optional:
     - Qt Source Files
     - Qt Debug Files
@@ -108,6 +110,20 @@ aqt install-qt --outputdir "C:\Qt" windows desktop ${QT_VERSION} win64_msvc2022_
     - Git for Windows (Skip if you have this already installed outside of the VS installer)
     - CMake tools for Windows (Skip if you have this already installed outside of the VS installer)
 
+### vcpkg
+
+`mob` now uses **vcpkg** to manage its third-party dependencies (like libcurl).
+
+1. **Install vcpkg**: If you don't have it, follow the [official instructions](https://learn.microsoft.com/en-us/vcpkg/get_started/get-started).
+2. **Set Environment Variable**: `mob` requires the `VCPKG_ROOT` environment variable to locate the toolchain.
+
+   ```powershell
+    $env:VCPKG_ROOT = "C:\path\to\vcpkg"
+    $env:PATH = "$env:VCPKG_ROOT;$env:PATH"
+   ```
+
+3. **Static Triplet**: `mob` builds with the `x64-windows-static-md` triplet by default to ensure a standalone executable. The `bootstrap.ps1` script handles this automatically if `VCPKG_ROOT` is set.
+
 ## Setting up MOB
 
 ```powershell
@@ -116,6 +132,9 @@ cd C:\dev
 
 # clone this repository
 git clone https://github.com/ModOrganizer2/mob
+
+# set vcpkg path, or use `vcpkg integrate install` instead
+$env:VCPKG_ROOT = "C:\path\to\your\vcpkg"
 
 # build mob itself - this will create mob.exe in the current directory
 ./bootstrap.ps1
@@ -254,7 +273,7 @@ The versions for all the tasks.
 The only path that's required is `prefix`, which is where `mob` will put everything. Within this directory will be `build/`, `downloads/` and `install/`. Everything else is derived from it.
 
 If `mob` is unable to find the Qt installation directory, it can be specified in `qt_install`. This directory should contain `bin/`, `include/`, etc.
-It's typically something like `C:\Qt\6.7.3\msvc2022_64\`. The other path `qt_bin` will be derived from it, it's just `$qt_install/bin/`.
+It's typically something like `C:\Qt\6.11.0\msvc2022_64\`. The other path `qt_bin` will be derived from it, it's just `$qt_install/bin/`.
 
 ## Command line
 

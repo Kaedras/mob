@@ -1,3 +1,5 @@
+#pragma once
+
 // global warnings
 #pragma warning(disable : 4464)  // relative include path
 #pragma warning(disable : 4820)  // padding added
@@ -47,8 +49,6 @@
 #include <array>
 #include <atomic>
 #include <charconv>
-#include <condition_variable>
-#include <csignal>
 #include <filesystem>
 #include <format>
 #include <fstream>
@@ -57,24 +57,22 @@
 #include <map>
 #include <mutex>
 #include <optional>
-#include <ranges>
 #include <regex>
 #include <set>
 #include <sstream>
 #include <string>
-#include <string_view>
 #include <thread>
-#include <type_traits>
 #include <vector>
 
 #ifdef _WIN32
-#include <Shlobj.h>
-#include <imagehlp.h>
-#include <io.h>
-#include <shlwapi.h>
-#endif
+#include <windows.h>
 
-#ifdef __unix__
+#include <dbghelp.h>
+#include <fcntl.h>
+#include <io.h>
+#include <shlobj.h>
+#include <shlwapi.h>
+#else
 #include <cerrno>
 #include <cstring>
 #include <execinfo.h>
@@ -88,8 +86,6 @@ extern "C" {
 #include <sys/pidfd.h>
 }
 #endif
-
-#include <fcntl.h>
 
 #include <clipp.h>
 #include <curl/curl.h>
