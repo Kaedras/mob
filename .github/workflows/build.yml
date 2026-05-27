@@ -19,17 +19,13 @@ jobs:
         run: |
           $env:VCPKG_ROOT = $env:VCPKG_INSTALLATION_ROOT
           ./bootstrap.ps1 -Verbose
+
   build_linux:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
 
-      - name: Install dependencies
-        run: |
-          sudo apt-get update && sudo apt-get install -y libcurl4-openssl-dev
-
       - name: Install GCC 16
-        if: ${{ runner.os == 'Linux' }}
         run: |
           sudo apt-get install -y --no-install-recommends software-properties-common
           sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
@@ -41,4 +37,6 @@ jobs:
           sudo update-alternatives --install /usr/bin/c++ c++ /usr/bin/g++-16 100
 
       - name: Build Mob
-        run: ./bootstrap.sh -Verbose
+        run: |
+          export VCPKG_ROOT="$VCPKG_INSTALLATION_ROOT"
+          ./bootstrap.sh -Verbose
