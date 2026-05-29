@@ -21,14 +21,14 @@ fi
 
 # install vcpkg
 if [ ! -d "vcpkg/.git" ]; then
-  git clone -q --depth 1 https://github.com/microsoft/vcpkg.git
+  git clone -q https://github.com/microsoft/vcpkg.git
   cd vcpkg
 else
   cd vcpkg
   git pull -q
 fi
 ./bootstrap-vcpkg.sh -disableMetrics
-cd ..
+cd - 1>/dev/null
 export VCPKG_ROOT=/root/vcpkg
 export PATH="$VCPKG_ROOT:$PATH"
 
@@ -39,19 +39,21 @@ if [ "$DO_RELEASE" -eq 1 ]; then
 fi
 
 # install mob
+## clone or pull
 if [ ! -d "mob/.git" ]; then
   echo cloning mob...
   git clone -q --depth 1 https://github.com/Kaedras/mob.git
+else
+  if [ "$UPDATE_MOB" -eq 1 ]; then
+    (cd mob && git pull -q)
+  fi
+fi
+
+## build mob
+if [ "$UPDATE_MOB" -eq 1 ] || [ ! -f "mob/mob" ]; then
   cd mob
   echo building mob...
   ./bootstrap.sh
-else
-  cd mob
-  if [ "$UPDATE_MOB" -eq 1 ]; then
-    git pull -q
-    echo building mob...
-    ./bootstrap.sh
-  fi
 fi
 
 if [ "$DO_BUILD" -eq 1 ]; then
