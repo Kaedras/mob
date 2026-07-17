@@ -35,11 +35,6 @@ namespace mob::tasks {
                               libDir / "libsoftokn3.so", libDir / "libfreeblpriv3.so",
                               libDir / "libssl3.so"};
 
-            fs::path sevenZip = "/usr/lib/7zip/7z.so";
-            if (!fs::exists(sevenZip)) {
-                sevenZip = "/usr/lib64/7zip/7z.so";
-            }
-
             linuxdeploy tool;
             tool.output(conf().path().install_appimage())
                 .appdir(appDirPath)
@@ -49,7 +44,6 @@ namespace mob::tasks {
                 // bundle nss3, this prevents crashes due to version mismatches between
                 // host and appimage
                 .library(libs)
-                .library(sevenZip)
                 .deployDepsOnly(deployDepsOnly)
                 .customAppRun(find_root() / "AppRun");
 
