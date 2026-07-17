@@ -22,17 +22,18 @@ RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-16 100 && \
     update-alternatives --install /usr/bin/x86_64-linux-gnu-gcc x86_64-linux-gnu-gcc /usr/bin/gcc-16 100 && \
     update-alternatives --install /usr/bin/x86_64-linux-gnu-g++ x86_64-linux-gnu-g++ /usr/bin/g++-16 100
 
-# install python 3.13
+# install python
+ARG PYTHON_VERSION="3.14"
 RUN add-apt-repository -y ppa:deadsnakes/ppa && \
     apt-get update && \
     apt-get install -y --no-install-recommends \
-      python3.13-full \
-      python3.13-venv \
-      libpython3.13-dev && \
-    python3.13 -m ensurepip --upgrade
+      python${PYTHON_VERSION}-full \
+      python${PYTHON_VERSION}-venv \
+      libpython${PYTHON_VERSION}-dev
+RUN python${PYTHON_VERSION} -m ensurepip --upgrade
 
-# set python 3.13 as default
-RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.13 100
+# set new python as default
+RUN update-alternatives --install /usr/bin/python python /usr/bin/python${PYTHON_VERSION} 100
 
 # add kitware apt repository for newer cmake versions. see https://apt.kitware.com/ for more details
 # while the flag for c++26 has been added in cmake 3.25, it is only functional in cmake 4.2 and later
