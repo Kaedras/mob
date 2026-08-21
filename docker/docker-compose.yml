@@ -8,10 +8,7 @@ services:
       - .env
     volumes:
       - /dev/fuse:/dev/fuse # required for linuxdeploy
-      - ${OUTPUT_DIR:-./}ubuntu-24.04/build:/root/build
-      - ${OUTPUT_DIR:-./}ubuntu-24.04/mob:/root/mob
-      - ${OUTPUT_DIR:-./}ubuntu-24.04/ccache:/root/ccache
-      - ${OUTPUT_DIR:-./}ubuntu-24.04/vcpkg:/root/vcpkg
+      - ${OUTPUT_DIR:-./}ubuntu-24.04:/data
     cap_add:
       - SYS_ADMIN # required for linuxdeploy
 
@@ -24,9 +21,6 @@ services:
       - .env
     volumes:
       - /dev/fuse:/dev/fuse # required for linuxdeploy
-      - ${OUTPUT_DIR:-./}ubuntu-26.04/build:/root/build
-      - ${OUTPUT_DIR:-./}ubuntu-26.04/mob:/root/mob
-      - ${OUTPUT_DIR:-./}ubuntu-26.04/ccache:/root/ccache
-      - ${OUTPUT_DIR:-./}ubuntu-26.04/vcpkg:/root/vcpkg
+      - ${OUTPUT_DIR:-./}ubuntu-26.04:/data
     cap_add:
       - SYS_ADMIN # required for linuxdeploy

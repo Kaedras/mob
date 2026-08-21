@@ -15,8 +15,8 @@ fi
 
 if [ "$DO_BUILD" -eq 1 ]; then
   # clean up directories that should be recreated
-  rm -rf /root/build/build/AppImage
-  rm -rf /root/build/install
+  rm -rf /data/build/AppImage
+  rm -rf /data/install
 fi
 
 # enable ccache if $USE_CCACHE equals 1
@@ -35,7 +35,7 @@ else
 fi
 ./bootstrap-vcpkg.sh -disableMetrics
 cd - 1>/dev/null
-export VCPKG_ROOT=/root/vcpkg
+export VCPKG_ROOT=/data/vcpkg
 export PATH="$VCPKG_ROOT:$PATH"
 
 if [ "$DO_RELEASE" -eq 1 ]; then
@@ -64,12 +64,12 @@ fi
 
 if [ "$DO_BUILD" -eq 1 ]; then
   echo building modorganizer...
-  ./mob -d /root/build --log-file mob.build.log build
+  ./mob -d /data --log-file mob.build.log build
 fi
 
 if [ "$DO_RELEASE" -eq 1 ]; then
   echo creating release...
-  ./mob -d /root/build release devbuild --appimage --log-file mob.release.log
+  ./mob -d /data release devbuild --appimage --log-file mob.release.log
 fi
 
 if [ "${USE_CCACHE:-0}" -eq 1 ]; then

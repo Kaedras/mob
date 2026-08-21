@@ -103,12 +103,11 @@ RUN apt-get install -y --no-install-recommends rustup && rustup default stable
 
 # define volumes
 VOLUME /dev/fuse
-VOLUME /root/build
-VOLUME /root/ccache
-VOLUME /root/mob
-VOLUME /root/vcpkg
+VOLUME /data
+
+WORKDIR /data
 
 # set entrypoint
 COPY ./entrypoint.sh /root/entrypoint.sh
 RUN chmod +x /root/entrypoint.sh
-ENTRYPOINT [ "bash", "./entrypoint.sh" ]
+ENTRYPOINT [ "bash", "/root/entrypoint.sh" ]
