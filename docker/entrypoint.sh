@@ -2,6 +2,12 @@
 
 set -e
 
+if [ ! -z "$DEBUG" ] ; then
+  env
+  gcc -v
+  python -V
+fi
+
 if [ "$DO_BUILD" -eq 0 ] && [ "$DO_RELEASE" -eq 0 ]; then
   echo "Build and release are both disabled, exiting"
   return 0

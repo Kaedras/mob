@@ -1,20 +1,32 @@
 services:
-  build:
+  build-ubuntu-24.04:
     build:
         context: .
+        args:
+          BASE_IMAGE: ubuntu:24.04
+    env_file:
+      - .env
     volumes:
       - /dev/fuse:/dev/fuse # required for linuxdeploy
-      - ${OUTPUT_DIR:-./}build:/root/build
-      - ${OUTPUT_DIR:-./}mob:/root/mob
-      - ${OUTPUT_DIR:-./}ccache:/root/ccache
-      - ${OUTPUT_DIR:-./}vcpkg:/root/vcpkg
-    environment:
-      - EXTRA_QT_MODULES=${EXTRA_QT_MODULES}
-      - EXTRA_PLATFORM_PLUGINS=${EXTRA_PLATFORM_PLUGINS}
-      - LINUXDEPLOY_EXCLUDED_LIBRARIES=${LINUXDEPLOY_EXCLUDED_LIBRARIES}
-      - USE_CCACHE=${USE_CCACHE}
-      - DO_BUILD=${DO_BUILD}
-      - DO_RELEASE=${DO_RELEASE}
-      - UPDATE_MOB=${UPDATE_MOB}
+      - ${OUTPUT_DIR:-./}ubuntu-24.04/build:/root/build
+      - ${OUTPUT_DIR:-./}ubuntu-24.04/mob:/root/mob
+      - ${OUTPUT_DIR:-./}ubuntu-24.04/ccache:/root/ccache
+      - ${OUTPUT_DIR:-./}ubuntu-24.04/vcpkg:/root/vcpkg
+    cap_add:
+      - SYS_ADMIN # required for linuxdeploy
+
+  build-ubuntu-26.04:
+    build:
+        context: .
+        args:
+          BASE_IMAGE: ubuntu:26.04
+    env_file:
+      - .env
+    volumes:
+      - /dev/fuse:/dev/fuse # required for linuxdeploy
+      - ${OUTPUT_DIR:-./}ubuntu-26.04/build:/root/build
+      - ${OUTPUT_DIR:-./}ubuntu-26.04/mob:/root/mob
+      - ${OUTPUT_DIR:-./}ubuntu-26.04/ccache:/root/ccache
+      - ${OUTPUT_DIR:-./}ubuntu-26.04/vcpkg:/root/vcpkg
     cap_add:
       - SYS_ADMIN # required for linuxdeploy

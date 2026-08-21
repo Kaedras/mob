@@ -1,4 +1,7 @@
-FROM ubuntu:24.04
+ARG BASE_IMAGE=ubuntu:24.04
+FROM ${BASE_IMAGE}
+
+ARG BASE_IMAGE
 
 WORKDIR /root
 
@@ -7,12 +10,9 @@ RUN export DEBIAN_FRONTEND=noninteractive \
     && apt-get update \
     && apt-get full-upgrade -y
 
-# install gcc 16
-RUN export DEBIAN_FRONTEND=noninteractive \
-    && apt-get install -y --no-install-recommends software-properties-common gpg-agent \
-    && add-apt-repository -y ppa:ubuntu-toolchain-r/test \
-    && apt-get update \
-    && apt-get install -y --no-install-recommends gcc-16 g++-16
+# run container-specific setup
+COPY ./setup.sh /tmp/setup.sh
+RUN chmod +x /tmp/setup.sh && /tmp/setup.sh "$BASE_IMAGE"
 
 # set gcc 16 as default
 RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-16 100 && \
@@ -30,19 +30,9 @@ RUN add-apt-repository -y ppa:deadsnakes/ppa && \
       python${PYTHON_VERSION}-full \
       python${PYTHON_VERSION}-venv \
       libpython${PYTHON_VERSION}-dev
-RUN python${PYTHON_VERSION} -m ensurepip --upgrade
 
 # set new python as default
 RUN update-alternatives --install /usr/bin/python python /usr/bin/python${PYTHON_VERSION} 100
-
-# add kitware apt repository for newer cmake versions. see https://apt.kitware.com/ for more details
-# while the flag for c++26 has been added in cmake 3.25, it is only functional in cmake 4.2 and later
-RUN apt-get install -y --no-install-recommends ca-certificates gpg wget && \
-    wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc | gpg --dearmor - > /usr/share/keyrings/kitware-archive-keyring.gpg && \
-    echo 'deb [signed-by=/usr/share/keyrings/kitware-archive-keyring.gpg] https://apt.kitware.com/ubuntu/ noble main' > /etc/apt/sources.list.d/kitware.list && \
-    apt-get update && \
-    rm /usr/share/keyrings/kitware-archive-keyring.gpg && \
-    apt-get install -y kitware-archive-keyring
 
 # install dependencies
 RUN export DEBIAN_FRONTEND=noninteractive \

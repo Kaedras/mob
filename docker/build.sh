@@ -12,4 +12,5 @@ else
 fi
 
 $COMMAND compose build
-$COMMAND compose run --rm build
+$COMMAND compose run --rm build-ubuntu-24.04
+$COMMAND compose run --rm build-ubuntu-26.04
