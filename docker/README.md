@@ -12,9 +12,6 @@ Podman (including podman-compose) or docker
 ## Usage
 
 ```shell
-# may be necessary if podman is installed without a wrapper
-alias docker=podman
-
 ./build.sh
 ```
 
