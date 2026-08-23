@@ -8,13 +8,39 @@
 #include "ini.h"
 #include "paths.h"
 
+namespace {
+
 #ifdef __unix__
-inline const wchar_t* GetCommandLineW()
-{
-#warning STUB!
-    return L"";
-}
+    // this doesn't escape parameters containing spaces, but should be good enough for
+    // logging
+    std::string getCommandLine()
+    {
+        std::ifstream file("/proc/self/cmdline", std::ios::binary);
+        if (!file.is_open()) {
+            std::cerr << "error opening '/proc/self/cmdline'\n";
+            return {};
+        }
+
+        std::string cmdline((std::istreambuf_iterator<char>(file)),
+                            std::istreambuf_iterator<char>());
+
+        std::ranges::replace(cmdline, '\0', ' ');
+
+        // remove trailing space
+        if (!cmdline.empty() && cmdline.back() == ' ') {
+            cmdline.pop_back();
+        }
+
+        return cmdline;
+    }
+#else
+    std::wstring getCommandLine()
+    {
+        return std::wstring(GetCommandLineW());
+    }
+
 #endif
+}  // namespace
 
 namespace mob::details {
 
@@ -585,7 +611,7 @@ namespace mob {
         MOB_ASSERT(!inis.empty());
 
         // some logging
-        gcx().debug(context::conf, "cl: {}", std::wstring(GetCommandLineW()));
+        gcx().debug(context::conf, "cl: {}", getCommandLine());
         gcx().debug(context::conf, "using inis in order:");
         for (auto&& ini : inis)
             gcx().debug(context::conf, "  . {}", ini);
