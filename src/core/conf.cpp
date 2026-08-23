@@ -545,11 +545,12 @@ namespace mob {
 #endif
         resolve_path("install_installer", p.install(), "installer");
         resolve_path("install_bin", p.install(), "bin");
-        resolve_path("install_libs", p.install(), "lib");
 #ifdef _WIN32
+        resolve_path("install_libs", p.install(), "lib");
         resolve_path("install_pdbs", p.install(), "pdb");
         resolve_path("install_dlls", p.install_bin(), "dlls");
 #else
+        resolve_path("install_libs", p.install(), "lib64");
         resolve_path("install_pdbs", p.install(), "debug");
         resolve_path("install_dlls", p.install_bin(), "lib");
 #endif
