@@ -215,6 +215,9 @@ namespace mob {
             catch (std::exception&) {
                 // this is typically a bad format string, but there's not a lot
                 // that can be done except logging to stderr and asserting
+#ifdef __unix__
+                std::cerr << "bad format string '" << f.get() << "'\n";
+#else
 
                 // try to display the format string, but the console is in utf16
                 // mode and the string is utf8, so it would have to be converted,
@@ -231,6 +234,8 @@ namespace mob {
                 }
 
                 std::wcerr << "bad format string '" << s << "'\n";
+#endif
+
 #ifdef __cpp_lib_debugging
                 std::breakpoint_if_debugging();
 #else
