@@ -186,6 +186,7 @@ namespace mob {
                                    Args&&... args) const
         {
             do_log(true, r, level::error, f, std::forward<Args>(args)...);
+            std::unreachable();
         }
 
     private:
