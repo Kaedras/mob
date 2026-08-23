@@ -243,6 +243,11 @@ namespace mob {
                 if (IsDebuggerPresent())
                     DebugBreak();
 #endif
+
+                if (bail) {
+                    do_log_impl(bail, r, lv,
+                                "bad format string '" + std::string(f.get()) + "'");
+                }
             }
         }
 
