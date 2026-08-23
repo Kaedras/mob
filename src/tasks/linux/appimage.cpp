@@ -115,6 +115,7 @@ namespace mob::tasks {
     void appimage::do_build_and_install()
     {
         const fs::path appDir = source_path() / "ModOrganizer";
+        const fs::path libDir = appDir / "usr/lib";
 
         // copy bin
         op::copy_glob_to_dir_if_better(cx(), conf().path().install_bin(),
@@ -122,14 +123,14 @@ namespace mob::tasks {
                                        op::flags::copy_files | op::flags::copy_dirs);
         // copy lib
         op::copy_glob_to_dir_if_better(cx(), conf().path().install_libs() / "*.so",
-                                       appDir / "usr/lib",
+                                       libDir,
                                        op::flags::copy_files | op::flags::copy_dirs);
 
         // copy libraries that are not inside the lib directory
         op::copy_file_to_dir_if_better(cx(), appDir / "usr/bin/loot/libloot.so.0",
-                                       appDir / "usr/lib");
-        op::copy_glob_to_dir_if_better(cx(), appDir / "usr/bin/lib/*.so",
-                                       appDir / "usr/lib", op::flags::copy_files);
+                                       libDir);
+        op::copy_glob_to_dir_if_better(cx(), appDir / "usr/bin/lib/*.so", libDir,
+                                       op::flags::copy_files);
 
         // copy translations
         op::copy_glob_to_dir_if_better(cx(), appDir / "usr/bin/translations/*",
@@ -142,7 +143,6 @@ namespace mob::tasks {
         op::delete_directory(cx(), appDir / "usr/bin/translations");
 
         // remove plugins from usr/lib
-        const fs::path libDir = appDir / "usr/lib";
         const array libs{libDir / "libbsa_*.so",          libDir / "libcheck_fnis.so",
                          libDir / "libdiagnose_basic.so", libDir / "libgame_*.so",
                          libDir / "libinibakery.so",      libDir / "libinieditor.so",
