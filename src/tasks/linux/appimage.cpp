@@ -168,18 +168,21 @@ namespace mob::tasks {
         };
 
         // strip files
-        const fs::path bin = appDir / "usr/bin";
-        const array filesToStrip{
-            bin / "ModOrganizer",
-            bin / "helper",
-            bin / "loot/*",
-            bin / "nxmhandler",
-            bin / "plugins/*.so",
-            libDir / "libloot.so.0",
-            libDir / "libmo2-archive.so",
-            libDir / "libuibase.so",
-            libDir / "libusvfs-fuse.so",
-        };
+        const fs::path bin          = appDir / "usr/bin";
+        const fs::path pluginPython = bin / "plugins/plugin_python";
+        const array filesToStrip{bin / "ModOrganizer",
+                                 bin / "helper",
+                                 bin / "loot/*",
+                                 bin / "nxmhandler",
+                                 bin / "plugins/*.so",
+                                 libDir / "libloot.so.0",
+                                 libDir / "libmo2-archive.so",
+                                 libDir / "libuibase.so",
+                                 libDir / "libusvfs-fuse.so",
+                                 pluginPython / "*.so",
+                                 pluginPython / "lib/*.so",
+                                 pluginPython / "libs/*.so",
+                                 pluginPython / "libs/PyQt6/*.so"};
         for (const auto& file : filesToStrip) {
             strip(file.string());
         }
@@ -204,32 +207,17 @@ namespace mob::tasks {
             cx(), conf().path().install() / "share/applications/ModOrganizer.desktop",
             appDir / "usr/share/applications");
 
-        vector<fs::path> ldLibraryPath;
+        vector deployDepsOnly{bin,
+                              bin / "loot",
+                              bin / "plugins",
+                              libDir / "libmo2-archive.so",
+                              libDir / "libuibase.so",
+                              libDir / "libusvfs-fuse.so",
+                              libDir / "libloot.so.0",
+                              pluginPython / "libplugin_python.so",
+                              pluginPython / "libs/PyQt6"};
 
-        vector deployDepsOnly{
-            bin,
-            bin / "loot",
-            bin / "plugins",
-            libDir / "libmo2-archive.so",
-            libDir / "libuibase.so",
-            libDir / "libusvfs-fuse.so",
-            libDir / "libloot.so.0",
-        };
-
-        // todo: refactor this once plugin_python is stable
-        if (conf().task({"plugin_python"}).get<bool>("enabled")) {
-            const fs::path pluginPython = bin / "plugins/plugin_python";
-
-            ldLibraryPath.push_back(pluginPython / "lib");
-
-            deployDepsOnly.push_back(pluginPython / "libplugin_python.so");
-            deployDepsOnly.push_back(pluginPython / "libs/PyQt6");
-
-            strip(pluginPython / "*.so");
-            strip(pluginPython / "lib/*.so");
-            strip(pluginPython / "libs/*.so");
-            strip(pluginPython / "libs/PyQt6/*.so");
-        }
+        vector ldLibraryPath{pluginPython / "lib"};
 
         run_tool(create_tool(appDir, deployDepsOnly, ldLibraryPath));
     }
