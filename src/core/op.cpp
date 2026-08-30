@@ -380,6 +380,13 @@ namespace mob::op {
         const auto wildcard    = src_glob.filename().native();
 
         if (!fs::exists(file_parent)) {
+            if (f & optional) {
+                cx.debug(context::fs,
+                         "not copying glob {} to {}, parent directory {} doesn't exist "
+                         "(optional)",
+                         src_glob, dest_dir, file_parent);
+                return;
+            }
             cx.bail_out(context::fs,
                         "can't copy glob {} to {}, parent directory {} doesn't exist",
                         src_glob, dest_dir, file_parent);
