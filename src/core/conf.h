@@ -253,9 +253,12 @@ namespace mob {
         VALUE(install_installer);
 #ifdef __unix__
         VALUE(install_appimage);
+        VALUE(install_lib);
+        VALUE(install_lib64);
+#else
+        VALUE(install_libs);
 #endif
         VALUE(install_bin);
-        VALUE(install_libs);
         VALUE(install_pdbs);
 
         VALUE(install_dlls);

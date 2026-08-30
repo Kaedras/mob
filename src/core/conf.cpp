@@ -576,7 +576,8 @@ namespace mob {
         resolve_path("install_pdbs", p.install(), "pdb");
         resolve_path("install_dlls", p.install_bin(), "dlls");
 #else
-        resolve_path("install_libs", p.install(), "lib64");
+        resolve_path("install_lib", p.install(), "lib");
+        resolve_path("install_lib64", p.install(), "lib64");
         resolve_path("install_pdbs", p.install(), "debug");
         resolve_path("install_dlls", p.install_bin(), "lib");
 #endif

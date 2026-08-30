@@ -122,9 +122,14 @@ namespace mob::tasks {
                                        appDir / "usr",
                                        op::flags::copy_files | op::flags::copy_dirs);
         // copy lib
-        op::copy_glob_to_dir_if_better(cx(), conf().path().install_libs() / "*.so",
-                                       libDir,
-                                       op::flags::copy_files | op::flags::copy_dirs);
+        op::copy_glob_to_dir_if_better(
+            cx(), conf().path().install_lib() / "*.so", libDir,
+            op::flags::copy_files | op::flags::copy_dirs | op::flags::optional);
+
+        // copy lib64
+        op::copy_glob_to_dir_if_better(
+            cx(), conf().path().install_lib64() / "*.so", libDir,
+            op::flags::copy_files | op::flags::copy_dirs | op::flags::optional);
 
         // copy libraries that are not inside the lib directory
         op::copy_file_to_dir_if_better(cx(), appDir / "usr/bin/loot/libloot.so.0",
